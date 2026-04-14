@@ -15,6 +15,7 @@ import { EndlessSetup } from './pages/EndlessSetup';
 import { Page, Level, GameMode, Item, EndlessRecord } from './types';
 import { INITIAL_LEVELS, INITIAL_INVENTORY } from './constants';
 import { motion, AnimatePresence } from 'motion/react';
+import { Analytics } from '@vercel/analytics/react';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>('HOME');
@@ -261,6 +262,7 @@ export default function App() {
       )}
       
       {currentPage === 'HOME' && <Footer />}
+      <Analytics />
     </div>
   );
 }
