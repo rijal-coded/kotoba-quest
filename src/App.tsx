@@ -15,7 +15,6 @@ import { EndlessSetup } from './pages/EndlessSetup';
 import { Page, Level, GameMode, Item, EndlessRecord } from './types';
 import { INITIAL_LEVELS, INITIAL_INVENTORY } from './constants';
 import { motion, AnimatePresence } from 'motion/react';
-import { Analytics } from '@vercel/analytics/react';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>('HOME');
@@ -80,13 +79,14 @@ export default function App() {
   };
 
   const handleStartEndless = (selectedLevels: Level[]) => {
-    const combinedWords = selectedLevels.flatMap(l => l.words);
+    const combinedWords = selectedLevels.flatMap(l => l.words.slice(0, l.unlockedWordCount));
     const combinedLevel: Level = {
       id: 'endless',
       name: 'ENDLESS MODE',
       icon: 'Infinity',
       isCompleted: false,
       bestTime: 0,
+      unlockedWordCount: combinedWords.length,
       words: combinedWords
     };
     setSelectedLevel(combinedLevel);
@@ -104,10 +104,12 @@ export default function App() {
     if (selectedLevel && currentPage !== 'ENDLESS') {
       setLevels(prev => prev.map(l => {
         if (l.id === selectedLevel.id) {
+          const newUnlocked = victory ? Math.min(l.words.length, l.unlockedWordCount + 5) : l.unlockedWordCount;
           return {
             ...l,
             isCompleted: victory ? true : l.isCompleted,
-            bestTime: victory ? (l.bestTime === 0 ? timeSpent : Math.min(l.bestTime, timeSpent)) : l.bestTime
+            bestTime: victory ? (l.bestTime === 0 ? timeSpent : Math.min(l.bestTime, timeSpent)) : l.bestTime,
+            unlockedWordCount: newUnlocked
           };
         }
         return l;
@@ -178,7 +180,7 @@ export default function App() {
       case 'MODE_SELECT':
         return <ModeSelect onSelectMode={setGameMode} onNavigate={handleNavigate} />;
       case 'LEVEL_SELECT':
-        return <LevelSelect levels={levels} onSelect={handleLevelSelect} />;
+        return <LevelSelect levels={levels} gameMode={gameMode} onSelect={handleLevelSelect} />;
       case 'BATTLE':
         return selectedLevel ? (
           <Battle 
@@ -189,7 +191,7 @@ export default function App() {
             onFinish={handleBattleFinish} 
           />
         ) : (
-          <LevelSelect levels={levels} onSelect={handleLevelSelect} />
+          <LevelSelect levels={levels} gameMode={gameMode} onSelect={handleLevelSelect} />
         );
       case 'ENDLESS':
         return selectedLevel ? (
@@ -227,7 +229,7 @@ export default function App() {
             <div className="pt-8 border-t border-white/10">
               <p className="text-xs uppercase tracking-widest text-white/30">
                 Created by Muhammad Rijal Rais<br />
-                Powered by AI Studio Build
+                Assisted by AI
               </p>
             </div>
           </div>
@@ -262,7 +264,6 @@ export default function App() {
       )}
       
       {currentPage === 'HOME' && <Footer />}
-      <Analytics />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { Play, Infinity, User, Lock } from 'lucide-react';
+import { Play, Infinity, User, Lock, Gamepad2 } from 'lucide-react';
 import { Page } from '../types';
 import { NavButton } from './UI';
 
@@ -23,6 +23,12 @@ export const BottomNav = ({ currentPage, onNavigate, hasCompletedLevel }: Bottom
         active={currentPage === 'ENDLESS'} 
         disabled={!hasCompletedLevel}
         onClick={() => onNavigate('ENDLESS')}
+      />
+      <NavButton 
+        icon={<Gamepad2 className="w-6 h-6" />} 
+        label="Mode" 
+        active={currentPage === 'MODE_SELECT'} 
+        onClick={() => onNavigate('MODE_SELECT')}
       />
       <NavButton 
         icon={<User className="w-6 h-6" />} 

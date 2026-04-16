@@ -16,6 +16,7 @@ export interface Level {
   words: Word[];
   isCompleted: boolean;
   bestTime: number;
+  unlockedWordCount: number;
 }
 
 export interface Item {

@@ -1,17 +1,18 @@
 import { motion } from 'motion/react';
 import * as Icons from 'lucide-react';
-import { Level } from '../types';
+import { Level, GameMode } from '../types';
 
 interface LevelSelectProps {
   levels: Level[];
+  gameMode: GameMode;
   onSelect: (level: Level) => void;
 }
 
-export const LevelSelect = ({ levels, onSelect }: LevelSelectProps) => {
+export const LevelSelect = ({ levels, gameMode, onSelect }: LevelSelectProps) => {
   return (
     <div className="p-6 pb-24 md:pb-6 space-y-8 max-w-5xl mx-auto">
       <h2 className="text-3xl font-black text-center uppercase text-neon-blue drop-shadow-[0_0_2px_rgba(59,130,246,0.5)] tracking-widest">
-        DAFTAR LEVEL
+        {gameMode} MODE
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

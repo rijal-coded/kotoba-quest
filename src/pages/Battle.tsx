@@ -39,26 +39,30 @@ export const Battle = ({ level, isEndless, gameMode, inventory, setInventory, on
   const [showEndlessFinish, setShowEndlessFinish] = useState(false);
   const [rewardNotification, setRewardNotification] = useState<string | null>(null);
 
+  const activeWords = useMemo(() => {
+    return isEndless ? level.words : level.words.slice(0, level.unlockedWordCount);
+  }, [level, isEndless]);
+
   const currentWord = useMemo(() => {
     if (isEndless) {
       // In endless, pick random word from level
-      return level.words[Math.floor(Math.random() * level.words.length)];
+      return activeWords[Math.floor(Math.random() * activeWords.length)];
     }
-    return level.words[gameState.currentWordIndex % level.words.length];
-  }, [gameState.currentWordIndex, level.words, isEndless]);
+    return activeWords[gameState.currentWordIndex % activeWords.length];
+  }, [gameState.currentWordIndex, activeWords, isEndless]);
 
   const displayWord = gameMode === 'KANJI' && currentWord.kanji ? currentWord.kanji : currentWord.japanese;
 
   const options = useMemo(() => {
     const correct = currentWord.indonesian;
-    const others = level.words
+    const others = activeWords
       .filter(w => w.indonesian !== correct)
       .map(w => w.indonesian)
       .sort(() => Math.random() - 0.5)
       .slice(0, 3);
     
     return [correct, ...others].sort(() => Math.random() - 0.5);
-  }, [currentWord, level.words]);
+  }, [currentWord, activeWords]);
 
   const handleAnswer = (answer: string) => {
     const isCorrect = answer === currentWord.indonesian;
@@ -158,10 +162,10 @@ export const Battle = ({ level, isEndless, gameMode, inventory, setInventory, on
   }, [gameState.playerHP, showDefeat, showEndlessFinish, isEndless]);
 
   useEffect(() => {
-    if (!isEndless && gameState.enemyHP <= 0 && gameState.currentWordIndex >= level.words.length && !showVictory) {
+    if (!isEndless && gameState.enemyHP <= 0 && gameState.currentWordIndex >= activeWords.length && !showVictory) {
       setShowVictory(true);
     }
-  }, [gameState.enemyHP, gameState.currentWordIndex, isEndless, level.words.length, showVictory]);
+  }, [gameState.enemyHP, gameState.currentWordIndex, isEndless, activeWords.length, showVictory]);
 
   const handleFinish = (victory: boolean) => {
     const timeSpent = Math.floor((Date.now() - startTime) / 1000);
@@ -221,6 +225,11 @@ export const Battle = ({ level, isEndless, gameMode, inventory, setInventory, on
             <span className="text-xs font-bold text-neon-cyan uppercase">KAPSUL PENINGKAT ADRENALIN</span>
             <span className="text-xs font-mono text-neon-green">x1</span>
           </div>
+          {level.unlockedWordCount < level.words.length && (
+            <div className="mt-4 p-3 bg-neon-blue/20 border border-neon-blue text-neon-blue text-xs font-bold uppercase tracking-widest text-center">
+              KOSAKATA BARU TELAH DITAMBAHKAN KE LEVEL INI!
+            </div>
+          )}
         </div>
         <button 
           onClick={() => handleFinish(true)}
