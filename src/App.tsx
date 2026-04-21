@@ -16,6 +16,10 @@ import { Page, Level, GameMode, Item, EndlessRecord } from './types';
 import { INITIAL_LEVELS, INITIAL_INVENTORY } from './constants';
 import { motion, AnimatePresence } from 'motion/react';
 
+import { ExperimentalBattle } from './pages/ExperimentalBattle';
+
+import { About } from './pages/About';
+
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>('HOME');
   const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
@@ -43,6 +47,7 @@ export default function App() {
   });
 
   const [gameMode, setGameMode] = useState<GameMode>('KANA');
+  const [isExperimentalMode, setIsExperimentalMode] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('kotoba_levels', JSON.stringify(levels));
@@ -208,32 +213,20 @@ export default function App() {
         ) : (
           <EndlessSetup levels={levels} records={endlessRecords} onStart={handleStartEndless} />
         );
+      case 'EXPERIMENTAL_BATTLE':
+        return (
+          <ExperimentalBattle 
+            level={levels[0]} 
+            gameMode={gameMode}
+            inventory={inventory}
+            setInventory={setInventory}
+            onFinish={(victory) => handleNavigate('HOME')} 
+          />
+        );
       case 'INVENTORY':
         return <Inventory username={username} inventory={inventory} powerScore={powerScore} />;
       case 'ABOUT':
-        return (
-          <div className="p-8 max-w-2xl mx-auto space-y-8 text-center">
-            <h2 className="text-4xl font-black uppercase tracking-tighter text-neon-cyan drop-shadow-[0_0_2px_rgba(0,255,255,0.5)]">About Kotoba Quest</h2>
-            <div className="space-y-4 text-white/70 leading-relaxed">
-              <p>
-                Kotoba Quest adalah sebuah eksperimen dalam gamifikasi pembelajaran bahasa. 
-                Menggabungkan estetika cyberpunk dengan metode pengulangan spasi untuk membantu 
-                pengguna menghafal kosakata bahasa Jepang (Hiragana & Katakana).
-              </p>
-              <p>
-                Setiap jawaban yang benar akan memberikan serangan kepada musuh, sementara 
-                jawaban yang salah akan membuat karakter Anda menerima kerusakan. 
-                Bertahanlah dan kuasai bahasanya!
-              </p>
-            </div>
-            <div className="pt-8 border-t border-white/10">
-              <p className="text-xs uppercase tracking-widest text-white/30">
-                Created by Muhammad Rijal Rais<br />
-                Assisted by AI
-              </p>
-            </div>
-          </div>
-        );
+        return <About onNavigate={handleNavigate} isExperimentalMode={isExperimentalMode} setIsExperimentalMode={setIsExperimentalMode} onResetData={handleResetData} />;
       default:
         return <Home onStart={() => handleNavigate('MODE_SELECT')} username={username} onSetUsername={handleSetUsername} onResetData={handleResetData} />;
     }

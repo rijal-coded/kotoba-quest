@@ -1,4 +1,4 @@
-export type Page = 'HOME' | 'MODE_SELECT' | 'BATTLE' | 'INVENTORY' | 'LEVEL_SELECT' | 'ENDLESS' | 'ABOUT';
+export type Page = 'HOME' | 'MODE_SELECT' | 'BATTLE' | 'INVENTORY' | 'LEVEL_SELECT' | 'ENDLESS' | 'ABOUT' | 'EXPERIMENTAL_BATTLE';
 
 export type GameMode = 'KANA' | 'KANJI';
 

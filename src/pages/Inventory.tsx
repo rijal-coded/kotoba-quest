@@ -31,7 +31,7 @@ export const Inventory = ({ username, inventory, powerScore }: InventoryProps) =
           <h3 className="text-2xl font-black uppercase tracking-tighter">{username || 'UNKNOWN PLAYER'}</h3>
         </div>
         <div className="text-right space-y-1">
-          <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Power Score</span>
+          <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Strength</span>
           <div className="text-xl font-mono text-neon-cyan">{powerScore.toLocaleString('id-ID')}</div>
         </div>
       </div>

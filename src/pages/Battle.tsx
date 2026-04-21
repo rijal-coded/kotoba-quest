@@ -319,7 +319,7 @@ export const Battle = ({ level, isEndless, gameMode, inventory, setInventory, on
             <h3 className="text-2xl font-black uppercase tracking-tighter">GREITHER</h3>
           </div>
           <div className="text-right space-y-1">
-            <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Power Score</span>
+            <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Strength</span>
             <div className="text-xl font-mono text-neon-blue">190.000.000</div>
           </div>
         </div>
