@@ -47,7 +47,6 @@ export default function App() {
   });
 
   const [gameMode, setGameMode] = useState<GameMode>('KANA');
-  const [isExperimentalMode, setIsExperimentalMode] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('kotoba_levels', JSON.stringify(levels));
@@ -213,20 +212,10 @@ export default function App() {
         ) : (
           <EndlessSetup levels={levels} records={endlessRecords} onStart={handleStartEndless} />
         );
-      case 'EXPERIMENTAL_BATTLE':
-        return (
-          <ExperimentalBattle 
-            level={levels[0]} 
-            gameMode={gameMode}
-            inventory={inventory}
-            setInventory={setInventory}
-            onFinish={(victory) => handleNavigate('HOME')} 
-          />
-        );
       case 'INVENTORY':
         return <Inventory username={username} inventory={inventory} powerScore={powerScore} />;
       case 'ABOUT':
-        return <About onNavigate={handleNavigate} isExperimentalMode={isExperimentalMode} setIsExperimentalMode={setIsExperimentalMode} onResetData={handleResetData} />;
+        return <About onNavigate={handleNavigate} onResetData={handleResetData} />;
       default:
         return <Home onStart={() => handleNavigate('MODE_SELECT')} username={username} onSetUsername={handleSetUsername} onResetData={handleResetData} />;
     }

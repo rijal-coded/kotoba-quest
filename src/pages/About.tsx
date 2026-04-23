@@ -1,49 +1,35 @@
-import { useState } from 'react';
+import { useState, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Page } from '../types';
 
 interface AboutProps {
-  isExperimentalMode: boolean;
-  setIsExperimentalMode: (val: boolean) => void;
   onNavigate: (page: Page) => void;
   onResetData: () => void;
 }
 
-export const About = ({ isExperimentalMode, setIsExperimentalMode, onNavigate, onResetData }: AboutProps) => {
+export const About = ({ onNavigate, onResetData }: AboutProps) => {
   const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
   const [password, setPassword] = useState('');
-  const [showExitPrompt, setShowExitPrompt] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(false);
 
   const handleTitleClick = () => {
-    if (isExperimentalMode) {
-      setShowExitPrompt(true);
-    } else {
-      setShowPasswordPrompt(true);
-    }
+    setShowPasswordPrompt(true);
   };
 
-  const handlePasswordSubmit = (e: React.FormEvent) => {
+  const handlePasswordSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (password === 'Faira Khairaniza Ferdian') {
-      setIsExperimentalMode(true);
-      setShowPasswordPrompt(false);
+    if (password.toLowerCase() === 'faira') {
+      setSuccessMessage(true);
       setPassword('');
+      setShowPasswordPrompt(false);
     } else {
       setShowPasswordPrompt(false);
       setPassword('');
     }
-  };
-
-  const handleExitExp = (confirm: boolean) => {
-    if (confirm) {
-      setIsExperimentalMode(false);
-    }
-    setShowExitPrompt(false);
   };
 
   const handleReset = () => {
     onResetData();
-    // Simple visual feedback for development
     alert("Data berhasil direset!");
   };
 
@@ -55,6 +41,16 @@ export const About = ({ isExperimentalMode, setIsExperimentalMode, onNavigate, o
       >
         About Kotoba Quest
       </h2>
+
+      {successMessage && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-6xl font-black text-neon-pink drop-shadow-[0_0_10px_rgba(255,0,255,0.8)] animate-pulse py-12"
+        >
+          I LOVE YOU
+        </motion.div>
+      )}
       
       <div className="space-y-4 text-white/70 leading-relaxed">
         <p>
@@ -69,37 +65,21 @@ export const About = ({ isExperimentalMode, setIsExperimentalMode, onNavigate, o
         </p>
       </div>
 
-      <div className="pt-8 border-t border-white/10">
-        <p className="text-xs uppercase tracking-widest text-white/30">
-          Created by Muhammad Rijal Rais<br />
-          Assisted by AI
-        </p>
-      </div>
-
-      {isExperimentalMode && (
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-12 p-6 border-2 border-neon-pink bg-dark-surface space-y-6"
+      <div className="pt-12 space-y-4">
+        <button 
+          onClick={handleReset}
+          className="text-[10px] text-white/20 uppercase tracking-[0.3em] hover:text-orange-500 transition-colors"
         >
-          <h3 className="text-xl font-black text-neon-pink tracking-widest uppercase">Experimental Zone</h3>
-          <p className="text-xs text-white/50 uppercase tracking-widest">Akses mode developer aktif</p>
-          <div className="flex flex-col gap-4">
-            <button 
-              onClick={() => onNavigate('EXPERIMENTAL_BATTLE')}
-              className="w-full px-8 py-3 bg-red-500/10 text-red-400 border border-red-500 font-bold uppercase tracking-widest hover:bg-red-500/30 transition-colors"
-            >
-              [Test] Launch RPG Battle
-            </button>
-            <button 
-              onClick={handleReset}
-              className="w-full px-8 py-3 bg-orange-500/10 text-orange-400 border border-orange-500 font-bold uppercase tracking-widest hover:bg-orange-500/30 transition-colors"
-            >
-              [Debug] Reset Progress
-            </button>
-          </div>
-        </motion.div>
-      )}
+          [ Hard Reset Database ]
+        </button>
+
+        <div className="pt-8 border-t border-white/10">
+          <p className="text-xs uppercase tracking-widest text-white/30">
+            Created by Muhammad Rijal Rais<br />
+            Assisted by AI
+          </p>
+        </div>
+      </div>
 
       {/* Password Prompt Modal */}
       <AnimatePresence>
@@ -139,39 +119,6 @@ export const About = ({ isExperimentalMode, setIsExperimentalMode, onNavigate, o
                 </button>
               </div>
             </form>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Exit Confirm Modal */}
-      <AnimatePresence>
-        {showExitPrompt && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-dark-bg/95 backdrop-blur-sm p-4"
-          >
-            <div className="bg-dark-surface border-2 border-neon-pink p-6 max-w-sm w-full space-y-6 text-center">
-              <h3 className="text-xl font-black text-neon-pink uppercase tracking-widest">Peringatan</h3>
-              <p className="text-white/80 uppercase tracking-widest text-sm">
-                Apakah Anda yakin untuk keluar dari mode eksperimen?
-              </p>
-              <div className="flex gap-4 justify-center">
-                <button 
-                  onClick={() => handleExitExp(true)}
-                  className="px-8 py-2 bg-neon-pink text-dark-bg font-black uppercase tracking-widest hover:bg-neon-pink/90 transition-colors"
-                >
-                  IYA
-                </button>
-                <button 
-                  onClick={() => handleExitExp(false)}
-                  className="px-8 py-2 border border-white/40 text-white/60 font-bold uppercase tracking-widest hover:text-white hover:border-white transition-colors"
-                >
-                  TIDAK
-                </button>
-              </div>
-            </div>
           </motion.div>
         )}
       </AnimatePresence>
