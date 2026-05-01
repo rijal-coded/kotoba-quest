@@ -14,8 +14,8 @@ export const HPBar = ({ current, max, label, color }: HPBarProps) => {
   return (
     <div className="w-full">
       <div className="flex justify-between items-end mb-1">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-text-secondary">{label}</span>
-        <span className="text-[10px] font-mono text-text-secondary">{current}/{max}</span>
+        <span className="text-xs md:text-sm font-bold uppercase tracking-wider text-text-secondary">{label}</span>
+        <span className="text-xs md:text-sm font-mono text-text-secondary">{current}/{max}</span>
       </div>
       <div className="hp-bar">
         <motion.div
@@ -38,14 +38,24 @@ interface NavButtonProps {
 }
 
 export const NavButton = ({ icon, label, active, disabled, onClick }: NavButtonProps) => (
-  <button
+  <motion.button
     onClick={disabled ? undefined : onClick}
     disabled={disabled}
-    className={`flex flex-col items-center justify-center gap-1 transition-all ${active ? 'text-main' : 'text-text-secondary hover:text-text-primary'} ${disabled ? 'opacity-40 cursor-not-allowed' : ''}`}
+    whileHover={!disabled ? { scale: 1.05 } : {}}
+    whileTap={!disabled ? { scale: 0.95 } : {}}
+    className={`flex flex-col items-center justify-center gap-1.5 p-2 transition-all ${
+      active
+        ? 'text-main glow-cyan'
+        : 'text-text-secondary hover:text-text-primary'
+    } ${disabled ? 'opacity-40 cursor-not-allowed' : ''}`}
   >
-    <div className={`${active ? 'drop-shadow-[0_0_6px_rgba(0,156,255,0.6)]' : ''} transition-all`}>
+    <div className={`w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-lg transition-all ${
+      active
+        ? 'bg-main/10 border border-main/30'
+        : ''
+    }`}>
       {icon}
     </div>
-    <span className="text-[10px] font-bold uppercase tracking-tighter">{label}</span>
-  </button>
+    <span className="text-xs md:text-sm font-bold uppercase tracking-wider">{label}</span>
+  </motion.button>
 );

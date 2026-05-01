@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Zap, Sword, Shield } from 'lucide-react';
+import { Zap, Sword, Shield, Heart } from 'lucide-react';
 import { memo } from 'react';
 
 interface PlayerPanelProps {
@@ -16,66 +16,97 @@ export const PlayerPanel = memo(({ hp, maxHp, skillPoints, enemyHP, isShieldActi
   const hpPercent = Math.max(0, Math.min(100, (hp / maxHp) * 100));
 
   return (
-    <div className="battle-panel battle-panel--player fixed md:static bottom-[64px] left-0 right-0 md:bottom-auto z-40 md:col-span-4 md:h-fit">
-      <div className="space-y-4 max-w-md md:max-w-none mx-auto px-4 md:px-0">
-        <HPBar label="PLAYER HP" percent={hpPercent} color="bg-main" count={`${hp} / ${maxHp}`} />
+    <div className="battle-panel battle-panel--player relative overflow-hidden z-40 md:col-span-4">
+      {/* Decorative corner brackets */}
+      <div className="hud-corner hud-corner--bl" />
+      <div className="hud-corner hud-corner--br" />
 
+      <div className="relative z-10 space-y-5 md:space-y-6 max-w-md md:max-w-none mx-auto px-4 md:px-0">
+        {/* HP Section */}
+        <div className="space-y-3">
+          <div className="flex justify-between items-end">
+            <div className="flex items-center gap-2">
+              <Heart className="w-5 h-5 md:w-6 md:h-6 text-main" />
+              <h3 className="text-sm md:text-base font-black uppercase text-main tracking-wider">PLAYER HP</h3>
+            </div>
+            <motion.span
+              key={hp}
+              initial={{ scale: 1.2, color: 'var(--accent)' }}
+              animate={{ scale: 1, color: 'var(--main)' }}
+              transition={{ duration: 0.2 }}
+              className="text-lg md:text-xl font-mono font-bold text-main"
+            >
+              {hp} / {maxHp}
+            </motion.span>
+          </div>
+          <HPBar percent={hpPercent} color="bg-main" />
+        </div>
+
+        {/* Skill Points Section */}
         <div className="skill-section">
-          <div className="flex justify-between items-end mb-2">
+          <div className="flex justify-between items-end mb-3">
             <h4 className="skill-label">
-              <Zap className="w-3 h-3 md:w-4 md:h-4" /> SKILL POINTS
+              <Zap className="w-4 h-4 md:w-5 md:h-5 text-main" /> SP
             </h4>
-            <span className="skill-value">{skillPoints}</span>
+            <motion.span
+              key={skillPoints}
+              initial={{ y: -5, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="skill-value text-2xl md:text-3xl font-mono font-bold text-main"
+            >
+              {skillPoints}
+            </motion.span>
           </div>
 
           <div className="sp-bar-bg">
-            <div className="sp-bar-fill" style={{width: `${skillPoints}%`}} />
+            <motion.div
+              className="sp-bar-fill"
+              animate={{ width: `${skillPoints}%` }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            />
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-1 gap-2 md:gap-3 pt-1">
+          {/* Skill Buttons */}
+          <div className="grid grid-cols-2 md:grid-cols-1 gap-3 md:gap-4 pt-2">
             <SkillButton
               icon={Sword}
               label="Zen Slash"
               cost="30 SP"
-              color="red"
+              attack
               disabled={skillPoints < 30 || enemyHP <= 0}
               onClick={onUseAttack}
+              isReady={skillPoints >= 30 && enemyHP > 0}
             />
             <SkillButton
               icon={Shield}
               label="Neon Guard"
               cost="20 SP"
-              color="cyan"
               disabled={skillPoints < 20 || isShieldActive}
               onClick={onUseDefend}
+              isReady={skillPoints >= 20 && !isShieldActive}
             />
           </div>
         </div>
       </div>
+
+      {/* Scanline effect */}
+      <div className="scanline text-main/5" />
     </div>
   );
 });
 
 interface HPBarProps {
-  label: string;
   percent: number;
   color: string;
-  count: string;
 }
 
-const HPBar = ({ label, percent, color, count }: HPBarProps) => (
-  <div className="flex-1">
-    <div className="flex justify-between items-end mb-1.5">
-      <h3 className="text-xs md:text-sm font-black uppercase text-main leading-none">{label}</h3>
-      <span className="hp-count">{count}</span>
-    </div>
-    <div className="hp-bar">
-      <motion.div
-        className={`hp-bar-fill ${color}`}
-        animate={{ width: `${percent}%`}}
-        transition={{duration: 0.3}}
-      />
-    </div>
+const HPBar = ({ percent, color }: HPBarProps) => (
+  <div className="hp-bar">
+    <motion.div
+      className={`hp-bar-fill ${color} glow-cyan`}
+      animate={{ width: `${percent}%` }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+    />
   </div>
 );
 
@@ -83,30 +114,38 @@ interface SkillButtonProps {
   icon: React.ElementType;
   label: string;
   cost: string;
-  color: 'red' | 'cyan';
+  attack?: boolean;
   disabled: boolean;
   onClick: () => void;
+  isReady: boolean;
 }
 
-const SkillButton = ({ icon: Icon, label, cost, color, disabled, onClick }: SkillButtonProps) => {
-  const colorClasses = color === 'red'
-    ? 'border-red-500/40 bg-red-500/10 text-red-400 hover:bg-red-500/20'
-    : 'border-main/40 bg-main/10 text-main hover:bg-main/20';
+const SkillButton = ({ icon: Icon, label, cost, attack, disabled, onClick, isReady }: SkillButtonProps) => {
+  const colorClasses = attack
+    ? 'border-red-500/50 bg-red-500/15 text-red-400 hover:bg-red-500/25 hover:border-red-500/60'
+    : 'border-main/50 bg-main/15 text-main hover:bg-main/25 hover:border-main/60';
 
-  // Glow effect when skill is ready (not disabled)
-  const glowStyle = !disabled ? (color === 'red'
-    ? { boxShadow: '0 0 12px rgba(239, 68, 68, 0.7)' }
-    : { boxShadow: '0 0 12px rgba(0, 156, 255, 0.7)' })
+  const glowStyle = isReady ? (attack
+    ? { boxShadow: 'var(--glow-red)' }
+    : { boxShadow: 'var(--glow-cyan)' })
     : undefined;
 
   return (
-    <button
+    <motion.button
+      whileHover={isReady ? { scale: 1.02 } : {}}
+      whileTap={isReady ? { scale: 0.98 } : {}}
       onClick={onClick}
       disabled={disabled}
-      className={`skill-button border ${colorClasses}`}
+      className={`skill-button border ${colorClasses} relative overflow-hidden group`}
       style={glowStyle}
     >
-      <Icon className="w-3.5 h-3.5 md:w-5 md:h-5" /> {label} <span className="opacity-50">{cost}</span>
-    </button>
+      {/* Inner glow effect */}
+      {isReady && (
+        <div className={`absolute inset-0 ${attack ? 'bg-red-500/10' : 'bg-main/10'} opacity-0 group-hover:opacity-100 transition-opacity`} />
+      )}
+      <Icon className="w-5 h-5 md:w-6 md:h-6" />
+      <span className="font-bold tracking-wider">{label}</span>
+      <span className="opacity-60 text-xs font-mono">{cost}</span>
+    </motion.button>
   );
 };

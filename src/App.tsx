@@ -21,6 +21,7 @@ export default function App() {
     currentPage,
     selectedLevel,
     pendingNav,
+    setPendingNav,
     levels,
     inventory,
     username,
@@ -43,7 +44,7 @@ export default function App() {
       case 'MODE_SELECT':
         return <ModeSelect onSelectMode={setGameMode} onNavigate={handleNavigate} />;
       case 'LEVEL_SELECT':
-        return <LevelSelect levels={levels} gameMode={gameMode} onSelect={handleLevelSelect} />;
+        return <LevelSelect levels={levels} gameMode={gameMode} onSelect={handleLevelSelect} onNavigate={handleNavigate} />;
       case 'BATTLE':
         return selectedLevel ? (
           <Battle
@@ -53,9 +54,11 @@ export default function App() {
             inventory={inventory}
             setInventory={setInventory}
             onFinish={handleBattleFinish}
+            pendingNav={pendingNav}
+            onCancelNav={() => setPendingNav(null)}
           />
         ) : (
-          <LevelSelect levels={levels} gameMode={gameMode} onSelect={handleLevelSelect} />
+          <LevelSelect levels={levels} gameMode={gameMode} onSelect={handleLevelSelect} onNavigate={handleNavigate} />
         );
       case 'INVENTORY':
         return <Inventory username={username} inventory={inventory} setInventory={setInventory} powerScore={powerScore} />;

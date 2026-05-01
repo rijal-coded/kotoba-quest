@@ -1,11 +1,12 @@
 import { motion } from 'motion/react';
 import * as Icons from 'lucide-react';
-import { Level, GameMode } from '../types';
+import { Level, GameMode, Page } from '../types';
 
 interface LevelSelectProps {
   levels: Level[];
   gameMode: GameMode;
   onSelect: (level: Level) => void;
+  onNavigate?: (page: Page) => void;
 }
 
 const formatTime = (seconds: number) => {
@@ -15,7 +16,7 @@ const formatTime = (seconds: number) => {
   return `${m}:${s}`;
 };
 
-export const LevelSelect = ({ levels, gameMode, onSelect }: LevelSelectProps) => {
+export const LevelSelect = ({ levels, gameMode, onSelect, onNavigate }: LevelSelectProps) => {
   // In TANTANGAN mode, only show completed (practiced) levels
   const availableLevels = gameMode === 'TANTANGAN'
     ? levels.filter(l => l.isCompleted)
@@ -38,8 +39,8 @@ export const LevelSelect = ({ levels, gameMode, onSelect }: LevelSelectProps) =>
         <div className="text-center py-12 space-y-4">
           <p className="text-text-secondary">Tidak ada level yang tersedia. Selesaikan setidaknya satu level di mode LEARNING atau PRACTICE untuk membuka Tantangan!</p>
           <button
-            onClick={() => onSelect(levels[0])} // dummy, or we could navigate back to MODE_SELECT
-            className="px-6 py-2 bg-main text-bg-primary font-bold rounded-xl"
+            onClick={() => onNavigate?.('MODE_SELECT')}
+            className="px-6 py-3 bg-main/10 text-main font-bold rounded-xl border border-main/30 hover:bg-main/20 hover:glow-cyan transition-all text-sm uppercase tracking-wider"
           >
             Kembali ke Mode Awal
           </button>

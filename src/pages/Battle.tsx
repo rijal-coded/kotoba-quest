@@ -1,4 +1,5 @@
 import { useState, Dispatch, SetStateAction } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Level, GameMode, Item, Page } from '../types';
 import { useBattleEngine } from '../hooks/useBattleEngine';
 import { EnemyPanel } from '../components/battle/EnemyPanel';
@@ -143,6 +144,109 @@ export const Battle = ({ level, isEndless, gameMode, inventory, setInventory, on
         onClose={() => setShowInventory(false)}
         onUseItem={handleUseItem}
       />
+
+      {/* Navigation Guard Modal for TANTANGAN mode */}
+      {pendingNav && (
+        <ExitConfirmationModal
+          targetPage={pendingNav}
+          onConfirm={() => {
+            if (onCancelNav) {
+              onCancelNav();
+            }
+          }}
+          onCancel={() => {
+            if (onCancelNav) {
+              onCancelNav();
+            }
+          }}
+        />
+      )}
     </>
+  );
+};
+
+// Exit Confirmation Modal Component
+interface ExitConfirmationModalProps {
+  targetPage: Page;
+  onConfirm: () => void;
+  onCancel: () => void;
+}
+
+const ExitConfirmationModal = ({ targetPage, onConfirm, onCancel }: ExitConfirmationModalProps) => {
+  const pageNames: Record<Page, string> = {
+    HOME: 'Beranda',
+    MODE_SELECT: 'Pemilihan Mode',
+    LEVEL_SELECT: 'Pemilihan Level',
+    BATTLE: 'Pertempuran',
+    INVENTORY: 'Inventori',
+    ABOUT: 'Tentang',
+    EXPERIMENTAL_BATTLE: 'Pertempuran Eksperimental'
+  };
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      >
+        {/* Backdrop */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onCancel}
+          className="absolute inset-0 bg-bg-primary/90 backdrop-blur-md"
+        />
+
+        {/* Modal */}
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.9, opacity: 0, y: 20 }}
+          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+          className="relative w-full max-w-sm bg-bg-surface border border-text-primary/10 rounded-2xl p-6 shadow-2xl glow-cyan"
+        >
+          <div className="hud-corner hud-corner--tl" />
+          <div className="hud-corner hud-corner--tr" />
+          <div className="hud-corner hud-corner--bl" />
+          <div className="hud-corner hud-corner--br" />
+
+          <div className="text-center space-y-4">
+            <div className="w-16 h-16 mx-auto rounded-full bg-main/10 border border-main/30 flex items-center justify-center">
+              <svg className="w-8 h-8 text-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+            </div>
+
+            <h3 className="text-xl font-black uppercase tracking-widest text-main">
+              Konfirmasi Keluar
+            </h3>
+
+            <p className="text-text-secondary text-sm">
+              Anda berada dalam Mode Tantangan. Jika keluar sekarang, progres akan <span className="text-main font-bold">tidak tersimpan</span>.
+              <br /><br />
+              Yakin ingin keluar ke <span className="text-accent font-bold">{pageNames[targetPage]}</span>?
+            </p>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={onCancel}
+                className="flex-1 px-4 py-3 bg-bg-primary border border-text-primary/20 text-text-primary font-bold uppercase tracking-wider rounded-xl hover:bg-text-primary/5 transition-all"
+              >
+                Batal
+              </button>
+              <button
+                onClick={onConfirm}
+                className="flex-1 px-4 py-3 bg-main/90 text-bg-primary font-bold uppercase tracking-wider rounded-xl hover:bg-main transition-all shadow-[0_0_15px_rgba(0,156,255,0.4)]"
+              >
+                Keluar
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 };
