@@ -5,59 +5,134 @@
   --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   
-  --color-neon-cyan: #00FFFF;
+  --color-main: var(--main);
+  --color-accent: var(--accent);
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-surface: var(--bg-surface);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+
+  /* Legacy remapping */
+  --color-neon-cyan: var(--main);
+  --color-neon-green: var(--accent);
   --color-neon-blue: #3B82F6;
-  --color-neon-green: #10B981;
   --color-neon-pink: #D946EF;
-  --color-dark-bg: #0A0A0A;
-  --color-dark-surface: #1A1A1A;
-  --color-dark-border: #333333;
+  --color-dark-bg: var(--bg-primary);
+  --color-dark-surface: var(--bg-surface);
+  --color-white: var(--text-primary);
 }
 
 @layer base {
-  body {
-    @apply bg-dark-bg text-white font-sans antialiased overflow-x-hidden;
+  :root {
+    /* Light Mode Variables */
+    --main: #009CFF;
+    --accent: #10B981; /* Changed to darker green for better contrast in light mode */
+    --bg-primary: #E2E8F0; /* Slate-200, less harsh than pure white */
+    --bg-surface: #F1F5F9; /* Slate-100 */
+    --text-primary: #0F172A; /* Slate-900 */
+    --text-secondary: #475569; /* Slate-600 */
   }
 
-  /* Custom scrollbar for neon look */
+  .dark {
+    /* Dark Mode Variables */
+    --main: #009CFF;
+    --accent: #49F89B;
+    --bg-primary: #010207;
+    --bg-surface: #151614;
+    --text-primary: #F8FAFC;
+    --text-secondary: #9CA3AF;
+  }
+
+  body {
+    @apply bg-bg-primary text-text-primary font-sans antialiased overflow-x-hidden transition-colors duration-300;
+  }
+
   ::-webkit-scrollbar {
-    width: 4px;
+    width: 6px;
   }
   ::-webkit-scrollbar-track {
-    @apply bg-dark-bg;
+    @apply bg-bg-primary;
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-neon-cyan;
+    @apply bg-main rounded-full;
   }
 }
 
 @layer components {
   .neon-border {
-    @apply border border-neon-cyan/50 shadow-[0_0_10px_rgba(0,255,255,0.2)];
+    @apply border border-main/50 shadow-[0_0_10px_rgba(0,156,255,0.2)] rounded-2xl;
   }
-  
+
   .neon-text-cyan {
-    @apply text-neon-cyan drop-shadow-[0_0_5px_rgba(0,255,255,0.5)];
+    @apply text-main drop-shadow-[0_0_5px_rgba(0,156,255,0.3)];
   }
-  
+
   .neon-text-blue {
-    @apply text-neon-blue drop-shadow-[0_0_5px_rgba(59,130,246,0.5)];
+    @apply text-neon-blue drop-shadow-[0_0_5px_rgba(59,130,246,0.3)];
   }
-  
+
   .neon-text-green {
-    @apply text-neon-green drop-shadow-[0_0_5px_rgba(16,185,129,0.5)];
+    @apply text-accent drop-shadow-[0_0_5px_rgba(73,248,155,0.3)];
   }
 
   .block-button {
-    @apply border-2 border-neon-cyan px-4 py-2 uppercase font-bold tracking-tighter transition-all hover:bg-neon-cyan hover:text-dark-bg active:scale-95;
+    @apply border-2 border-main rounded-xl px-4 py-2 uppercase font-bold tracking-tighter transition-all hover:bg-main hover:text-bg-primary active:scale-95 shadow-sm;
   }
 
-  .hp-bar-bg {
-    @apply h-4 bg-dark-border w-full relative overflow-hidden;
+  .battle-panel {
+    @apply bg-bg-primary/95 md:bg-bg-surface backdrop-blur-md shadow-lg border border-text-primary/10 rounded-2xl transition-all duration-300;
+  }
+
+  .battle-panel--enemy {
+    @apply pt-4 pb-4 px-4 md:p-6;
+  }
+
+  .battle-panel--player {
+    @apply pt-4 pb-4 md:p-6 border-t border-text-primary/10 md:border md:border-text-primary/10 md:mt-4;
+  }
+
+  .hp-bar {
+    @apply h-2 md:h-3 w-full bg-bg-surface border border-text-primary/10 rounded-full overflow-hidden relative shadow-inner;
+  }
+
+  .hp-bar--cooldown {
+    @apply border-red-500/30;
   }
 
   .hp-bar-fill {
-    @apply h-full transition-all duration-500 ease-out;
+    @apply absolute top-0 left-0 bottom-0 rounded-full transition-all duration-500;
+  }
+
+  .hp-count {
+    @apply text-[10px] md:text-sm text-text-secondary font-mono;
+  }
+
+  .intent-display {
+    @apply text-[10px] md:text-xs font-bold text-red-500 uppercase flex items-center justify-end gap-1 mb-1 leading-none;
+  }
+
+  .skill-section {
+    @apply bg-bg-surface/50 md:bg-bg-surface p-4 md:p-0 border md:border-none border-text-primary/10 md:space-y-4 rounded-xl;
+  }
+
+  .skill-label {
+    @apply text-[10px] md:text-xs sm:text-xs font-bold text-main tracking-widest uppercase flex items-center gap-1 leading-none;
+  }
+
+  .skill-value {
+    @apply text-sm md:text-xl font-mono text-main leading-none;
+  }
+
+  .sp-bar-bg {
+    @apply h-1.5 md:h-2 w-full bg-bg-primary border border-main/30 rounded-full overflow-hidden relative mb-3 shadow-inner;
+  }
+
+  .sp-bar-fill {
+    @apply absolute top-0 left-0 bottom-0 bg-main rounded-full transition-all duration-300;
+  }
+
+  .skill-button {
+    @apply px-3 py-3 text-[10px] md:text-xs font-bold uppercase tracking-widest disabled:opacity-30 disabled:grayscale transition-all flex items-center justify-center gap-1 md:gap-3 rounded-xl shadow-sm;
   }
 
   @keyframes shake {

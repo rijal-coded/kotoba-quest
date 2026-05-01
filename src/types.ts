@@ -1,6 +1,6 @@
-export type Page = 'HOME' | 'MODE_SELECT' | 'BATTLE' | 'INVENTORY' | 'LEVEL_SELECT' | 'ENDLESS' | 'ABOUT' | 'EXPERIMENTAL_BATTLE';
+export type Page = 'HOME' | 'MODE_SELECT' | 'BATTLE' | 'INVENTORY' | 'LEVEL_SELECT' | 'ABOUT' | 'EXPERIMENTAL_BATTLE';
 
-export type GameMode = 'KANA' | 'KANJI';
+export type GameMode = 'LEARNING' | 'PRACTICE' | 'TANTANGAN';
 
 export interface Word {
   japanese: string;
@@ -27,6 +27,10 @@ export interface Item {
   rarity: 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY';
   effect?: string;
   count?: number;
+  attackBonus?: number;
+  defenseBonus?: number;
+  hpBonus?: number;
+  isEquipped?: boolean;
 }
 
 export interface GameState {

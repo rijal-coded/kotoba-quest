@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect } from 'react';
 import { Header, Footer } from './components/Layout';
 import { BottomNav } from './components/BottomNav';
 import { Home } from './pages/Home';
@@ -11,171 +10,31 @@ import { ModeSelect } from './pages/ModeSelect';
 import { Battle } from './pages/Battle';
 import { Inventory } from './pages/Inventory';
 import { LevelSelect } from './pages/LevelSelect';
-import { EndlessSetup } from './pages/EndlessSetup';
-import { Page, Level, GameMode, Item, EndlessRecord } from './types';
-import { INITIAL_LEVELS, INITIAL_INVENTORY } from './constants';
-import { motion, AnimatePresence } from 'motion/react';
-
-import { ExperimentalBattle } from './pages/ExperimentalBattle';
-
 import { About } from './pages/About';
+import { ExperimentalBattle } from './pages/ExperimentalBattle';
+import { motion, AnimatePresence } from 'motion/react';
+import { useGameState } from './hooks/useGameState';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<Page>('HOME');
-  const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
-  const [pendingNav, setPendingNav] = useState<Page | null>(null);
-  
-  const [levels, setLevels] = useState<Level[]>(() => {
-    const saved = localStorage.getItem('kotoba_levels');
-    return saved ? JSON.parse(saved) : INITIAL_LEVELS;
-  });
-  
-  const [inventory, setInventory] = useState<Item[]>(() => {
-    const saved = localStorage.getItem('kotoba_inventory');
-    return saved ? JSON.parse(saved) : INITIAL_INVENTORY;
-  });
-
-  const [username, setUsername] = useState<string>(() => localStorage.getItem('kotoba_username') || '');
-  const [powerScore, setPowerScore] = useState<number>(() => {
-    const saved = localStorage.getItem('kotoba_power_score');
-    return saved ? parseInt(saved, 10) : 0;
-  });
-  
-  const [endlessRecords, setEndlessRecords] = useState<EndlessRecord[]>(() => {
-    const saved = localStorage.getItem('kotoba_endless_records');
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  const [gameMode, setGameMode] = useState<GameMode>('KANA');
-
-  useEffect(() => {
-    localStorage.setItem('kotoba_levels', JSON.stringify(levels));
-  }, [levels]);
-
-  useEffect(() => {
-    localStorage.setItem('kotoba_inventory', JSON.stringify(inventory));
-  }, [inventory]);
-
-  useEffect(() => {
-    localStorage.setItem('kotoba_power_score', powerScore.toString());
-  }, [powerScore]);
-
-  useEffect(() => {
-    localStorage.setItem('kotoba_endless_records', JSON.stringify(endlessRecords));
-  }, [endlessRecords]);
-
-  const handleNavigate = (page: Page) => {
-    if (currentPage === 'ENDLESS' && selectedLevel) {
-      setPendingNav(page);
-      return;
-    }
-    setCurrentPage(page);
-    if (page !== 'BATTLE' && page !== 'ENDLESS') {
-      setSelectedLevel(null);
-    } else if (page === 'ENDLESS') {
-      setSelectedLevel(null);
-    }
-  };
-
-  const handleLevelSelect = (level: Level) => {
-    setSelectedLevel(level);
-    setCurrentPage('BATTLE');
-  };
-
-  const handleStartEndless = (selectedLevels: Level[]) => {
-    const combinedWords = selectedLevels.flatMap(l => l.words.slice(0, l.unlockedWordCount));
-    const combinedLevel: Level = {
-      id: 'endless',
-      name: 'ENDLESS MODE',
-      icon: 'Infinity',
-      isCompleted: false,
-      bestTime: 0,
-      unlockedWordCount: combinedWords.length,
-      words: combinedWords
-    };
-    setSelectedLevel(combinedLevel);
-  };
-
-  const handleBattleFinish = (
-    victory: boolean, 
-    timeSpent: number, 
-    rewards?: Item[], 
-    scoreEarned: number = 0,
-    enemiesBeaten?: number,
-    wordsBeaten?: number,
-    navigateTo?: Page
-  ) => {
-    if (selectedLevel && currentPage !== 'ENDLESS') {
-      setLevels(prev => prev.map(l => {
-        if (l.id === selectedLevel.id) {
-          const newUnlocked = victory ? Math.min(l.words.length, l.unlockedWordCount + 5) : l.unlockedWordCount;
-          return {
-            ...l,
-            isCompleted: victory ? true : l.isCompleted,
-            bestTime: victory ? (l.bestTime === 0 ? timeSpent : Math.min(l.bestTime, timeSpent)) : l.bestTime,
-            unlockedWordCount: newUnlocked
-          };
-        }
-        return l;
-      }));
-    }
-
-    if (victory) {
-      setPowerScore(prev => prev + scoreEarned);
-      
-      if (rewards) {
-        setInventory(prev => {
-          const newInventory = [...prev];
-          rewards.forEach(reward => {
-            const existingItem = newInventory.find(i => i.id === reward.id);
-            if (existingItem && existingItem.count !== undefined) {
-              existingItem.count += (reward.count || 1);
-            } else {
-              newInventory.push(reward);
-            }
-          });
-          return newInventory;
-        });
-      }
-    }
-
-    if (currentPage === 'ENDLESS') {
-      if (enemiesBeaten !== undefined && wordsBeaten !== undefined) {
-        setEndlessRecords(prev => [...prev, {
-          date: Date.now(),
-          enemiesBeaten,
-          wordsBeaten
-        }]);
-      }
-      setSelectedLevel(null);
-      setPendingNav(null);
-      if (navigateTo) {
-        setCurrentPage(navigateTo);
-      } else {
-        setCurrentPage('ENDLESS');
-      }
-    } else {
-      setCurrentPage('LEVEL_SELECT');
-    }
-  };
-
-  const handleSetUsername = (name: string) => {
-    setUsername(name);
-    localStorage.setItem('kotoba_username', name);
-  };
-
-  const handleResetData = () => {
-    setUsername('');
-    setLevels(INITIAL_LEVELS);
-    setInventory(INITIAL_INVENTORY);
-    setPowerScore(0);
-    setEndlessRecords([]);
-    localStorage.removeItem('kotoba_username');
-    localStorage.removeItem('kotoba_levels');
-    localStorage.removeItem('kotoba_inventory');
-    localStorage.removeItem('kotoba_power_score');
-    localStorage.removeItem('kotoba_endless_records');
-  };
+  const {
+    currentPage,
+    selectedLevel,
+    pendingNav,
+    levels,
+    inventory,
+    username,
+    powerScore,
+    endlessRecords,
+    gameMode,
+    setInventory,
+    setGameMode,
+    handleNavigate,
+    handleLevelSelect,
+    handleBattleFinish,
+    handleSetUsername,
+    handleResetData,
+  } = useGameState();
 
   const renderPage = () => {
     switch (currentPage) {
@@ -187,35 +46,31 @@ export default function App() {
         return <LevelSelect levels={levels} gameMode={gameMode} onSelect={handleLevelSelect} />;
       case 'BATTLE':
         return selectedLevel ? (
-          <Battle 
-            level={selectedLevel} 
-            gameMode={gameMode}
-            inventory={inventory}
-            setInventory={setInventory}
-            onFinish={handleBattleFinish} 
-          />
-        ) : (
-          <LevelSelect levels={levels} gameMode={gameMode} onSelect={handleLevelSelect} />
-        );
-      case 'ENDLESS':
-        return selectedLevel ? (
-          <Battle 
-            level={selectedLevel} 
-            isEndless 
+          <Battle
+            level={selectedLevel}
+            isEndless={gameMode === 'TANTANGAN'}
             gameMode={gameMode}
             inventory={inventory}
             setInventory={setInventory}
             onFinish={handleBattleFinish}
-            pendingNav={pendingNav}
-            onCancelNav={() => setPendingNav(null)}
           />
         ) : (
-          <EndlessSetup levels={levels} records={endlessRecords} onStart={handleStartEndless} />
+          <LevelSelect levels={levels} gameMode={gameMode} onSelect={handleLevelSelect} />
         );
       case 'INVENTORY':
-        return <Inventory username={username} inventory={inventory} powerScore={powerScore} />;
+        return <Inventory username={username} inventory={inventory} setInventory={setInventory} powerScore={powerScore} />;
       case 'ABOUT':
         return <About onNavigate={handleNavigate} onResetData={handleResetData} />;
+      case 'EXPERIMENTAL_BATTLE':
+        return (
+          <ExperimentalBattle
+            levels={levels}
+            gameMode={gameMode}
+            inventory={inventory}
+            setInventory={setInventory}
+            onFinish={handleBattleFinish}
+          />
+        );
       default:
         return <Home onStart={() => handleNavigate('MODE_SELECT')} username={username} onSetUsername={handleSetUsername} onResetData={handleResetData} />;
     }
@@ -224,28 +79,30 @@ export default function App() {
   const showNav = currentPage !== 'HOME' && currentPage !== 'ABOUT' && currentPage !== 'MODE_SELECT';
 
   return (
-    <div className="min-h-screen flex flex-col bg-dark-bg selection:bg-neon-cyan selection:text-dark-bg">
-      <Header currentPage={currentPage} onNavigate={handleNavigate} />
-      
-      <main className={`flex-1 relative ${showNav ? 'md:pr-24' : ''}`}>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentPage}
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.02 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-          >
-            {renderPage()}
-          </motion.div>
-        </AnimatePresence>
-      </main>
+    <ErrorBoundary>
+      <div className="min-h-screen flex flex-col bg-bg-primary text-text-primary selection:bg-main selection:text-bg-primary transition-colors duration-300">
+        <Header currentPage={currentPage} onNavigate={handleNavigate} />
 
-      {showNav && (
-        <BottomNav currentPage={currentPage} onNavigate={handleNavigate} hasCompletedLevel={levels.some(l => l.isCompleted)} />
-      )}
-      
-      {currentPage === 'HOME' && <Footer />}
-    </div>
+        <main className={`flex-1 relative ${showNav ? 'md:pr-24' : ''}`}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentPage}
+              initial={{ opacity: 0, scale: 0.99 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.01 }}
+              transition={{ duration: 0.15, ease: 'easeOut' }}
+            >
+              {renderPage()}
+            </motion.div>
+          </AnimatePresence>
+        </main>
+
+        {showNav && (
+          <BottomNav currentPage={currentPage} onNavigate={handleNavigate} />
+        )}
+
+        {currentPage === 'HOME' && <Footer />}
+      </div>
+    </ErrorBoundary>
   );
 }

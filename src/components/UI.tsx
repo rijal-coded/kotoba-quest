@@ -10,15 +10,15 @@ interface HPBarProps {
 
 export const HPBar = ({ current, max, label, color }: HPBarProps) => {
   const percentage = Math.max(0, Math.min(100, (current / max) * 100));
-  
+
   return (
     <div className="w-full">
       <div className="flex justify-between items-end mb-1">
-        <span className="text-[10px] font-bold uppercase tracking-widest opacity-80">{label}</span>
-        <span className="text-[10px] font-mono">{current}/{max}</span>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-text-secondary">{label}</span>
+        <span className="text-[10px] font-mono text-text-secondary">{current}/{max}</span>
       </div>
-      <div className="hp-bar-bg border border-white/10">
-        <motion.div 
+      <div className="hp-bar">
+        <motion.div
           className={`hp-bar-fill ${color}`}
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
@@ -38,12 +38,12 @@ interface NavButtonProps {
 }
 
 export const NavButton = ({ icon, label, active, disabled, onClick }: NavButtonProps) => (
-  <button 
+  <button
     onClick={disabled ? undefined : onClick}
     disabled={disabled}
-    className={`flex flex-col items-center justify-center gap-1 transition-all ${active ? 'text-neon-cyan' : 'text-white/40 hover:text-white/70'} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+    className={`flex flex-col items-center justify-center gap-1 transition-all ${active ? 'text-main' : 'text-text-secondary hover:text-text-primary'} ${disabled ? 'opacity-40 cursor-not-allowed' : ''}`}
   >
-    <div className={`${active ? 'drop-shadow-[0_0_5px_rgba(0,255,255,0.5)]' : ''}`}>
+    <div className={`${active ? 'drop-shadow-[0_0_6px_rgba(0,156,255,0.6)]' : ''} transition-all`}>
       {icon}
     </div>
     <span className="text-[10px] font-bold uppercase tracking-tighter">{label}</span>

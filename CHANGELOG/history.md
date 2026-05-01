@@ -2,6 +2,21 @@
 
 Semua perubahan, peningkatan, penambahan, dan perbaikan yang dilakukan pada Kotoba Quest sejak awal pengembangan.
 
+## [2026-04-29 16:24]
+### Improved
+- **App.tsx Refactor**: Extracted state, persistence, and routing logic into `src/hooks/useGameState.ts`, reducing file size from 255 to ~100 lines.
+- **Battle Engine Refactor**: Replaced 6 separate `useState` hooks with a unified, atomic `useReducer` in `src/hooks/useBattleEngine.ts`.
+- **Component Modularization**: Split the massive 438-line `Battle.tsx` into small, focused components (`EnemyPanel`, `PlayerPanel`, `QuestionCard`, `InventoryModal`, etc.) in `src/components/battle/`.
+
+## [2026-04-29 15:58]
+### Added
+- **Ultimate Reviewer Protocol**: Explicitly established the USER as the final authority for all code changes.
+- **Conditional Audit Log**: Refined the changelog rule to only record changes after USER verification.
+
+### Improved
+- **AIP Refinement**: Clarified technical terminology (memoization) and interaction protocols to ensure maximum architectural clarity.
+
+
 ## [2026-04-23]
 ### Added
 - Menambahkan 20 level bertema baru dengan kategori kosakata yang spesifik.

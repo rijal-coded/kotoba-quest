@@ -1,5 +1,7 @@
 import { Level, Item } from './types';
 
+export const MAX_INVENTORY_SLOTS = 99;
+
 export const INITIAL_LEVELS: Level[] = [
   {
     id: 'lvl_intro',
@@ -527,24 +529,29 @@ export const INITIAL_LEVELS: Level[] = [
 export const INITIAL_INVENTORY: Item[] = [
   {
     id: 'w1',
-    name: 'KATANA RUSAK',
+    name: 'UCHIGATANA',
     type: 'WEAPON',
-    description: 'Pedang tua berkarat.',
+    description: 'Pedang panjang standar prajurit Sengoku.',
     rarity: 'COMMON',
+    attackBonus: 10,
+    isEquipped: true
   },
   {
     id: 's1',
-    name: 'PERISAI KAYU',
+    name: 'TEDATE KAYU',
     type: 'SHIELD',
-    description: 'Perisai sederhana.',
+    description: 'Perisai tangan kayu untuk menahan serangan panah dan tombak.',
     rarity: 'COMMON',
+    defenseBonus: 5,
+    isEquipped: true
   },
   {
     id: 'c1',
-    name: 'KAPSUL ADRENALIN',
+    name: 'RAMUAN YAKUSO',
     type: 'CONSUMABLE',
-    description: 'Memulihkan 50 HP',
+    description: 'Racikan tanaman obat yang memulihkan 50 HP.',
     rarity: 'COMMON',
+    hpBonus: 50,
     count: 3
   }
 ];

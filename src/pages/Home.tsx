@@ -41,23 +41,29 @@ export const Home = ({ onStart, username, onSetUsername, onResetData }: HomeProp
     }
   };
 
+  // Pre-computed class strings — avoids inline ternary logic inside JSX
+  const primaryBtnClass =
+    'w-full px-12 py-4 bg-main text-bg-primary font-black text-xl tracking-widest uppercase rounded-xl shadow-[0_4px_20px_rgba(0,156,255,0.3)] hover:brightness-110 transition-all';
+  const secondaryBtnClass =
+    'w-full px-12 py-4 border border-text-primary/20 text-text-secondary font-black text-xl tracking-widest uppercase rounded-xl hover:text-text-primary hover:border-text-primary/40 transition-all';
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] p-6 text-center">
+    <div className="flex flex-col items-center justify-center min-h-[70vh] p-6 text-center">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-8"
+        className="space-y-8 w-full max-w-sm"
       >
-        <div className="space-y-2">
-          <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase text-neon-cyan drop-shadow-[0_0_2px_rgba(0,255,255,0.5)]">
+        <div className="space-y-3">
+          <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase text-main drop-shadow-[0_0_20px_rgba(0,156,255,0.3)]">
             KOTOBA QUEST
           </h2>
-          <p className="text-white/60 tracking-[0.2em] uppercase text-sm">
+          <p className="text-text-secondary tracking-[0.2em] uppercase text-sm">
             Master the language. Win the battle.
           </p>
         </div>
 
-        <div className="py-12 min-h-[200px] flex flex-col items-center justify-center">
+        <div className="py-8 min-h-[200px] flex flex-col items-center justify-center">
           <AnimatePresence mode="wait">
             {showConfirmReset ? (
               <motion.div
@@ -65,84 +71,78 @@ export const Home = ({ onStart, username, onSetUsername, onResetData }: HomeProp
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="space-y-6 max-w-sm"
+                className="space-y-5 w-full"
               >
-                <p className="text-neon-pink font-bold uppercase tracking-widest text-sm border border-neon-pink p-4 bg-neon-pink/10">
+                <p className="text-neon-pink font-bold uppercase tracking-widest text-sm border border-neon-pink/40 p-4 bg-neon-pink/10 rounded-2xl leading-relaxed">
                   Memulai game baru akan menimpa data sebelumnya. Lanjutkan?
                 </p>
-                <div className="flex gap-4 justify-center">
-                  <button 
+                <div className="flex gap-3 justify-center">
+                  <button
                     onClick={() => handleConfirmReset(true)}
-                    className="px-8 py-2 bg-neon-pink text-dark-bg font-black uppercase tracking-widest hover:bg-neon-pink/90 transition-colors"
+                    className="flex-1 px-8 py-3 bg-neon-pink text-bg-primary font-black uppercase tracking-widest rounded-xl hover:brightness-110 transition-all"
                   >
                     IYA
                   </button>
-                  <button 
+                  <button
                     onClick={() => handleConfirmReset(false)}
-                    className="px-8 py-2 border border-white/40 text-white/60 font-bold uppercase tracking-widest hover:text-white hover:border-white transition-colors"
+                    className="flex-1 px-8 py-3 border border-text-primary/20 text-text-secondary font-bold uppercase tracking-widest rounded-xl hover:text-text-primary hover:border-text-primary/40 transition-all"
                   >
                     TIDAK
                   </button>
                 </div>
               </motion.div>
             ) : isEnteringName ? (
-              <motion.form 
+              <motion.form
                 key="form"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 onSubmit={handleSubmit}
-                className="flex flex-col gap-4 items-center w-full max-w-xs"
+                className="flex flex-col gap-4 items-center w-full"
               >
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   placeholder="ENTER USERNAME"
-                  className="w-full bg-dark-surface border-2 border-neon-cyan px-6 py-3 text-center font-mono text-xl uppercase tracking-widest text-neon-cyan focus:outline-none focus:shadow-[0_0_15px_rgba(0,255,255,0.3)]"
+                  className="w-full bg-bg-surface border-2 border-main/50 px-6 py-3 rounded-xl text-center font-mono text-xl uppercase tracking-widest text-main focus:outline-none focus:border-main focus:shadow-[0_0_15px_rgba(0,156,255,0.2)] transition-all"
                   autoFocus
                   maxLength={15}
                 />
-                <button 
+                <button
                   type="submit"
                   disabled={!inputValue.trim()}
-                  className="w-full px-8 py-3 bg-neon-cyan text-dark-bg font-black tracking-widest uppercase disabled:opacity-50 transition-opacity hover:opacity-90"
+                  className="w-full px-8 py-3 bg-main text-bg-primary font-black tracking-widest uppercase disabled:opacity-50 transition-all rounded-xl hover:brightness-110 shadow-[0_4px_15px_rgba(0,156,255,0.3)]"
                 >
                   Mulai
                 </button>
               </motion.form>
             ) : (
-              <motion.div 
+              <motion.div
                 key="buttons"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="flex flex-col gap-6 w-full max-w-xs"
+                className="flex flex-col gap-4 w-full"
               >
                 {username && (
-                  <button 
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={() => onStart('MODE_SELECT')}
-                    className="group relative px-12 py-4 bg-transparent border-2 border-neon-cyan overflow-hidden transition-all hover:shadow-[0_0_20px_rgba(0,255,255,0.4)]"
+                    className={primaryBtnClass}
                   >
-                    <div className="absolute inset-0 bg-neon-cyan translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                    <span className="relative z-10 font-black text-xl tracking-widest uppercase group-hover:text-dark-bg transition-colors">
-                      Lanjutkan
-                    </span>
-                  </button>
+                    Lanjutkan
+                  </motion.button>
                 )}
-                <button 
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={handleNewGameClick}
-                  className={`px-12 py-4 font-black text-xl tracking-widest uppercase transition-all ${
-                    username 
-                      ? 'text-white/40 border border-white/10 hover:text-white hover:border-white/40' 
-                      : 'group relative bg-transparent border-2 border-neon-cyan overflow-hidden hover:shadow-[0_0_20px_rgba(0,255,255,0.4)]'
-                  }`}
+                  className={username ? secondaryBtnClass : primaryBtnClass}
                 >
-                  {!username && <div className="absolute inset-0 bg-neon-cyan translate-y-full group-hover:translate-y-0 transition-transform duration-300" />}
-                  <span className={`relative z-10 ${!username ? 'group-hover:text-dark-bg' : ''}`}>
-                    Permainan Baru
-                  </span>
-                </button>
+                  Permainan Baru
+                </motion.button>
               </motion.div>
             )}
           </AnimatePresence>
