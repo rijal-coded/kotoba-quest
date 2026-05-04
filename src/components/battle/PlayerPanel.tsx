@@ -1,6 +1,7 @@
 import { motion } from 'motion/react';
 import { Zap, Sword, Shield, Heart } from 'lucide-react';
-import { memo } from 'react';
+import { memo, useEffect, useState, useRef } from 'react';
+import { useActionFeedback } from '../../hooks/useActionFeedback';
 
 interface PlayerPanelProps {
   hp: number;
@@ -14,12 +15,38 @@ interface PlayerPanelProps {
 
 export const PlayerPanel = memo(({ hp, maxHp, skillPoints, enemyHP, isShieldActive, onUseAttack, onUseDefend }: PlayerPanelProps) => {
   const hpPercent = Math.max(0, Math.min(100, (hp / maxHp) * 100));
+  const [hpFeedback, setHpFeedback] = useState<'damage' | 'heal' | null>(null);
+  const { feedback: attackFeedback, trigger: triggerAttackFeedback } = useActionFeedback();
+  const prevHpRef = useRef(hp);
+
+  // HP change feedback
+  useEffect(() => {
+    if (hp < prevHpRef.current) {
+      setHpFeedback('damage');
+    } else if (hp > prevHpRef.current) {
+      setHpFeedback('heal');
+    }
+    prevHpRef.current = hp;
+  }, [hp]);
+
+  // Clear HP feedback after animation
+  useEffect(() => {
+    if (hpFeedback) {
+      const timer = setTimeout(() => setHpFeedback(null), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [hpFeedback]);
 
   return (
-    <div className="battle-panel battle-panel--player relative overflow-hidden z-40 md:col-span-4">
+    <div className={`battle-panel battle-panel--player relative overflow-hidden z-40 md:col-span-4 ${isShieldActive ? 'shield-active' : ''} ${hpPercent < 30 ? 'critical-hp' : ''}`}>
       {/* Decorative corner brackets */}
       <div className="hud-corner hud-corner--bl" />
       <div className="hud-corner hud-corner--br" />
+
+      {/* Flash overlays for feedback */}
+      {hpFeedback === 'damage' && <div className="flash-overlay flash-overlay--damage" />}
+      {hpFeedback === 'heal' && <div className="flash-overlay flash-overlay--heal" />}
+      {attackFeedback === 'attack' && <div className="flash-overlay flash-overlay--attack" />}
 
       <div className="relative z-10 space-y-5 md:space-y-6 max-w-md md:max-w-none mx-auto px-4 md:px-0">
         {/* HP Section */}
@@ -74,7 +101,10 @@ export const PlayerPanel = memo(({ hp, maxHp, skillPoints, enemyHP, isShieldActi
               cost="30 SP"
               attack
               disabled={skillPoints < 30 || enemyHP <= 0}
-              onClick={onUseAttack}
+              onClick={() => {
+                onUseAttack();
+                triggerAttackFeedback('attack');
+              }}
               isReady={skillPoints >= 30 && enemyHP > 0}
             />
             <SkillButton
@@ -82,7 +112,10 @@ export const PlayerPanel = memo(({ hp, maxHp, skillPoints, enemyHP, isShieldActi
               label="Neon Guard"
               cost="20 SP"
               disabled={skillPoints < 20 || isShieldActive}
-              onClick={onUseDefend}
+              onClick={() => {
+                onUseDefend();
+                // Defend action visual is shield border via isShieldActive prop
+              }}
               isReady={skillPoints >= 20 && !isShieldActive}
             />
           </div>

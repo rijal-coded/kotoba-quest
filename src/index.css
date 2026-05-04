@@ -629,5 +629,157 @@
     z-index: -1;
   }
 
+  /* ========== ENHANCED BATTLE PANEL ANIMATIONS ========== */
+
+  /* Idle breathing glow for player panel (cyan) */
+  .battle-panel--player {
+    animation: player-idle-glow 4s ease-in-out infinite;
+  }
+
+  @keyframes player-idle-glow {
+    0%, 100% {
+      box-shadow: 0 0 15px rgba(0, 156, 255, 0.15), 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 25px rgba(0, 156, 255, 0.35), 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  /* Idle breathing glow for enemy panel (red) */
+  .battle-panel--enemy {
+    animation: enemy-idle-glow 4s ease-in-out infinite;
+  }
+
+  @keyframes enemy-idle-glow {
+    0%, 100% {
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.15), 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 25px rgba(239, 68, 68, 0.35), 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  /* Red scanline for enemy panel */
+  .battle-panel--enemy .scanline {
+    color: rgba(239, 68, 68, 0.2); /* Red with 20% opacity */
+    animation-duration: 6s; /* Slightly faster */
+  }
+
+  /* Enhanced scanline for player (cyan) */
+  .battle-panel--player .scanline {
+    color: rgba(0, 156, 255, 0.15); /* Cyan with 15% opacity */
+    animation-duration: 6s;
+  }
+
+  /* Flash overlays for damage/heal feedback */
+  .flash-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+    animation: flash-fade 0.3s ease-out forwards;
+  }
+
+  .flash-overlay--damage {
+    background: rgba(239, 68, 68, 0.3);
+  }
+
+  .flash-overlay--heal {
+    background: rgba(73, 248, 155, 0.25);
+  }
+
+  .flash-overlay--attack {
+    background: rgba(0, 156, 255, 0.2);
+  }
+
+  @keyframes flash-fade {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* HP bar flash effect */
+  .hp-bar-fill.flash {
+    animation: hp-flash 0.15s ease-out;
+  }
+
+  @keyframes hp-flash {
+    0% { filter: brightness(2) saturate(0.2); }
+    100% { filter: brightness(1) saturate(1); }
+  }
+
+  /* Shield active indicator for player panel */
+  .battle-panel--player.shield-active {
+    border-color: rgba(0, 156, 255, 0.6);
+    box-shadow: 0 0 30px rgba(0, 156, 255, 0.4), 0 4px 20px rgba(0, 0, 0, 0.3);
+    animation: shield-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes shield-pulse {
+    0%, 100% { border-color: rgba(0, 156, 255, 0.6); }
+    50% { border-color: rgba(0, 156, 255, 0.9); }
+  }
+
+  /* Critical HP indication for enemy (danger state) */
+  .battle-panel--enemy.critical-hp {
+    animation: critical-danger 1.5s ease-in-out infinite;
+  }
+
+  @keyframes critical-danger {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.4), 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    33% {
+      box-shadow: 0 0 30px rgba(239, 68, 68, 0.7), 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    66% {
+      box-shadow: 0 0 25px rgba(239, 68, 68, 0.5), 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  /* Critical HP for player - intense cyan glow that flickers to indicate danger */
+  .battle-panel--player.critical-hp {
+    animation: player-critical-glow 2s ease-in-out infinite;
+  }
+
+  .battle-panel--player.critical-hp .scanline {
+    color: rgba(255, 100, 100, 0.25); /* Reddish scanline when low HP */
+    animation-duration: 4s; /* Faster to increase alertness */
+  }
+
+  @keyframes player-critical-glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(255, 100, 100, 0.3), 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 35px rgba(255, 100, 100, 0.6), 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  /* Stunned state overlay */
+  .battle-panel--enemy.stunned::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(156, 163, 175, 0.2);
+    pointer-events: none;
+    z-index: 15;
+    animation: stun-flash 0.5s ease-in-out infinite;
+  }
+
+  @keyframes stun-flash {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+  }
+
+  /* Disable animations for users who prefer reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 
 }

@@ -1,6 +1,7 @@
 import { motion } from 'motion/react';
 import { Target } from 'lucide-react';
 import { EnemyTemplate } from '../../utils/enemyUtils';
+import { useEffect, useState, useRef } from 'react';
 
 interface EnemyPanelProps {
   enemy: EnemyTemplate;
@@ -12,12 +13,32 @@ export const EnemyPanel = ({ enemy, currentHP, cooldownPercentage }: EnemyPanelP
   const hpPercent = Math.max(0, Math.min(100, (currentHP / enemy.maxHp) * 100));
   const tierColor = enemy.tier === 5 ? 'text-neon-pink' : 'neon-text-cyan';
   const barColor = enemy.tier === 5 ? 'bg-neon-pink' : 'bg-accent';
+  const [isShaking, setIsShaking] = useState(false);
+  const [showDamageFlash, setShowDamageFlash] = useState(false);
+  const prevHpRef = useRef(currentHP);
+
+  // Damage feedback: shake + flash
+  useEffect(() => {
+    if (currentHP < prevHpRef.current) {
+      setIsShaking(true);
+      setShowDamageFlash(true);
+      const timer = setTimeout(() => {
+        setIsShaking(false);
+        setShowDamageFlash(false);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+    prevHpRef.current = currentHP;
+  }, [currentHP]);
 
   return (
-    <div className="battle-panel battle-panel--enemy sticky md:static top-[73px] z-30 md:col-span-12 relative overflow-hidden">
+    <div className={`battle-panel battle-panel--enemy sticky md:static top-[73px] z-30 md:col-span-12 relative overflow-hidden ${isShaking ? 'animate-shake' : ''} ${hpPercent < 30 ? 'critical-hp' : ''}`}>
       {/* Decorative corner brackets */}
       <div className="hud-corner hud-corner--tl" />
       <div className="hud-corner hud-corner--tr" />
+
+      {/* Damage flash overlay */}
+      {showDamageFlash && <div className="flash-overlay flash-overlay--damage" />}
 
       <div className="relative z-10 flex flex-col md:flex-row items-center gap-4 max-w-md md:max-w-none mx-auto px-2 md:px-0">
         <div className="flex-1 w-full space-y-3">
