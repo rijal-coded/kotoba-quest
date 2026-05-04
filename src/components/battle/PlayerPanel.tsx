@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { Zap, Sword, Shield, Heart } from 'lucide-react';
-import { memo, useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useActionFeedback } from '../../hooks/useActionFeedback';
 
 interface PlayerPanelProps {
@@ -13,11 +13,19 @@ interface PlayerPanelProps {
   onUseDefend: () => void;
 }
 
-export const PlayerPanel = memo(({ hp, maxHp, skillPoints, enemyHP, isShieldActive, onUseAttack, onUseDefend }: PlayerPanelProps) => {
+export const PlayerPanel = ({ hp, maxHp, skillPoints, enemyHP, isShieldActive, onUseAttack, onUseDefend }: PlayerPanelProps) => {
   const hpPercent = Math.max(0, Math.min(100, (hp / maxHp) * 100));
   const [hpFeedback, setHpFeedback] = useState<'damage' | 'heal' | null>(null);
   const { feedback: attackFeedback, trigger: triggerAttackFeedback } = useActionFeedback();
   const prevHpRef = useRef(hp);
+
+  // Critical HP escalation levels
+  const getCriticalHpClass = () => {
+    if (hpPercent < 10) return 'critical-hp critical-3';
+    if (hpPercent < 20) return 'critical-hp critical-2';
+    if (hpPercent < 30) return 'critical-hp critical-1';
+    return '';
+  };
 
   // HP change feedback
   useEffect(() => {
@@ -38,7 +46,7 @@ export const PlayerPanel = memo(({ hp, maxHp, skillPoints, enemyHP, isShieldActi
   }, [hpFeedback]);
 
   return (
-    <div className={`battle-panel battle-panel--player relative overflow-hidden z-40 md:col-span-4 ${isShieldActive ? 'shield-active' : ''} ${hpPercent < 30 ? 'critical-hp' : ''}`}>
+    <div className={`battle-panel battle-panel--player relative overflow-hidden z-40 md:col-span-4 ${isShieldActive ? 'shield-active' : ''} ${getCriticalHpClass()}`}>
       {/* Decorative corner brackets */}
       <div className="hud-corner hud-corner--bl" />
       <div className="hud-corner hud-corner--br" />
@@ -66,7 +74,7 @@ export const PlayerPanel = memo(({ hp, maxHp, skillPoints, enemyHP, isShieldActi
               {hp} / {maxHp}
             </motion.span>
           </div>
-          <HPBar percent={hpPercent} color="bg-main" />
+          <HPBar percent={hpPercent} color="bg-main" flash={hpFeedback !== null} />
         </div>
 
         {/* Skill Points Section */}
@@ -126,17 +134,18 @@ export const PlayerPanel = memo(({ hp, maxHp, skillPoints, enemyHP, isShieldActi
       <div className="scanline text-main/5" />
     </div>
   );
-});
+};
 
 interface HPBarProps {
   percent: number;
   color: string;
+  flash?: boolean;
 }
 
-const HPBar = ({ percent, color }: HPBarProps) => (
+const HPBar = ({ percent, color, flash }: HPBarProps) => (
   <div className="hp-bar">
     <motion.div
-      className={`hp-bar-fill ${color} glow-cyan`}
+      className={`hp-bar-fill ${color} ${flash ? 'flash' : ''} glow-cyan`}
       animate={{ width: `${percent}%` }}
       transition={{ duration: 0.3, ease: "easeOut" }}
     />

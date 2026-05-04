@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { Item } from '../../types';
 import { X } from 'lucide-react';
+import { memo } from 'react';
 
 interface InventoryModalProps {
   isOpen: boolean;
@@ -9,7 +10,7 @@ interface InventoryModalProps {
   onUseItem: (item: Item) => void;
 }
 
-export const InventoryModal = ({ isOpen, inventory, onClose, onUseItem }: InventoryModalProps) => {
+export const InventoryModal = memo(({ isOpen, inventory, onClose, onUseItem }: InventoryModalProps) => {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -62,4 +63,4 @@ export const InventoryModal = ({ isOpen, inventory, onClose, onUseItem }: Invent
       )}
     </AnimatePresence>
   );
-};
+});

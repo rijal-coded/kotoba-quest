@@ -17,6 +17,14 @@ export const EnemyPanel = ({ enemy, currentHP, cooldownPercentage }: EnemyPanelP
   const [showDamageFlash, setShowDamageFlash] = useState(false);
   const prevHpRef = useRef(currentHP);
 
+  // Determine telegraph class based on cooldown percentage
+  const getTelegraphClass = () => {
+    if (cooldownPercentage >= 90) return 'telegraph-critical';
+    if (cooldownPercentage >= 80) return 'telegraph-imminent';
+    if (cooldownPercentage >= 60) return 'telegraph-warning';
+    return '';
+  };
+
   // Damage feedback: shake + flash
   useEffect(() => {
     if (currentHP < prevHpRef.current) {
@@ -31,8 +39,18 @@ export const EnemyPanel = ({ enemy, currentHP, cooldownPercentage }: EnemyPanelP
     prevHpRef.current = currentHP;
   }, [currentHP]);
 
+  // Critical HP escalation levels
+  const getCriticalHpClass = () => {
+    if (hpPercent < 10) return 'critical-hp critical-3';
+    if (hpPercent < 20) return 'critical-hp critical-2';
+    if (hpPercent < 30) return 'critical-hp critical-1';
+    return '';
+  };
+
+  const tierClass = enemy.tier < 5 ? `tier-${enemy.tier}` : '';
+
   return (
-    <div className={`battle-panel battle-panel--enemy sticky md:static top-[73px] z-30 md:col-span-12 relative overflow-hidden ${isShaking ? 'animate-shake' : ''} ${hpPercent < 30 ? 'critical-hp' : ''}`}>
+    <div className={`battle-panel battle-panel--enemy sticky md:static top-[73px] z-30 md:col-span-12 relative overflow-hidden ${isShaking ? 'animate-shake' : ''} ${getCriticalHpClass()} ${getTelegraphClass()} ${tierClass}`}>
       {/* Decorative corner brackets */}
       <div className="hud-corner hud-corner--tl" />
       <div className="hud-corner hud-corner--tr" />
@@ -67,7 +85,7 @@ export const EnemyPanel = ({ enemy, currentHP, cooldownPercentage }: EnemyPanelP
           </div>
 
           {/* HP Bar */}
-          <HPBar percent={hpPercent} color={barColor} />
+          <HPBar percent={hpPercent} color={barColor} flash={showDamageFlash} tierClass={tierClass} />
         </div>
 
         {/* Intent Display */}
@@ -91,12 +109,14 @@ interface HPBarProps {
   percent: number;
   color: string;
   variant?: 'default' | 'cooldown';
+  flash?: boolean;
+  tierClass?: string;
 }
 
-const HPBar = ({ percent, color, variant = 'default' }: HPBarProps) => (
-  <div className={`hp-bar ${variant === 'cooldown' ? 'hp-bar--cooldown' : ''}`}>
+const HPBar = ({ percent, color, variant = 'default', flash, tierClass }: HPBarProps) => (
+  <div className={`hp-bar ${variant === 'cooldown' ? 'hp-bar--cooldown' : ''} ${tierClass || ''}`}>
     <motion.div
-      className={`hp-bar-fill ${color} ${variant !== 'cooldown' ? 'glow-cyan' : 'glow-red'}`}
+      className={`hp-bar-fill ${color} ${flash ? 'flash' : ''} ${variant !== 'cooldown' ? 'glow-cyan' : 'glow-red'}`}
       animate={{ width: `${percent}%` }}
       transition={{ duration: 0.3, ease: "easeOut" }}
     />

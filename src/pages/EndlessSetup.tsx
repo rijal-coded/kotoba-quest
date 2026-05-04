@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'motion/react';
 import * as Icons from 'lucide-react';
 import { Level, EndlessRecord } from '../types';
@@ -10,7 +10,10 @@ interface EndlessSetupProps {
 }
 
 export const EndlessSetup = ({ levels, records, onStart }: EndlessSetupProps) => {
-  const completedLevels = levels.filter(l => l.isCompleted);
+  const completedLevels = useMemo(() =>
+    levels.filter(l => l.isCompleted),
+    [levels]
+  );
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set(completedLevels.map(l => l.id)));
 
   const toggleLevel = (id: string) => {
@@ -23,11 +26,17 @@ export const EndlessSetup = ({ levels, records, onStart }: EndlessSetupProps) =>
     setSelectedIds(newSet);
   };
 
-  const highestRecord = records.reduce(
-    (max, record) => record.enemiesBeaten > max.enemiesBeaten ? record : max,
-    { enemiesBeaten: 0, wordsBeaten: 0, date: 0 }
+  const highestRecord = useMemo(() =>
+    records.reduce(
+      (max, record) => record.enemiesBeaten > max.enemiesBeaten ? record : max,
+      { enemiesBeaten: 0, wordsBeaten: 0, date: 0 }
+    ),
+    [records]
   );
-  const recentRecords = [...records].sort((a, b) => b.date - a.date).slice(0, 5);
+  const recentRecords = useMemo(() =>
+    [...records].sort((a, b) => b.date - a.date).slice(0, 5),
+    [records]
+  );
 
   if (completedLevels.length === 0) {
     return (

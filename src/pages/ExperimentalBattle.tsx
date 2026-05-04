@@ -1,9 +1,14 @@
-import { useState, useMemo, useEffect, Dispatch, SetStateAction } from 'react';
+import { useState, useMemo, useEffect, useRef, memo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Swords, Zap, Target, Shield, Sword, Briefcase } from 'lucide-react';
 import { Level, GameMode, Item, Page, Word } from '../types';
 import { useBattleEngine } from '../hooks/useBattleEngine';
 import { shuffleArray } from '../utils/arrayUtils';
+import { FloatingText } from '../components/battle/FloatingText';
+import { ParticleBurst } from '../components/battle/ParticleBurst';
+import { SlashEffect } from '../components/battle/effects/SlashEffect';
+import { ShieldWave } from '../components/battle/effects/ShieldWave';
+
 
 interface BattleProps {
   levels: Level[];
@@ -16,13 +21,136 @@ interface BattleProps {
   onCancelNav?: () => void;
 }
 
-export const ExperimentalBattle = ({ levels, initialLevelIndex = 0, isEndless, gameMode, inventory, onFinish }: BattleProps) => {
+// Types for effect entries
+interface FloatingTextEntry {
+  id: string;
+  text: string;
+  x: number;
+  y: number;
+  color: 'damage' | 'heal' | 'sp' | 'score' | 'critical' | 'benar' | 'salah';
+  size?: 'sm' | 'md' | 'lg';
+  duration?: number;
+}
+
+interface ParticleBurstEntry {
+  id: string;
+  x: number;
+  y: number;
+  color: 'cyan' | 'red' | 'green' | 'pink' | 'gold';
+  count?: number;
+  velocity?: number;
+}
+
+export const ExperimentalBattle = memo(({ levels, initialLevelIndex = 0, isEndless, gameMode, inventory, onFinish }: BattleProps) => {
   const [startTime] = useState(Date.now());
   const [showInventory, setShowInventory] = useState(false);
   const [currentLevelIndex, setCurrentLevelIndex] = useState(initialLevelIndex);
   const currentLevel = levels[currentLevelIndex];
 
   const { state, activeWords, currentWord, actions } = useBattleEngine(currentLevel, isEndless, inventory, gameMode);
+
+  // Effect spawning state
+  const [floatingTexts, setFloatingTexts] = useState<FloatingTextEntry[]>([]);
+  const [particleBursts, setParticleBursts] = useState<ParticleBurstEntry[]>([]);
+  const [slashEffects, setSlashEffects] = useState<Array<{ id: string; x: number; y: number }>>([]);
+  const [shieldWaves, setShieldWaves] = useState<Array<{ id: string; x: number; y: number }>>([]);
+
+  // Helpers to spawn skill effects
+  const spawnSlash = (x: number, y: number) => {
+    const id = Math.random().toString(36).substr(2, 9);
+    setSlashEffects(prev => [...prev, { id, x, y }]);
+    setTimeout(() => {
+      setSlashEffects(prev => prev.filter(item => item.id !== id));
+    }, 500);
+  };
+
+  const spawnShieldWave = (x: number, y: number) => {
+    const id = Math.random().toString(36).substr(2, 9);
+    setShieldWaves(prev => [...prev, { id, x, y }]);
+    setTimeout(() => {
+      setShieldWaves(prev => prev.filter(item => item.id !== id));
+    }, 600);
+  };
+
+  // Helper to spawn a floating text
+  const spawnFloatingText = (text: string, x: number, y: number, color: FloatingTextEntry['color'], size: 'sm' | 'md' | 'lg' = 'md', duration: number = 1.5) => {
+    const id = Math.random().toString(36).substr(2, 9);
+    setFloatingTexts(prev => [...prev, { id, text, x, y, color, size, duration }]);
+    setTimeout(() => {
+      setFloatingTexts(prev => prev.filter(item => item.id !== id));
+    }, duration * 1000);
+  };
+
+  // Helper to spawn a particle burst
+  const spawnParticleBurst = (x: number, y: number, color: 'cyan' | 'red' | 'green' | 'pink' | 'gold', count?: number, velocity?: number) => {
+    const id = Math.random().toString(36).substr(2, 9);
+    setParticleBursts(prev => [...prev, { id, x, y, color, count, velocity }]);
+    setTimeout(() => {
+      setParticleBursts(prev => prev.filter(item => item.id !== id));
+    }, 1500);
+  };
+
+  // Detect state changes to spawn visual feedback
+  const prevStateRef = useRef(state);
+  useEffect(() => {
+    const prev = prevStateRef.current;
+
+    // Enemy took damage
+    if (state.enemyHP < prev.enemyHP) {
+      const damage = prev.enemyHP - state.enemyHP;
+      spawnFloatingText(`-${damage}`, 50, 25, 'damage', 'lg');
+      spawnParticleBurst(50, 25, 'cyan');
+    }
+
+    // Player took damage
+    if (state.playerHP < prev.playerHP) {
+      const damage = prev.playerHP - state.playerHP;
+      spawnFloatingText(`-${damage}`, 50, 78, 'damage', 'lg');
+      spawnParticleBurst(50, 78, 'red');
+    }
+
+    // Player healed
+    if (state.playerHP > prev.playerHP) {
+      const heal = state.playerHP - prev.playerHP;
+      spawnFloatingText(`+${heal}`, 50, 78, 'heal', 'md');
+      spawnParticleBurst(50, 78, 'green');
+    }
+
+    // Skill points gained (from answering)
+    if (state.skillPoints > prev.skillPoints) {
+      const spGain = state.skillPoints - prev.skillPoints;
+      spawnFloatingText(`+${spGain} SP`, 50, 73, 'sp', 'sm');
+    }
+
+    // Score increased
+    if (state.score > prev.score) {
+      // Score increase is usually 100 per correct answer; might be multiple if combo later, but no combo now.
+      const scoreGain = state.score - prev.score;
+      spawnFloatingText(`+${scoreGain}`, 50, 18, 'score', 'sm');
+    }
+
+    // Feedback: CORRECT / WRONG
+    if (state.feedback === 'CORRECT' && prev.feedback !== 'CORRECT') {
+      spawnFloatingText('BENAR!', 50, 45, 'benar', 'lg', 1);
+    } else if (state.feedback === 'WRONG' && prev.feedback !== 'WRONG') {
+      spawnFloatingText('SALAH!', 50, 45, 'salah', 'lg', 1);
+    }
+
+    // Skill usage detection
+    // Attack skill: SP decreased by 30 and enemy HP decreased by 40
+    if (prev.skillPoints - state.skillPoints === 30 && prev.enemyHP - state.enemyHP === 40) {
+      spawnSlash(50, 25); // enemy panel center approx
+      spawnParticleBurst(50, 25, 'pink');
+    }
+
+    // Defend skill: SP decreased by 20 and shield became active
+    if (prev.skillPoints - state.skillPoints === 20 && state.isShieldActive && !prev.isShieldActive) {
+      spawnShieldWave(50, 78); // player panel center approx
+    }
+
+    prevStateRef.current = state;
+  }, [state]);
+
 
   // Display logic: PRACTICE shows kanji if available; LEARNING/TANTANGAN show kana
   const displayWord = (gameMode === 'PRACTICE' && currentWord.kanji) ? currentWord.kanji : currentWord.japanese;
@@ -82,7 +210,7 @@ export const ExperimentalBattle = ({ levels, initialLevelIndex = 0, isEndless, g
   }
 
   return (
-    <div className={`transition-transform max-w-5xl mx-auto flex flex-col md:grid md:grid-cols-12 md:gap-6 ${state.shake ? 'animate-shake' : ''} md:p-6`}>
+    <div className={`transition-transform max-w-5xl mx-auto flex flex-col md:grid md:grid-cols-12 md:gap-6 ${state.shake ? 'animate-shake' : ''} md:p-6 relative`}>
       {/* Enemy Section (Sticky Mobile, Part of Grid Desktop) */}
       <div className="sticky md:static top-0 z-30 bg-dark-bg/95 md:bg-dark-surface/50 backdrop-blur-md pt-4 pb-2 px-4 md:p-6 shadow-[0_4px_20px_rgba(0,0,0,0.5)] md:shadow-none border-b border-white/5 md:border md:border-white/10 md:col-span-12 lg:col-span-12">
         <div className="flex items-center gap-4 max-w-md md:max-w-none mx-auto">
@@ -159,13 +287,46 @@ export const ExperimentalBattle = ({ levels, initialLevelIndex = 0, isEndless, g
               </motion.div>
             )}
           </AnimatePresence>
+
+          {/* Enemy Defeat Overlay */}
+          <AnimatePresence>
+            {state.defeatTransitionPending && (
+              <motion.div
+                key="defeated"
+                className="absolute inset-0 flex items-center justify-center bg-red-900/30"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <motion.h2
+                  className="text-3xl md:text-6xl font-black uppercase tracking-tighter text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.9)]"
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 1.5, opacity: 0 }}
+                  transition={{ duration: 0.5, ease: 'easeOut' }}
+                >
+                  DEFEATED!
+                </motion.h2>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Question Box */}
         <div className="bg-neon-blue p-4 md:p-8 text-center border-2 border-neon-blue shadow-[0_0_15px_rgba(59,130,246,0.3)]">
-          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-white tracking-widest leading-none">
-            {displayWord}
-          </h2>
+          <AnimatePresence mode="wait">
+            <motion.h2
+              key={currentWord.japanese}
+              className="text-2xl sm:text-3xl md:text-5xl font-bold text-white tracking-widest leading-none"
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 1.05 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+            >
+              {displayWord}
+            </motion.h2>
+          </AnimatePresence>
         </div>
 
         {/* Answer Options */}
@@ -198,9 +359,42 @@ export const ExperimentalBattle = ({ levels, initialLevelIndex = 0, isEndless, g
         onClose={() => setShowInventory(false)}
         onUseItem={handleUseItem}
       />
+
+      {/* Effects Overlay */}
+      <div className="pointer-events-none fixed inset-0 z-50">
+        {floatingTexts.map(ft => (
+          <FloatingText
+            key={ft.id}
+            id={ft.id}
+            text={ft.text}
+            x={ft.x}
+            y={ft.y}
+            color={ft.color}
+            size={ft.size}
+            duration={ft.duration}
+          />
+        ))}
+        {particleBursts.map(pb => (
+          <ParticleBurst
+            key={pb.id}
+            id={pb.id}
+            x={pb.x}
+            y={pb.y}
+            color={pb.color}
+            count={pb.count}
+            velocity={pb.velocity}
+          />
+        ))}
+        {slashEffects.map(se => (
+          <SlashEffect key={se.id} x={se.x} y={se.y} />
+        ))}
+        {shieldWaves.map(sw => (
+          <ShieldWave key={sw.id} x={sw.x} y={sw.y} />
+        ))}
+      </div>
     </div>
   );
-};
+});
 
 // Extracted Answer Options component
 interface AnswerOptionsProps {

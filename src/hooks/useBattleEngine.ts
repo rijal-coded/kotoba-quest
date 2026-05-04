@@ -31,6 +31,7 @@ export interface BattleState {
   showDefeat: boolean;
   enemyCooldown: number;
   inventory: Item[]; // For self-contained battle modes
+  defeatTransitionPending: boolean; // true during 1s delay after enemy dies
 }
 
 export type BattleAction =
@@ -45,10 +46,12 @@ export type BattleAction =
   | { type: 'USE_SKILL_DEFEND' }
   | { type: 'USE_ITEM_HEAL'; amount: number }
   | { type: 'USE_ITEM_CONSUME'; itemId: string }
+  | { type: 'UPDATE_INVENTORY'; updater: (inventory: Item[]) => Item[] }
   | { type: 'NEXT_WORD'; endlessRandomIndex: number }
   | { type: 'TRIGGER_VICTORY' }
   | { type: 'TRIGGER_DEFEAT' }
-  | { type: 'SYNC_LEVEL'; level: Level };
+  | { type: 'SYNC_LEVEL'; level: Level }
+  | { type: 'SET_DEFEAT_PENDING'; pending: boolean };
 
 export const initialBattleState = (level: Level, inventory: Item[] = []): BattleState => {
   const initialEnemy = generateEnemy(0);
@@ -75,6 +78,7 @@ export const initialBattleState = (level: Level, inventory: Item[] = []): Battle
     shake: false,
     showVictory: false,
     showDefeat: false,
+    defeatTransitionPending: false,
     enemyCooldown: 0,
     inventory,
   };
@@ -137,6 +141,12 @@ export const battleReducer = (state: BattleState, action: BattleAction): BattleS
         enemyCooldown: 0,
       };
 
+    case 'SET_DEFEAT_PENDING':
+      return {
+        ...state,
+        defeatTransitionPending: action.pending,
+      };
+
     case 'ENEMY_DEFEATED':
       return {
         ...state,
@@ -144,6 +154,9 @@ export const battleReducer = (state: BattleState, action: BattleAction): BattleS
         maxEnemyHP: action.nextEnemy.maxHp,
         currentEnemy: action.nextEnemy,
         enemiesBeaten: state.enemiesBeaten + 1,
+        feedback: null,
+        isShieldActive: false,
+        defeatTransitionPending: false,
       };
 
     case 'USE_SKILL_ATTACK': {
@@ -176,6 +189,12 @@ export const battleReducer = (state: BattleState, action: BattleAction): BattleS
             ? { ...i, count: Math.max(0, (i.count || 1) - 1) }
             : i
         ),
+      };
+
+    case 'UPDATE_INVENTORY':
+      return {
+        ...state,
+        inventory: action.updater(state.inventory),
       };
 
     case 'TRIGGER_VICTORY':
@@ -269,18 +288,26 @@ export const useBattleEngine = (
     return activeWords[state.currentWordIndex % activeWords.length];
   }, [state.currentWordIndex, state.endlessRandomIndex, activeWords, isEndless, gameMode]);
 
-  // Enemy Death logic
+  // Enemy Death logic with delay for defeat sequence
   useEffect(() => {
-    if (state.enemyHP <= 0 && !state.showVictory && !state.showDefeat) {
-      const newlyGeneratedEnemy = generateEnemy(state.enemiesBeaten + 1);
-      dispatch({ type: 'ENEMY_DEFEATED', nextEnemy: newlyGeneratedEnemy });
-      
-      // Auto-advance word if enemy was killed by skill
-      if (state.feedback === null) {
-        dispatch({ type: 'NEXT_WORD', endlessRandomIndex: Math.floor(Math.random() * activeWords.length) });
-      }
+    if (state.enemyHP <= 0 && !state.showVictory && !state.showDefeat && !state.defeatTransitionPending) {
+      // Start defeat transition
+      dispatch({ type: 'SET_DEFEAT_PENDING', pending: true });
+
+      const timer = setTimeout(() => {
+        const nextEnemy = generateEnemy(state.enemiesBeaten + 1);
+        dispatch({ type: 'ENEMY_DEFEATED', nextEnemy });
+
+        // Auto-advance word if enemy was killed by skill (feedback is null)
+        // This captures the state at the moment enemy died (closure)
+        if (state.feedback === null) {
+          dispatch({ type: 'NEXT_WORD', endlessRandomIndex: Math.floor(Math.random() * activeWords.length) });
+        }
+      }, 1000); // 1 second defeat sequence
+
+      return () => clearTimeout(timer);
     }
-  }, [state.enemyHP, state.showVictory, state.showDefeat, state.enemiesBeaten, state.feedback, activeWords.length]);
+  }, [state.enemyHP, state.showVictory, state.showDefeat, state.defeatTransitionPending, state.enemiesBeaten, state.feedback, activeWords.length]);
 
   // Unified Victory / Defeat Detection
   useEffect(() => {

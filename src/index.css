@@ -54,6 +54,15 @@
   --color-neon-blue: #3B82F6;
   --color-neon-red: #EF4444;
 
+  /* Floating Text Colors (Light Mode) */
+  --color-damage: #EF4444;
+  --color-heal: #10B981;
+  --color-sp: #0EA5E9;
+  --color-score: #F59E0B;
+  --color-critical: #EC4899;
+  --color-benar: #22C55E;
+  --color-salah: #DC2626;
+
   /* Glass morphism */
   --color-glass-bg: var(--glass-bg);
   --color-glass-border: var(--glass-border);
@@ -85,6 +94,15 @@
   --font-size-2xl: clamp(1.25rem, 1.2vw + 1rem, 1.5rem);
   --font-size-3xl: clamp(1.5rem, 1.5vw + 1.2rem, 1.875rem);
   --font-size-4xl: clamp(1.875rem, 2vw + 1.5rem, 2.25rem);
+
+  /* Dark Mode: Pastel colors for floating text */
+  --color-damage: #FFB3B3;
+  --color-heal: #B5E8B5;
+  --color-sp: #A8DADC;
+  --color-score: #FFE08C;
+  --color-critical: #FFC1CC;
+  --color-benar: #86EFAC;
+  --color-salah: #FCA5A5;
 }
 
 
@@ -755,6 +773,105 @@
     }
   }
 
+  /* Critical HP Escalation Levels */
+  /* Level 1 (20-30% HP): Existing behavior, slow pulse */
+  .battle-panel--enemy.critical-1,
+  .battle-panel--player.critical-1 {
+    animation-duration: 1.5s;
+  }
+
+  /* Level 2 (10-20% HP): Fast, intense pulse */
+  .battle-panel--enemy.critical-2,
+  .battle-panel--player.critical-2 {
+    animation-duration: 0.75s;
+    animation-timing-function: ease-in-out;
+  }
+
+  .battle-panel--enemy.critical-2 {
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.7), 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .battle-panel--player.critical-2 .scanline {
+    color: rgba(255, 50, 50, 0.3);
+  }
+
+  /* Level 3 (<10% HP): Rapid strobe, highest intensity */
+  .battle-panel--enemy.critical-3,
+  .battle-panel--player.critical-3 {
+    animation-duration: 0.3s;
+    animation-timing-function: steps(2);
+  }
+
+  .battle-panel--enemy.critical-3 {
+    animation: critical-strobe 0.3s steps(2) infinite;
+  }
+
+  .battle-panel--player.critical-3 {
+    animation: player-critical-strobe 0.3s steps(2) infinite;
+  }
+
+  .battle-panel--enemy.critical-3 .scanline,
+  .battle-panel--player.critical-3 .scanline {
+    animation: critical-scanline-fast 0.3s linear infinite;
+  }
+
+  @keyframes critical-strobe {
+    0%, 100% {
+      box-shadow: 0 0 40px rgba(239, 68, 68, 1), 0 4px 20px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(239, 68, 68, 0.2);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5), 0 4px 20px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(239, 68, 68, 0.1);
+    }
+  }
+
+  @keyframes player-critical-strobe {
+    0%, 100% {
+      box-shadow: 0 0 40px rgba(255, 50, 50, 1), 0 4px 20px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(255, 50, 50, 0.2);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(255, 50, 50, 0.5), 0 4px 20px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(255, 50, 50, 0.1);
+    }
+  }
+
+  @keyframes critical-scanline-fast {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 100%; }
+  }
+
+  /* Enemy panel tier-based border colorization */
+  .battle-panel--enemy.tier-1 {
+    border-color: rgba(239, 68, 68, 0.6) !important; /* red-500 */
+  }
+
+  .battle-panel--enemy.tier-2 {
+    border-color: rgba(249, 115, 22, 0.6) !important; /* orange-500 */
+  }
+
+  .battle-panel--enemy.tier-3 {
+    border-color: rgba(245, 158, 11, 0.6) !important; /* amber-500 */
+  }
+
+  .battle-panel--enemy.tier-4 {
+    border-color: rgba(16, 185, 129, 0.6) !important; /* emerald-500 */
+  }
+
+  /* HP bar tier border colorization */
+  .hp-bar.tier-1 {
+    border-color: rgba(239, 68, 68, 0.6) !important;
+  }
+
+  .hp-bar.tier-2 {
+    border-color: rgba(249, 115, 22, 0.6) !important;
+  }
+
+  .hp-bar.tier-3 {
+    border-color: rgba(245, 158, 11, 0.6) !important;
+  }
+
+  .hp-bar.tier-4 {
+    border-color: rgba(16, 185, 129, 0.6) !important;
+  }
+
   /* Stunned state overlay */
   .battle-panel--enemy.stunned::before {
     content: '';
@@ -769,6 +886,50 @@
   @keyframes stun-flash {
     0%, 100% { opacity: 0.3; }
     50% { opacity: 0.6; }
+  }
+
+  /* Enemy attack telegraph system */
+  .battle-panel--enemy.telegraph-warning .scanline {
+    animation: telegraph-scanline 1s ease-in-out infinite;
+  }
+
+  .battle-panel--enemy.telegraph-imminent .scanline {
+    animation: telegraph-scanline 0.5s ease-in-out infinite;
+  }
+
+  .battle-panel--enemy.telegraph-imminent {
+    border-color: rgba(239, 68, 68, 0.6) !important;
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.5), inset 0 0 20px rgba(239, 68, 68, 0.1) !important;
+  }
+
+  .battle-panel--enemy.telegraph-critical {
+    animation: telegraph-critical-strobe 0.2s ease-in-out infinite;
+  }
+
+  .battle-panel--enemy.telegraph-critical::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(239, 68, 68, 0.15);
+    pointer-events: none;
+    z-index: 10;
+    animation: telegraph-critical-overlay 0.2s steps(1) infinite;
+  }
+
+  @keyframes telegraph-scanline {
+    0%, 100% { background-position: 0 0; }
+    100% { background-position: 0 100%; }
+  }
+
+  @keyframes telegraph-critical-strobe {
+    0%, 100% { border-color: rgba(239, 68, 68, 0.6); }
+    50% { border-color: rgba(239, 68, 68, 1); }
+  }
+
+  @keyframes telegraph-critical-overlay {
+    0% { opacity: 0.2; }
+    50% { opacity: 0.4; }
+    100% { opacity: 0.2; }
   }
 
   /* Disable animations for users who prefer reduced motion */

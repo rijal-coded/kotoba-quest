@@ -32,7 +32,7 @@ export const Header = ({ onNavigate, currentPage }: HeaderProps) => {
         className="flex items-center gap-2 group"
       >
         <Home className="w-6 h-6 text-main group-hover:drop-shadow-[0_0_5px_rgba(0,156,255,0.8)] transition-all" />
-        <h1 className="text-xl font-black tracking-tighter uppercase text-main drop-shadow-[0_0_2px_rgba(0,156,255,0.5)]">
+        <h1 className="text-xl font-black tracking-tighter uppercase neon-text-cyan drop-shadow-[0_0_2px_rgba(0,156,255,0.5)]">
           KOTOBA QUEST
         </h1>
       </button>
