@@ -1,8 +1,12 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { Item } from '../types';
 import { Shield, Sword, Star, Zap } from 'lucide-react';
 import { MAX_INVENTORY_SLOTS } from '../constants';
+
+// Sort orders (outside component to avoid recreation)
+const RARITY_ORDER = { COMMON: 0, RARE: 1, EPIC: 2, LEGENDARY: 3 } as const;
+const TYPE_ORDER = { WEAPON: 0, SHIELD: 1, ACCESSORY: 2, CONSUMABLE: 3 } as const;
 
 interface InventoryProps {
   username: string;
@@ -53,7 +57,7 @@ const EquippedItemCard = ({ item }: { item: Item }) => {
 export const Inventory = ({ username, inventory, setInventory, powerScore }: InventoryProps) => {
   const [filter, setFilter] = useState<'SEMUA' | 'SENJATA' | 'PERISAI' | 'AKSESORI' | 'POTIONS'>('SEMUA');
 
-  const equipped = inventory.filter(item => item.isEquipped);
+  const equipped = useMemo(() => inventory.filter(item => item.isEquipped), [inventory]);
 
   const toggleEquip = (targetItem: Item) => {
     if (targetItem.type === 'CONSUMABLE') return;
@@ -70,28 +74,28 @@ export const Inventory = ({ username, inventory, setInventory, powerScore }: Inv
     );
   };
 
-  const items = inventory.filter(item => {
+  const items = useMemo(() => inventory.filter(item => {
     if (filter === 'SEMUA') return true;
     if (filter === 'SENJATA') return item.type === 'WEAPON';
     if (filter === 'PERISAI') return item.type === 'SHIELD';
     if (filter === 'AKSESORI') return item.type === 'ACCESSORY';
     if (filter === 'POTIONS') return item.type === 'CONSUMABLE';
     return true;
-  });
+  }), [inventory, filter]);
 
   // Sort by rarity (COMMON→RARE→EPIC→LEGENDARY), then type (WEAPON→SHIELD→ACCESSORY→CONSUMABLE), then name
-  const rarityOrder = { COMMON: 0, RARE: 1, EPIC: 2, LEGENDARY: 3 };
-  const typeOrder = { WEAPON: 0, SHIELD: 1, ACCESSORY: 2, CONSUMABLE: 3 };
-
-  const sortedItems = [...items].sort((a, b) => {
-    const ra = rarityOrder[a.rarity] ?? 0;
-    const rb = rarityOrder[b.rarity] ?? 0;
-    if (ra !== rb) return ra - rb;
-    const ta = typeOrder[a.type] ?? 99;
-    const tb = typeOrder[b.type] ?? 99;
-    if (ta !== tb) return ta - tb;
-    return a.name.localeCompare(b.name);
-  });
+  const sortedItems = useMemo(() =>
+    [...items].sort((a, b) => {
+      const ra = RARITY_ORDER[a.rarity] ?? 0;
+      const rb = RARITY_ORDER[b.rarity] ?? 0;
+      if (ra !== rb) return ra - rb;
+      const ta = TYPE_ORDER[a.type] ?? 99;
+      const tb = TYPE_ORDER[b.type] ?? 99;
+      if (ta !== tb) return ta - tb;
+      return a.name.localeCompare(b.name);
+    }),
+    [items]
+  );
 
   return (
     <div className="p-4 md:p-6 pb-24 md:pb-6 space-y-6 max-w-4xl mx-auto">

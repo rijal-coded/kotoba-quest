@@ -11,13 +11,12 @@ interface BattleProps {
   isEndless?: boolean;
   gameMode: GameMode;
   inventory: Item[];
-  setInventory: Dispatch<SetStateAction<Item[]>>;
-  onFinish: (victory: boolean, timeSpent: number, rewards?: Item[], scoreEarned?: number, enemiesBeaten?: number, wordsBeaten?: number, navigateTo?: Page) => void;
+  onFinish: (victory: boolean, timeSpent: number, rewards?: Item[], scoreEarned?: number, enemiesBeaten?: number, wordsBeaten?: number, navigateTo?: Page, currentInventory?: Item[]) => void;
   pendingNav?: Page | null;
   onCancelNav?: () => void;
 }
 
-export const ExperimentalBattle = ({ levels, initialLevelIndex = 0, isEndless, gameMode, inventory, setInventory, onFinish }: BattleProps) => {
+export const ExperimentalBattle = ({ levels, initialLevelIndex = 0, isEndless, gameMode, inventory, onFinish }: BattleProps) => {
   const [startTime] = useState(Date.now());
   const [showInventory, setShowInventory] = useState(false);
   const [currentLevelIndex, setCurrentLevelIndex] = useState(initialLevelIndex);
@@ -36,7 +35,8 @@ export const ExperimentalBattle = ({ levels, initialLevelIndex = 0, isEndless, g
       state.score,
       state.enemiesBeaten,
       state.wordsBeaten,
-      'HOME'
+      'HOME',
+      state.inventory
     );
   };
 
@@ -44,7 +44,6 @@ export const ExperimentalBattle = ({ levels, initialLevelIndex = 0, isEndless, g
     if (item.type === 'CONSUMABLE' && item.count && item.count > 0) {
       actions.healPlayer(50);
       actions.consumeItem(item.id);
-      setInventory(prev => prev.map(i => i.id === item.id ? { ...i, count: (i.count || 1) - 1 } : i));
       setShowInventory(false);
     }
   };
@@ -195,7 +194,7 @@ export const ExperimentalBattle = ({ levels, initialLevelIndex = 0, isEndless, g
       {/* Inventory Modal */}
       <InventoryModal
         isOpen={showInventory}
-        inventory={inventory}
+        inventory={state.inventory}
         onClose={() => setShowInventory(false)}
         onUseItem={handleUseItem}
       />

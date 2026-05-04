@@ -15,13 +15,12 @@ interface BattleProps {
   isEndless?: boolean;
   gameMode: GameMode;
   inventory: Item[];
-  setInventory: Dispatch<SetStateAction<Item[]>>;
-  onFinish: (victory: boolean, timeSpent: number, rewards?: Item[], scoreEarned?: number, enemiesBeaten?: number, wordsBeaten?: number, navigateTo?: Page) => void;
+  onFinish: (victory: boolean, timeSpent: number, rewards?: Item[], scoreEarned?: number, enemiesBeaten?: number, wordsBeaten?: number, navigateTo?: Page, currentInventory?: Item[]) => void;
   pendingNav?: Page | null;
   onCancelNav?: () => void;
 }
 
-export const Battle = ({ level, isEndless, gameMode, inventory, setInventory, onFinish, pendingNav, onCancelNav }: BattleProps) => {
+export const Battle = ({ level, isEndless, gameMode, inventory, onFinish, pendingNav, onCancelNav }: BattleProps) => {
   const [startTime] = useState(Date.now());
   const [showInventory, setShowInventory] = useState(false);
 
@@ -78,14 +77,15 @@ export const Battle = ({ level, isEndless, gameMode, inventory, setInventory, on
       state.score,
       state.enemiesBeaten,
       state.wordsBeaten,
-      navigateTo
+      navigateTo,
+      state.inventory
     );
   };
 
   const handleUseItem = (item: Item) => {
     if (item.type === 'CONSUMABLE' && item.count && item.count > 0) {
       actions.healPlayer(item.hpBonus ?? 50);
-      setInventory(prev => prev.map(i => i.id === item.id ? { ...i, count: (i.count || 1) - 1 } : i));
+      actions.consumeItem(item.id);
     }
   };
 
@@ -140,7 +140,7 @@ export const Battle = ({ level, isEndless, gameMode, inventory, setInventory, on
 
       <InventoryModal
         isOpen={showInventory}
-        inventory={inventory}
+        inventory={state.inventory}
         onClose={() => setShowInventory(false)}
         onUseItem={handleUseItem}
       />

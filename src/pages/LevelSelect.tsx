@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import { useMemo } from 'react';
 import * as Icons from 'lucide-react';
 import { Level, GameMode, Page } from '../types';
 
@@ -18,9 +19,12 @@ const formatTime = (seconds: number) => {
 
 export const LevelSelect = ({ levels, gameMode, onSelect, onNavigate }: LevelSelectProps) => {
   // In TANTANGAN mode, only show completed (practiced) levels
-  const availableLevels = gameMode === 'TANTANGAN'
-    ? levels.filter(l => l.isCompleted)
-    : levels;
+  const availableLevels = useMemo(() =>
+    gameMode === 'TANTANGAN'
+      ? levels.filter(l => l.isCompleted)
+      : levels,
+    [levels, gameMode]
+  );
 
   const hasNoAvailable = availableLevels.length === 0;
 

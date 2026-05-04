@@ -15,9 +15,12 @@ import { ExperimentalBattle } from './pages/ExperimentalBattle';
 import { motion, AnimatePresence } from 'motion/react';
 import { useGameState } from './hooks/useGameState';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { RefreshCw } from 'lucide-react';
 
 export default function App() {
   const {
+    isHydrated,
+    hydrateError,
     currentPage,
     selectedLevel,
     pendingNav,
@@ -37,6 +40,26 @@ export default function App() {
     handleResetData,
   } = useGameState();
 
+  // Show loading screen while hydrating from persistence
+  if (!isHydrated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-bg-primary">
+        <div className="text-center space-y-4">
+          <div className="inline-block animate-spin" style={{ animationDuration: '1s' }}>
+            <RefreshCw className="w-12 h-12 text-main" />
+          </div>
+          <p className="text-text-secondary uppercase tracking-widest text-sm">Loading Kotoba Quest...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error boundary for hydration errors (app continues with defaults)
+  if (hydrateError) {
+    console.error('Hydration error:', hydrateError);
+    // Could also show a non-blocking toast here in the future
+  }
+
   const renderPage = () => {
     switch (currentPage) {
       case 'HOME':
@@ -52,7 +75,6 @@ export default function App() {
             isEndless={gameMode === 'TANTANGAN'}
             gameMode={gameMode}
             inventory={inventory}
-            setInventory={setInventory}
             onFinish={handleBattleFinish}
             pendingNav={pendingNav}
             onCancelNav={() => setPendingNav(null)}
@@ -70,7 +92,6 @@ export default function App() {
             levels={levels}
             gameMode={gameMode}
             inventory={inventory}
-            setInventory={setInventory}
             onFinish={handleBattleFinish}
           />
         );
