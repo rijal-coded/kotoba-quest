@@ -63,9 +63,9 @@ export const LevelSelect = ({ levels, gameMode, onSelect, onNavigate }: LevelSel
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => onSelect(level)}
-              className="w-full bg-bg-surface border border-text-primary/10 rounded-2xl p-4 flex items-center gap-4 group hover:border-main/50 hover:shadow-[0_4px_20px_rgba(0,156,255,0.1)] transition-all text-left"
+              className="w-full bg-bg-surface border border-main/10 rounded-2xl p-4 flex items-center gap-4 group hover:border-main/50 hover:shadow-[0_4px_20px_rgba(0,156,255,0.1)] transition-all text-left"
             >
-              <div className="w-12 h-12 shrink-0 bg-bg-primary border border-text-primary/10 rounded-xl flex items-center justify-center text-main group-hover:scale-110 group-hover:border-main/40 transition-all">
+              <div className="w-12 h-12 shrink-0 bg-bg-primary border border-main/10 rounded-xl flex items-center justify-center text-main group-hover:scale-110 group-hover:border-main/40 transition-all">
                 <IconComponent className="w-6 h-6" />
               </div>
 

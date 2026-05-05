@@ -12,7 +12,18 @@ interface EnemyPanelProps {
 export const EnemyPanel = ({ enemy, currentHP, cooldownPercentage }: EnemyPanelProps) => {
   const hpPercent = Math.max(0, Math.min(100, (currentHP / enemy.maxHp) * 100));
   const tierColor = enemy.tier === 5 ? 'text-neon-pink' : 'neon-text-cyan';
-  const barColor = enemy.tier === 5 ? 'bg-neon-pink' : 'bg-accent';
+  // const barColor = enemy.tier === 5 ? 'bg-neon-pink' : 'bg-accent'; // No longer used, using gradient instead
+  // Generate gradient based on tier
+  const getTierGradient = () => {
+    const gradients = {
+      1: 'linear-gradient(90deg, rgb(59 130 246) 0%, rgb(147 197 253) 100%)', // blue-500 to blue-300
+      2: 'linear-gradient(90deg, rgb(34 197 94) 0%, rgb(134 239 172) 100%)', // green-500 to green-300
+      3: 'linear-gradient(90deg, rgb(234 179 8) 0%, rgb(250 204 21) 100%)', // yellow-500 to yellow-300
+      4: 'linear-gradient(90deg, rgb(239 68 68) 0%, rgb(252 165 165) 100%)', // red-500 to red-300
+      5: 'linear-gradient(90deg, rgb(236 72 153) 0%, rgb(251 207 232) 100%)' // pink-500 to pink-300
+    };
+    return gradients[enemy.tier as keyof typeof gradients] || gradients[1];
+  };
   const [isShaking, setIsShaking] = useState(false);
   const [showDamageFlash, setShowDamageFlash] = useState(false);
   const prevHpRef = useRef(currentHP);
@@ -70,7 +81,7 @@ export const EnemyPanel = ({ enemy, currentHP, cooldownPercentage }: EnemyPanelP
               >
                 {enemy.name}
               </motion.h3>
-              <span className="text-[10px] md:text-xs font-bold px-2 py-0.5 bg-text-primary/10 text-text-secondary rounded-full border border-text-primary/20">
+              <span className="text-[10px] md:text-xs font-bold px-2 py-0.5 bg-text-primary/10 text-text-secondary rounded-full border border-main/15">
                 {enemy.rank}
               </span>
             </div>
@@ -85,7 +96,7 @@ export const EnemyPanel = ({ enemy, currentHP, cooldownPercentage }: EnemyPanelP
           </div>
 
           {/* HP Bar */}
-          <HPBar percent={hpPercent} color={barColor} flash={showDamageFlash} tierClass={tierClass} />
+          <HPBar percent={hpPercent} gradient={getTierGradient()} flash={showDamageFlash} tierClass={tierClass} />
         </div>
 
         {/* Intent Display */}
@@ -95,7 +106,11 @@ export const EnemyPanel = ({ enemy, currentHP, cooldownPercentage }: EnemyPanelP
             <span className="text-xs md:text-sm font-black text-main uppercase tracking-widest">INTENT</span>
             <span className="ml-auto text-sm md:text-lg font-black text-main">{Math.round(cooldownPercentage)}%</span>
           </div>
-          <HPBar percent={cooldownPercentage} color="bg-red-500" variant="cooldown" />
+          <HPBar
+            percent={cooldownPercentage}
+            gradient="linear-gradient(90deg, rgb(239 68 68) 0%, rgb(252 165 165) 100%)"
+            variant="cooldown"
+          />
         </div>
       </div>
 
@@ -107,16 +122,17 @@ export const EnemyPanel = ({ enemy, currentHP, cooldownPercentage }: EnemyPanelP
 
 interface HPBarProps {
   percent: number;
-  color: string;
+  gradient: string;
   variant?: 'default' | 'cooldown';
   flash?: boolean;
   tierClass?: string;
 }
 
-const HPBar = ({ percent, color, variant = 'default', flash, tierClass }: HPBarProps) => (
+const HPBar = ({ percent, gradient, variant = 'default', flash, tierClass }: HPBarProps) => (
   <div className={`hp-bar ${variant === 'cooldown' ? 'hp-bar--cooldown' : ''} ${tierClass || ''}`}>
     <motion.div
-      className={`hp-bar-fill ${color} ${flash ? 'flash' : ''} ${variant !== 'cooldown' ? 'glow-cyan' : 'glow-red'}`}
+      className={`hp-bar-fill inner-border ${flash ? 'flash' : ''} ${variant !== 'cooldown' ? 'glow-cyan' : 'glow-red'}`}
+      style={{ background: gradient }}
       animate={{ width: `${percent}%` }}
       transition={{ duration: 0.3, ease: "easeOut" }}
     />

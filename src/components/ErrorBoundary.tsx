@@ -53,7 +53,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 Something went wrong. This error has been logged.
               </p>
               {this.state.error && (
-                <details className="text-left bg-bg-surface border border-text-primary/10 rounded-xl p-4">
+                <details className="text-left bg-bg-surface border border-main/10 rounded-xl p-4">
                   <summary className="cursor-pointer text-sm font-bold uppercase tracking-widest text-main">
                     Error Details
                   </summary>

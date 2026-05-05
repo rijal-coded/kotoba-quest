@@ -26,7 +26,7 @@ export const Header = ({ onNavigate, currentPage }: HeaderProps) => {
   const toggleTheme = () => setIsDarkMode(prev => !prev);
 
   return (
-    <header className="border-b border-text-primary/10 p-4 flex justify-between items-center bg-bg-primary sticky top-0 z-50 transition-colors duration-300">
+    <header className="border-b border-main/10 p-4 flex justify-between items-center bg-bg-primary sticky top-0 z-50 transition-colors duration-300">
       <button 
         onClick={() => onNavigate('HOME')}
         className="flex items-center gap-2 group"
@@ -40,7 +40,7 @@ export const Header = ({ onNavigate, currentPage }: HeaderProps) => {
       <div className="flex items-center gap-2 md:gap-4">
         <button
           onClick={toggleTheme}
-          className="w-10 h-10 rounded-full border border-text-primary/10 flex items-center justify-center text-text-primary hover:bg-text-primary/5 transition-all"
+          className="w-10 h-10 rounded-full border border-main/10 flex items-center justify-center text-text-primary hover:bg-text-primary/5 transition-all"
           aria-label="Toggle Theme"
         >
           {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
@@ -63,7 +63,7 @@ export const Header = ({ onNavigate, currentPage }: HeaderProps) => {
 
 export const Footer = () => {
   return (
-    <footer className="p-8 border-t border-text-primary/10 mt-auto bg-bg-surface transition-colors duration-300">
+    <footer className="p-8 border-t border-main/10 mt-auto bg-bg-surface transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
         <div className="space-y-2">
           <h3 className="font-bold uppercase tracking-widest text-main">Kotoba Quest</h3>
@@ -81,7 +81,7 @@ export const Footer = () => {
         </div>
         
         <div className="flex justify-end items-center">
-          <div className="w-12 h-12 border border-text-primary/10 rounded-2xl flex items-center justify-center">
+          <div className="w-12 h-12 border border-main/10 rounded-2xl flex items-center justify-center">
             <div className="w-6 h-6 bg-main/20 rounded-full animate-pulse" />
           </div>
         </div>

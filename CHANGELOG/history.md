@@ -2,6 +2,17 @@
 
 Semua perubahan, peningkatan, penambahan, dan perbaikan yang dilakukan pada Kotoba Quest sejak awal pengembangan.
 
+## [2026-05-05 06:33]
+### Improved
+- **Border Color System**: Replaced all white-tinted borders (`border-text-primary/10`, `border-text-primary/20`, `rgba(255,255,255,0.08)`) with cyan-tinted (`border-main/10`, `border-main/15`, `rgba(0,156,255,0.08)`) across 12+ files for consistent dark-mode theming.
+- **Sidebar Navigation**: Fixed glow overflow on active nav buttons — replaced `glow-cyan` class with a contained `shadow-[0_0_8px...]` on the icon container; enlarged icon area to `w-10 h-10`/`w-11 h-11`; reduced label font size.
+- **Enemy Panel Glow**: Reduced `enemy-idle-glow` animation intensity by ~50% (from 0.15/0.35 to 0.08/0.18 opacity) to be less distracting during gameplay.
+
+### Fixed
+- **"MAIN" → "HOME" Button**: Changed sidebar nav label from "Main" to "Home" and replaced the Lucide `Play` icon with a Google Material Symbols `home` icon loaded via font link.
+- **CSS Glass Borders**: Changed `--glass-border` from white (`rgba(255,255,255,0.08)`) to cyan (`rgba(0,156,255,0.08)`), fixing glass-morphism panels to use themed borders.
+- **Battle Panel Borders**: Changed `.battle-panel` border from gray (`rgba(156,163,175,0.1)`) to cyan (`rgba(0,156,255,0.1)`).
+
 ## [2026-04-29 16:24]
 ### Improved
 - **App.tsx Refactor**: Extracted state, persistence, and routing logic into `src/hooks/useGameState.ts`, reducing file size from 255 to ~100 lines.

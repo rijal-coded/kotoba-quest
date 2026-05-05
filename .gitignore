@@ -7,3 +7,4 @@ coverage/
 .env*
 !.env.example
 2026-05-01-185550-local-command-caveatcaveat-the-messages-below.txt
+AGENTS.md

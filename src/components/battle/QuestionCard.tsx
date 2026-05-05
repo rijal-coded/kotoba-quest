@@ -86,7 +86,7 @@ interface BattleVisualProps {
 }
 
 const BattleVisual = ({ feedback, isShieldActive, enemyStrength, onOpenInventory }: BattleVisualProps) => (
-  <div className="battle-visual relative h-40 md:h-48 mb-4 rounded-xl overflow-hidden bg-gradient-to-b from-bg-surface/30 to-bg-surface/10 border border-text-primary/10">
+  <div className="battle-visual relative h-40 md:h-48 mb-4 rounded-xl overflow-hidden bg-gradient-to-b from-bg-surface/30 to-bg-surface/10 border border-main/10">
     {/* Background grid pattern */}
     <div
       className="absolute inset-0 opacity-10"
@@ -111,7 +111,7 @@ const BattleVisual = ({ feedback, isShieldActive, enemyStrength, onOpenInventory
     </motion.button>
 
     {/* Enemy Strength Display */}
-    <div className="battle-visual-strength absolute top-2 left-2 px-3 py-1 bg-bg-surface/90 border border-text-primary/10 rounded-lg">
+    <div className="battle-visual-strength absolute top-2 left-2 px-3 py-1 bg-bg-surface/90 border border-main/10 rounded-lg">
       <span className="text-xs md:text-sm font-mono font-bold text-main">
         STR: <span className="text-base md:text-lg">{enemyStrength.toLocaleString()}</span>
       </span>
@@ -144,7 +144,7 @@ const BattleVisual = ({ feedback, isShieldActive, enemyStrength, onOpenInventory
 );
 
 const QuestionBox = ({ displayWord }: { displayWord: string }) => (
-  <div className="question-box relative overflow-hidden rounded-xl bg-bg-surface/50 border border-text-primary/10 p-6 md:p-8 mb-4">
+  <div className="question-box relative overflow-hidden rounded-xl bg-bg-surface/50 border border-main/10 p-6 md:p-8 mb-4">
     {/* Decorative scan line */}
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       <motion.div

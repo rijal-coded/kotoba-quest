@@ -45,7 +45,7 @@ export const Home = ({ onStart, username, onSetUsername, onResetData }: HomeProp
   const primaryBtnClass =
     'w-full px-12 py-4 bg-main text-bg-primary font-black text-xl tracking-widest uppercase rounded-xl shadow-[0_4px_20px_rgba(0,156,255,0.3)] hover:brightness-110 transition-all';
   const secondaryBtnClass =
-    'w-full px-12 py-4 border border-text-primary/20 text-text-secondary font-black text-xl tracking-widest uppercase rounded-xl hover:text-text-primary hover:border-text-primary/40 transition-all';
+    'w-full px-12 py-4 border border-main/15 text-text-secondary font-black text-xl tracking-widest uppercase rounded-xl hover:text-text-primary hover:border-main/30 transition-all';
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] p-6 text-center">
@@ -85,7 +85,7 @@ export const Home = ({ onStart, username, onSetUsername, onResetData }: HomeProp
                   </button>
                   <button
                     onClick={() => handleConfirmReset(false)}
-                    className="flex-1 px-8 py-3 border border-text-primary/20 text-text-secondary font-bold uppercase tracking-widest rounded-xl hover:text-text-primary hover:border-text-primary/40 transition-all"
+                    className="flex-1 px-8 py-3 border border-main/15 text-text-secondary font-bold uppercase tracking-widest rounded-xl hover:text-text-primary hover:border-main/30 transition-all"
                   >
                     TIDAK
                   </button>

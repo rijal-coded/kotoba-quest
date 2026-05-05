@@ -27,9 +27,9 @@ export const InventoryModal = memo(({ isOpen, inventory, onClose, onUseItem }: I
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: '100%', opacity: 0 }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="relative w-full md:max-w-sm bg-bg-surface border border-text-primary/10 md:rounded-2xl rounded-t-2xl p-6 space-y-4 shadow-2xl"
+            className="relative w-full md:max-w-sm bg-bg-surface border border-main/10 md:rounded-2xl rounded-t-2xl p-6 space-y-4 shadow-2xl"
           >
-            <div className="flex justify-between items-center border-b border-text-primary/10 pb-4">
+            <div className="flex justify-between items-center border-b border-main/10 pb-4">
               <h3 className="text-lg font-black uppercase tracking-tighter text-text-primary">Item Bag</h3>
               <button onClick={onClose} className="w-8 h-8 rounded-full bg-text-primary/5 flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-text-primary/10 transition-all">
                 <X className="w-4 h-4" />
@@ -47,7 +47,7 @@ export const InventoryModal = memo(({ isOpen, inventory, onClose, onUseItem }: I
                     key={item.id}
                     onClick={() => { onUseItem(item); onClose(); }}
                     disabled={!item.count || item.count <= 0}
-                    className="w-full bg-bg-primary border border-text-primary/10 rounded-xl p-3 flex justify-between items-center hover:border-main/40 transition-all text-left group disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="w-full bg-bg-primary border border-main/10 rounded-xl p-3 flex justify-between items-center hover:border-main/40 transition-all text-left group disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     <div>
                       <h4 className="text-xs font-bold uppercase text-text-primary group-hover:text-main transition-colors">{item.name}</h4>

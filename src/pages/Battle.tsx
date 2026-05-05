@@ -206,7 +206,7 @@ const ExitConfirmationModal = ({ targetPage, onConfirm, onCancel }: ExitConfirma
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 20 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="relative w-full max-w-sm bg-bg-surface border border-text-primary/10 rounded-2xl p-6 shadow-2xl glow-cyan"
+          className="relative w-full max-w-sm bg-bg-surface border border-main/10 rounded-2xl p-6 shadow-2xl glow-cyan"
         >
           <div className="hud-corner hud-corner--tl" />
           <div className="hud-corner hud-corner--tr" />
@@ -233,7 +233,7 @@ const ExitConfirmationModal = ({ targetPage, onConfirm, onCancel }: ExitConfirma
             <div className="flex gap-3 pt-2">
               <button
                 onClick={onCancel}
-                className="flex-1 px-4 py-3 bg-bg-primary border border-text-primary/20 text-text-primary font-bold uppercase tracking-wider rounded-xl hover:bg-text-primary/5 transition-all"
+                className="flex-1 px-4 py-3 bg-bg-primary border border-main/15 text-text-primary font-bold uppercase tracking-wider rounded-xl hover:bg-text-primary/5 transition-all"
               >
                 Batal
               </button>

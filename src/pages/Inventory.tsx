@@ -19,7 +19,7 @@ const rarityColor = (rarity: Item['rarity']) => {
   if (rarity === 'LEGENDARY') return 'text-yellow-400 border-yellow-400/30 bg-yellow-400/10';
   if (rarity === 'EPIC') return 'text-neon-pink border-neon-pink/30 bg-neon-pink/10';
   if (rarity === 'RARE') return 'text-main border-main/30 bg-main/10';
-  return 'text-text-secondary border-text-primary/10 bg-text-primary/5';
+  return 'text-text-secondary border-main/10 bg-text-primary/5';
 };
 
 const typeIcon = (type: Item['type']) => {
@@ -100,7 +100,7 @@ export const Inventory = ({ username, inventory, setInventory, powerScore }: Inv
   return (
     <div className="p-4 md:p-6 pb-24 md:pb-6 space-y-6 max-w-4xl mx-auto">
       {/* User Header */}
-      <div className="bg-bg-surface border border-text-primary/10 rounded-2xl p-5 flex justify-between items-center">
+      <div className="bg-bg-surface border border-main/10 rounded-2xl p-5 flex justify-between items-center">
         <div className="space-y-0.5">
           <span className="text-[10px] font-bold text-main uppercase tracking-widest">Username</span>
           <h3 className="text-2xl font-black uppercase tracking-tighter text-text-primary">{username || 'UNKNOWN'}</h3>
@@ -141,7 +141,7 @@ export const Inventory = ({ username, inventory, setInventory, powerScore }: Inv
               className={`flex-shrink-0 px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-full border transition-all ${
                 filter === tab
                   ? 'bg-main/10 border-main text-main'
-                  : 'border-text-primary/10 text-text-secondary hover:border-text-primary/30 hover:text-text-primary'
+                  : 'border-main/10 text-text-secondary hover:border-main/25 hover:text-text-primary'
               }`}
             >
               {tab}
@@ -151,7 +151,7 @@ export const Inventory = ({ username, inventory, setInventory, powerScore }: Inv
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {sortedItems.map((item, index) => {
-            let borderClasses = item.isEquipped ? 'border-main/40 bg-main/5' : 'border-text-primary/10 hover:border-text-primary/25';
+            let borderClasses = item.isEquipped ? 'border-main/40 bg-main/5' : 'border-main/10 hover:border-main/25';
             
             // Dynamic Rarity Effects
             if (item.rarity === 'LEGENDARY') {

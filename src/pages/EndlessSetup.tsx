@@ -75,7 +75,7 @@ export const EndlessSetup = ({ levels, records, onStart }: EndlessSetupProps) =>
           <h3 className="text-xs font-bold text-text-secondary uppercase tracking-widest">Riwayat Rekor</h3>
           <div className="space-y-2">
             {recentRecords.map((record, i) => (
-              <div key={i} className="bg-bg-surface border border-text-primary/10 rounded-xl p-3 flex justify-between items-center">
+              <div key={i} className="bg-bg-surface border border-main/10 rounded-xl p-3 flex justify-between items-center">
                 <span className="text-xs text-text-secondary">{new Date(record.date).toLocaleDateString()}</span>
                 <div className="flex gap-4 text-xs font-mono">
                   <span className="text-neon-pink">{record.enemiesBeaten} 💀</span>
@@ -103,16 +103,16 @@ export const EndlessSetup = ({ levels, records, onStart }: EndlessSetupProps) =>
                 className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all ${
                   isSelected
                     ? 'bg-main/10 border-main text-text-primary'
-                    : 'bg-bg-surface border-text-primary/10 text-text-secondary hover:border-text-primary/30'
+                    : 'bg-bg-surface border-main/10 text-text-secondary hover:border-main/25'
                 }`}
               >
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center border flex-shrink-0 ${isSelected ? 'border-main text-main bg-main/10' : 'border-text-primary/10 text-text-secondary'}`}>
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center border flex-shrink-0 ${isSelected ? 'border-main text-main bg-main/10' : 'border-main/10 text-text-secondary'}`}>
                   <IconComponent className="w-5 h-5" />
                 </div>
                 <div className="flex-1 text-left text-sm font-bold uppercase tracking-wide">
                   {level.name}
                 </div>
-                <div className={`w-5 h-5 rounded-md border flex items-center justify-center flex-shrink-0 ${isSelected ? 'border-main bg-main text-bg-primary' : 'border-text-primary/20'}`}>
+                <div className={`w-5 h-5 rounded-md border flex items-center justify-center flex-shrink-0 ${isSelected ? 'border-main bg-main text-bg-primary' : 'border-main/15'}`}>
                   {isSelected && <Icons.Check className="w-3 h-3" />}
                 </div>
               </motion.button>

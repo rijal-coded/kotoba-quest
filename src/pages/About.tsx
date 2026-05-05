@@ -52,7 +52,7 @@ export const About = ({ onNavigate, onResetData }: AboutProps) => {
         </motion.div>
       )}
 
-      <div className="space-y-4 text-text-secondary leading-relaxed text-left bg-bg-surface border border-text-primary/10 rounded-2xl p-6">
+      <div className="space-y-4 text-text-secondary leading-relaxed text-left bg-bg-surface border border-main/10 rounded-2xl p-6">
         <p>
           Kotoba Quest adalah sebuah eksperimen dalam gamifikasi pembelajaran bahasa.
           Menggabungkan estetika cyberpunk dengan metode pengulangan spasi untuk membantu
@@ -72,7 +72,7 @@ export const About = ({ onNavigate, onResetData }: AboutProps) => {
           </h2>
         </div>
 
-        <div className="pt-8 border-t border-text-primary/10">
+        <div className="pt-8 border-t border-main/10">
           <p className="text-xs uppercase tracking-widest text-text-secondary">
             Dibuat untuk Skripsi
           </p>
@@ -105,7 +105,7 @@ export const About = ({ onNavigate, onResetData }: AboutProps) => {
                 <button
                   type="button"
                   onClick={() => { setShowPasswordPrompt(false); setPassword(''); }}
-                  className="flex-1 px-4 py-2 border border-text-primary/20 text-text-secondary font-bold uppercase tracking-widest rounded-xl hover:border-text-primary/40 hover:text-text-primary transition-all"
+                  className="flex-1 px-4 py-2 border border-main/15 text-text-secondary font-bold uppercase tracking-widest rounded-xl hover:border-main/30 hover:text-text-primary transition-all"
                 >
                   Batal
                 </button>

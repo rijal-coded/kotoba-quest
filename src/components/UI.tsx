@@ -45,17 +45,17 @@ export const NavButton = ({ icon, label, active, disabled, onClick }: NavButtonP
     whileTap={!disabled ? { scale: 0.95 } : {}}
     className={`flex flex-col items-center justify-center gap-1.5 p-2 transition-all ${
       active
-        ? 'text-main glow-cyan'
+        ? 'text-main'
         : 'text-text-secondary hover:text-text-primary'
     } ${disabled ? 'opacity-40 cursor-not-allowed' : ''}`}
   >
-    <div className={`w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-lg transition-all ${
+    <div className={`w-10 h-10 md:w-11 md:h-11 flex items-center justify-center rounded-xl transition-all ${
       active
-        ? 'bg-main/10 border border-main/30'
-        : ''
+        ? 'bg-main/10 border border-main/30 shadow-[0_0_8px_rgba(0,156,255,0.25)]'
+        : 'hover:bg-text-primary/5'
     }`}>
       {icon}
     </div>
-    <span className="text-xs md:text-sm font-bold uppercase tracking-wider">{label}</span>
+    <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider">{label}</span>
   </motion.button>
 );

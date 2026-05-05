@@ -29,7 +29,7 @@
 
   /* Glass Effect */
   --glass-bg: rgba(21, 22, 20, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(0, 156, 255, 0.08);
 
   /* Animation Timings */
   --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
@@ -210,7 +210,7 @@
   }
 
   .block-button:disabled {
-    border-color: color-mix(in srgb, var(--text-primary), transparent 80%);
+    border-color: color-mix(in srgb, var(--main), transparent 80%);
     color: var(--text-secondary);
     cursor: not-allowed;
     opacity: 0.5;
@@ -220,7 +220,7 @@
     height: 0.625rem;
     width: 100%;
     background-color: color-mix(in srgb, var(--bg-surface), transparent 50%);
-    border: 1px solid color-mix(in srgb, var(--text-primary), transparent 90%);
+    border: 1px solid color-mix(in srgb, var(--main), transparent 85%);
     border-radius: 9999px;
     overflow: hidden;
     position: relative;
@@ -248,6 +248,10 @@
     bottom: 0;
     border-radius: 9999px;
     transition: all 0.5s var(--ease-out-expo);
+  }
+
+  .hp-bar-fill.inner-border {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
   }
 
   .hp-count {
@@ -285,7 +289,7 @@
   .skill-section {
     background-color: color-mix(in srgb, var(--bg-surface), transparent 70%);
     padding: 1rem;
-    border: 1px solid color-mix(in srgb, var(--text-primary), transparent 90%);
+    border: 1px solid color-mix(in srgb, var(--main), transparent 85%);
     border-radius: 0.75rem;
     display: flex;
     flex-direction: column;
@@ -373,7 +377,7 @@
     justify-content: center;
     gap: 0.5rem;
     border-radius: 0.75rem;
-    border: 1px solid color-mix(in srgb, var(--text-primary), transparent 90%);
+    border: 1px solid color-mix(in srgb, var(--main), transparent 85%);
     background-color: var(--bg-surface);
     color: var(--text-primary);
   }
@@ -520,7 +524,7 @@
     background: rgba(21, 22, 20, 0.7);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 156, 255, 0.05);
   }
 
   .glass-lg {
@@ -593,7 +597,7 @@
     background: var(--glass-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(156, 163, 175, 0.1); /* text-primary/10 */
+    border: 1px solid rgba(0, 156, 255, 0.1);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     border-radius: 0.75rem; /* rounded-2xl */
     transition: all 0.3s ease;
@@ -630,7 +634,7 @@
     .battle-panel--player {
       padding: 1.5rem;
       border-top: none;
-      border: 1px solid rgba(156, 163, 175, 0.1);
+      border: 1px solid rgba(0, 156, 255, 0.1);
       margin-top: 0;
     }
   }
@@ -670,10 +674,10 @@
 
   @keyframes enemy-idle-glow {
     0%, 100% {
-      box-shadow: 0 0 15px rgba(239, 68, 68, 0.15), 0 4px 20px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.08), 0 4px 15px rgba(0, 0, 0, 0.2);
     }
     50% {
-      box-shadow: 0 0 25px rgba(239, 68, 68, 0.35), 0 4px 20px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 0 14px rgba(239, 68, 68, 0.18), 0 4px 15px rgba(0, 0, 0, 0.2);
     }
   }
 
