@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Page, Level, GameMode, Item, EndlessRecord } from '../types';
+import { Page, Level, GameMode, Item, EndlessRecord, WordCoverage } from '../types';
 import { INITIAL_LEVELS, INITIAL_INVENTORY, MAX_INVENTORY_SLOTS } from '../constants';
 import { usePersistence } from './usePersistence';
 import { GAME_STATE_KEYS } from '../services/persistence/PersistenceAdapter';
@@ -36,9 +36,9 @@ export const useGameState = () => {
   const [levels, setLevels] = useState<Level[]>(INITIAL_LEVELS);
   const [inventory, setInventory] = useState<Item[]>(INITIAL_INVENTORY);
   const [username, setUsername] = useState<string>('');
-  const [powerScore, setPowerScore] = useState<number>(0);
+  const [strength, setStrength] = useState<number>(0);
   const [endlessRecords, setEndlessRecords] = useState<EndlessRecord[]>(emptyEndlessRecords);
-  const [gameMode, setGameMode] = useState<GameMode>('LEARNING');
+  const [gameMode, setGameMode] = useState<GameMode>('BELAJAR');
 
   // Ref to access latest state without re-creating callbacks
   const stateRef = useRef({
@@ -46,6 +46,7 @@ export const useGameState = () => {
     selectedLevel,
     gameMode,
     inventory,
+    lastPage: null as Page | null,
   });
 
   useEffect(() => {
@@ -54,6 +55,7 @@ export const useGameState = () => {
       selectedLevel,
       gameMode,
       inventory,
+      lastPage: stateRef.current.currentPage,
     };
   }, [currentPage, selectedLevel, gameMode, inventory]);
 
@@ -70,18 +72,20 @@ export const useGameState = () => {
         if (!mounted) return;
 
         // Apply loaded data with fallback to defaults if null/undefined
-        const loadedLevels = data[GAME_STATE_KEYS.LEVELS] ?? INITIAL_LEVELS;
+        const loadedLevels = (data[GAME_STATE_KEYS.LEVELS] ?? INITIAL_LEVELS).map(
+          (l: Level) => ({ ...l, seenWordIndices: l.seenWordIndices ?? [] })
+        );
         const loadedInventory = data[GAME_STATE_KEYS.INVENTORY] ?? INITIAL_INVENTORY;
         const loadedUsername = data[GAME_STATE_KEYS.USERNAME] ?? '';
-        const loadedPowerScore = data[GAME_STATE_KEYS.POWER_SCORE] ?? 0;
+        const loadedStrength = data[GAME_STATE_KEYS.STRENGTH] ?? data['power_score'] ?? 0;
         const loadedEndlessRecords = ensureArray(data[GAME_STATE_KEYS.ENDLESS_RECORDS], emptyEndlessRecords);
 
         setLevels(loadedLevels);
         setInventory(loadedInventory);
         setUsername(loadedUsername);
-        setPowerScore(loadedPowerScore);
+        setStrength(loadedStrength);
         setEndlessRecords(loadedEndlessRecords);
-        // gameMode stays at default LEARNING initially; we don't persist it
+        // gameMode stays at default BELAJAR initially; we don't persist it
 
         setIsHydrated(true);
       } catch (error) {
@@ -111,7 +115,7 @@ export const useGameState = () => {
         await Promise.all([
           persistence.save(GAME_STATE_KEYS.LEVELS, levels),
           persistence.save(GAME_STATE_KEYS.INVENTORY, inventory),
-          persistence.save(GAME_STATE_KEYS.POWER_SCORE, powerScore),
+          persistence.save(GAME_STATE_KEYS.STRENGTH, strength),
           persistence.save(GAME_STATE_KEYS.ENDLESS_RECORDS, endlessRecords),
         ]);
       } catch (error) {
@@ -120,14 +124,14 @@ export const useGameState = () => {
     }, 500);
 
     return () => clearTimeout(timeoutId);
-  }, [isHydrated, persistence, levels, inventory, powerScore, endlessRecords]);
+  }, [isHydrated, persistence, levels, inventory, strength, endlessRecords]);
 
   // ---------------------------------------------------------------------------
   // Navigation
   // ---------------------------------------------------------------------------
   const handleNavigate = useCallback((page: Page) => {
-    const { currentPage, selectedLevel, gameMode } = stateRef.current;
-    if (currentPage === 'BATTLE' && gameMode === 'TANTANGAN' && selectedLevel) {
+    const { currentPage, selectedLevel } = stateRef.current;
+    if (currentPage === 'BATTLE' && selectedLevel) {
       setPendingNav(page);
       return;
     }
@@ -154,7 +158,8 @@ export const useGameState = () => {
       enemiesBeaten?: number,
       wordsBeaten?: number,
       navigateTo?: Page,
-      currentInventory?: Item[]
+      currentInventory?: Item[],
+      wordCoverage?: WordCoverage[]
     ) => {
       const { selectedLevel, gameMode, inventory: globalInventory } = stateRef.current;
       const isTantangan = gameMode === 'TANTANGAN';
@@ -167,13 +172,14 @@ export const useGameState = () => {
             ...l,
             isCompleted: victory ? true : l.isCompleted,
             bestTime: victory ? (l.bestTime === 0 ? timeSpent : Math.min(l.bestTime, timeSpent)) : l.bestTime,
-            unlockedWordCount: newUnlocked
+            unlockedWordCount: newUnlocked,
+            wordCoverage: wordCoverage ?? l.wordCoverage,
           };
         }));
       }
 
       if (victory) {
-        setPowerScore(prev => prev + scoreEarned);
+        setStrength(prev => prev + scoreEarned);
       }
 
       if (currentInventory !== undefined) {
@@ -256,7 +262,7 @@ export const useGameState = () => {
         setCurrentPage('LEVEL_SELECT');
       }
     },
-    [setLevels, setPowerScore, setInventory, setEndlessRecords, setCurrentPage, setSelectedLevel, setPendingNav]
+    [setLevels, setStrength, setInventory, setEndlessRecords, setCurrentPage, setSelectedLevel, setPendingNav]
   );
 
   const handleSetUsername = useCallback((name: string) => {
@@ -268,9 +274,9 @@ export const useGameState = () => {
     setLevels(INITIAL_LEVELS);
     setInventory(INITIAL_INVENTORY);
     setUsername('');
-    setPowerScore(0);
+    setStrength(0);
     setEndlessRecords(emptyEndlessRecords);
-    setGameMode('LEARNING');
+    setGameMode('BELAJAR');
     setCurrentPage('HOME');
     setSelectedLevel(null);
     setPendingNav(null);
@@ -283,6 +289,37 @@ export const useGameState = () => {
     if (!isHydrated) return;
     persistence.save(GAME_STATE_KEYS.USERNAME, username).catch(console.error);
   }, [isHydrated, persistence, username]);
+
+  // ---------------------------------------------------------------------------
+  // Mark word as seen in Belajar mode (for Words page collection)
+  // ---------------------------------------------------------------------------
+  const markWordSeen = useCallback((levelId: string, wordIndex: number) => {
+    setLevels(prev => prev.map(l => {
+      if (l.id !== levelId) return l;
+      if (l.seenWordIndices.includes(wordIndex)) return l;
+      return { ...l, seenWordIndices: [...l.seenWordIndices, wordIndex] };
+    }));
+  }, [setLevels]);
+
+  // ---------------------------------------------------------------------------
+  // Debug: unlock all words in a level
+  // ---------------------------------------------------------------------------
+  const unlockLevel = useCallback((levelId: string) => {
+    setLevels(prev => prev.map(l => {
+      if (l.id !== levelId) return l;
+      return { ...l, seenWordIndices: l.words.map((_, i) => i) };
+    }));
+  }, [setLevels]);
+
+  // ---------------------------------------------------------------------------
+  // Debug: unlock all words in all levels
+  // ---------------------------------------------------------------------------
+  const unlockAllLevels = useCallback(() => {
+    setLevels(prev => prev.map(l => ({
+      ...l,
+      seenWordIndices: l.words.map((_, i) => i),
+    })));
+  }, [setLevels]);
 
   return {
     // Hydration status
@@ -301,8 +338,8 @@ export const useGameState = () => {
     setInventory,
     username,
     setUsername,
-    powerScore,
-    setPowerScore,
+strength,
+  setStrength,
     endlessRecords,
     setEndlessRecords,
     gameMode,
@@ -313,5 +350,8 @@ export const useGameState = () => {
     handleBattleFinish,
     handleSetUsername,
     handleResetData,
+    markWordSeen,
+    unlockLevel,
+    unlockAllLevels,
   };
 };

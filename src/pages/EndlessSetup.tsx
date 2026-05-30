@@ -69,7 +69,7 @@ export const EndlessSetup = ({ levels, records, onStart }: EndlessSetupProps) =>
               <div key={i} className="bg-bg-surface border border-text-primary/10 rounded-xl p-3 flex justify-between items-center">
                 <span className="text-xs text-text-secondary">{new Date(record.date).toLocaleDateString()}</span>
                 <div className="flex gap-4 text-xs font-mono">
-                  <span className="text-neon-pink">{record.enemiesBeaten} 💀</span>
+                  <span className="text-neon-pink">{record.enemiesBeaten} </span>
                   <span className="text-accent">{record.wordsBeaten} ✓</span>
                 </div>
               </div>

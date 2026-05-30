@@ -1,10 +1,9 @@
-import { useReducer, useEffect, useMemo, useState, useRef, Dispatch, SetStateAction } from 'react';
-import { Level, Item, Word, GameMode } from '../types';
-import { generateEnemy, EnemyTemplate } from '../utils/enemyUtils';
+import { useReducer, useEffect, useMemo, useRef } from 'react';
+import { Level, Item, GameMode } from '../types';
+import { generateEnemy, EnemyTemplate, ProgressContext } from '../utils/enemyUtils';
+import { computeEquippedStats } from '../utils/equipmentStats';
 
-// Battle constants
-const BASE_DAMAGE = 30;
-const BASE_SP_GAIN = 35;
+const BASE_DAMAGE = 25;
 
 export interface BattleState {
   playerHP: number;
@@ -13,63 +12,76 @@ export interface BattleState {
   maxEnemyHP: number;
   currentEnemy: EnemyTemplate;
   currentLevel: Level;
-  currentWordIndex: number;
-  endlessRandomIndex: number; // Stabilizes random word selection
   score: number;
   wordsBeaten: number;
   enemiesBeaten: number;
   equipped: {
     weapon: Item | null;
     shield: Item | null;
+    armor: Item | null;
+    helm: Item | null;
     accessory: Item | null;
   };
-  skillPoints: number;
+  actionPoints: number;
   isShieldActive: boolean;
   feedback: 'CORRECT' | 'WRONG' | 'SHIELD' | null;
   shake: boolean;
   showVictory: boolean;
   showDefeat: boolean;
   enemyCooldown: number;
-  inventory: Item[]; // For self-contained battle modes
+  inventory: Item[];
+  isPaused: boolean;
+  isBossActive: boolean;
 }
 
 export type BattleAction =
-  | { type: 'ANSWER_CORRECT'; weaponBonus: number; spGain: number }
+  | { type: 'ANSWER_CORRECT'; weaponBonus: number; critTriggered: boolean }
   | { type: 'ANSWER_WRONG' }
   | { type: 'CLEAR_FEEDBACK' }
   | { type: 'ENEMY_ATTACK_TICK'; speedModifier: number }
-  | { type: 'ENEMY_ATTACK_HIT'; damage: number }
+  | { type: 'ENEMY_ATTACK_HIT'; damage: number; blockTriggered: boolean; isFullBlock: boolean }
   | { type: 'ENEMY_ATTACK_BLOCKED' }
   | { type: 'ENEMY_DEFEATED'; nextEnemy: EnemyTemplate }
   | { type: 'USE_SKILL_ATTACK' }
   | { type: 'USE_SKILL_DEFEND' }
   | { type: 'USE_ITEM_HEAL'; amount: number }
   | { type: 'USE_ITEM_CONSUME'; itemId: string }
-  | { type: 'NEXT_WORD'; endlessRandomIndex: number }
   | { type: 'TRIGGER_VICTORY' }
   | { type: 'TRIGGER_DEFEAT' }
-  | { type: 'SYNC_LEVEL'; level: Level };
+  | { type: 'SYNC_LEVEL'; level: Level }
+  | { type: 'SET_PAUSED'; paused: boolean }
+  | { type: 'SET_BOSS'; isBoss: boolean };
 
-export const initialBattleState = (level: Level, inventory: Item[] = []): BattleState => {
-  const initialEnemy = generateEnemy(0);
+export const initialBattleState = (level: Level, inventory: Item[] = [], progressContext?: ProgressContext): BattleState => {
   const equippedWeapon = inventory.find(i => i.type === 'WEAPON' && i.isEquipped) || null;
   const equippedShield = inventory.find(i => i.type === 'SHIELD' && i.isEquipped) || null;
+  const equippedArmor = inventory.find(i => i.type === 'ARMOR' && i.isEquipped) || null;
+  const equippedHelm = inventory.find(i => i.type === 'HELM' && i.isEquipped) || null;
   const equippedAccessory = inventory.find(i => i.type === 'ACCESSORY' && i.isEquipped) || null;
 
+  const stats = computeEquippedStats(inventory);
+  const maxHp = 200 + stats.totalHpBonus;
+
+  const initialEnemy = generateEnemy(0, false, progressContext);
+
   return {
-    playerHP: 150,
-    maxPlayerHP: 150,
+    playerHP: maxHp,
+    maxPlayerHP: maxHp,
     enemyHP: initialEnemy.hp,
     maxEnemyHP: initialEnemy.maxHp,
     currentEnemy: initialEnemy,
     currentLevel: level,
-    currentWordIndex: 0,
-    endlessRandomIndex: 0,
     score: 0,
     wordsBeaten: 0,
     enemiesBeaten: 0,
-    equipped: { weapon: equippedWeapon, shield: equippedShield, accessory: equippedAccessory },
-    skillPoints: 0,
+    equipped: {
+      weapon: equippedWeapon,
+      shield: equippedShield,
+      armor: equippedArmor,
+      helm: equippedHelm,
+      accessory: equippedAccessory,
+    },
+    actionPoints: 5,
     isShieldActive: false,
     feedback: null,
     shake: false,
@@ -77,6 +89,8 @@ export const initialBattleState = (level: Level, inventory: Item[] = []): Battle
     showDefeat: false,
     enemyCooldown: 0,
     inventory,
+    isPaused: false,
+    isBossActive: false,
   };
 };
 
@@ -84,59 +98,59 @@ export const battleReducer = (state: BattleState, action: BattleAction): BattleS
   switch (action.type) {
     case 'SYNC_LEVEL':
       return { ...state, currentLevel: action.level };
-
+    case 'SET_PAUSED':
+      return { ...state, isPaused: action.paused };
+    case 'SET_BOSS':
+      return { ...state, isBossActive: action.isBoss };
     case 'ANSWER_CORRECT': {
-      const damage = BASE_DAMAGE + action.weaponBonus;
+      const damage = BASE_DAMAGE + action.weaponBonus + (action.critTriggered ? action.weaponBonus : 0);
       return {
         ...state,
         feedback: 'CORRECT',
         enemyHP: Math.max(0, state.enemyHP - damage),
         wordsBeaten: state.wordsBeaten + 1,
-        score: state.score + 100,
-        skillPoints: Math.min(100, state.skillPoints + action.spGain),
+        score: state.score + (action.critTriggered ? 200 : 100),
+        actionPoints: Math.min(10, state.actionPoints + 1),
       };
     }
-
-    case 'ANSWER_WRONG':
+    case 'ANSWER_WRONG': {
+      const tierAvg = getEquippedTierAvg(state.equipped);
+      const scalingDmg = Math.max(10, Math.floor(25 * (1 + tierAvg * 0.15)));
       return {
         ...state,
         feedback: 'WRONG',
         shake: true,
-        playerHP: Math.max(0, state.playerHP - 10),
+        playerHP: Math.max(0, state.playerHP - scalingDmg),
+        actionPoints: 0,
       };
-
+    }
     case 'CLEAR_FEEDBACK':
       return { ...state, feedback: null, shake: false };
-
-    case 'NEXT_WORD':
-      return { 
-        ...state, 
-        currentWordIndex: state.currentWordIndex + 1,
-        endlessRandomIndex: action.endlessRandomIndex
-      };
-
     case 'ENEMY_ATTACK_TICK':
       return { ...state, enemyCooldown: Math.min(100, state.enemyCooldown + (5 * action.speedModifier)) };
-
     case 'ENEMY_ATTACK_HIT': {
-      const shieldBonus = state.equipped.shield?.defenseBonus || 0;
-      const actualDamage = Math.max(1, action.damage - shieldBonus);
+      const defenseBonus = state.equipped.shield?.defenseBonus ?? 0;
+      const armorBonus = state.equipped.armor?.defenseBonus ?? 0;
+      const helmBonus = state.equipped.helm?.defenseBonus ?? 0;
+      const accessoryDef = state.equipped.accessory?.defenseBonus ?? 0;
+      const totalDefense = defenseBonus + armorBonus + helmBonus + accessoryDef;
+      let finalDamage: number;
+      if (action.blockTriggered && action.isFullBlock) {
+        finalDamage = 0;
+      } else if (action.blockTriggered) {
+        finalDamage = Math.max(1, Math.floor(action.damage * 0.5) - totalDefense);
+      } else {
+        finalDamage = Math.max(1, action.damage - totalDefense);
+      }
       return {
         ...state,
         shake: true,
-        playerHP: Math.max(0, state.playerHP - actualDamage),
+        playerHP: Math.max(0, state.playerHP - finalDamage),
         enemyCooldown: 0,
       };
     }
-
     case 'ENEMY_ATTACK_BLOCKED':
-      return {
-        ...state,
-        feedback: 'SHIELD',
-        isShieldActive: false,
-        enemyCooldown: 0,
-      };
-
+      return { ...state, feedback: 'SHIELD', isShieldActive: false, enemyCooldown: 0 };
     case 'ENEMY_DEFEATED':
       return {
         ...state,
@@ -144,77 +158,83 @@ export const battleReducer = (state: BattleState, action: BattleAction): BattleS
         maxEnemyHP: action.nextEnemy.maxHp,
         currentEnemy: action.nextEnemy,
         enemiesBeaten: state.enemiesBeaten + 1,
+        enemyCooldown: 0,
       };
-
     case 'USE_SKILL_ATTACK': {
-      const newEnemyHP = Math.max(0, state.enemyHP - 40);
-      return {
-        ...state,
-        skillPoints: state.skillPoints - 30,
-        enemyHP: newEnemyHP,
-      };
+      const newEnemyHP = Math.max(0, state.enemyHP - 55);
+      return { ...state, actionPoints: Math.max(0, state.actionPoints - 3), enemyHP: newEnemyHP };
     }
-
     case 'USE_SKILL_DEFEND':
-      return {
-        ...state,
-        skillPoints: state.skillPoints - 20,
-        isShieldActive: true,
-      };
-
+      return { ...state, actionPoints: Math.max(0, state.actionPoints - 2), isShieldActive: true };
     case 'USE_ITEM_HEAL':
-      return {
-        ...state,
-        playerHP: Math.min(state.maxPlayerHP, state.playerHP + action.amount),
-      };
-
+      return { ...state, playerHP: Math.min(state.maxPlayerHP, state.playerHP + action.amount) };
     case 'USE_ITEM_CONSUME':
       return {
         ...state,
         inventory: state.inventory.map(i =>
-          i.id === action.itemId
-            ? { ...i, count: Math.max(0, (i.count || 1) - 1) }
-            : i
+          i.id === action.itemId ? { ...i, count: Math.max(0, (i.count || 1) - 1) } : i
         ),
       };
-
     case 'TRIGGER_VICTORY':
       return { ...state, showVictory: true };
-
     case 'TRIGGER_DEFEAT':
       return { ...state, showDefeat: true };
-
     default:
       return state;
   }
 };
 
+function getEquippedTierAvg(equipped: BattleState['equipped']): number {
+  const items = [equipped.weapon, equipped.shield, equipped.armor, equipped.helm, equipped.accessory].filter((i): i is Item => !!i && typeof i.tier === 'number');
+  if (items.length === 0) return 0;
+  return items.reduce((sum, i) => sum + i.tier, 0) / items.length;
+}
+
 export const useBattleEngine = (
   level: Level,
   isEndless: boolean | undefined,
   inventory: Item[] = [],
-  gameMode: GameMode = 'LEARNING'
+  gameMode: GameMode = 'BELAJAR',
+  completedLevels: number = 0
 ) => {
-  const [state, dispatch] = useReducer(battleReducer, level, (l) => initialBattleState(l, inventory));
+  const equippedWeapon = inventory.find(i => i.type === 'WEAPON' && i.isEquipped);
+  const equippedShield = inventory.find(i => i.type === 'SHIELD' && i.isEquipped);
+  const equippedArmor = inventory.find(i => i.type === 'ARMOR' && i.isEquipped);
+  const equippedHelm = inventory.find(i => i.type === 'HELM' && i.isEquipped);
+  const equippedAccessory = inventory.find(i => i.type === 'ACCESSORY' && i.isEquipped);
+  const stats = computeEquippedStats(inventory);
+  const tierAvg = getEquippedTierAvg({ weapon: equippedWeapon, shield: equippedShield, armor: equippedArmor, helm: equippedHelm, accessory: equippedAccessory });
 
-  // Sync level state
+  const progressContext: ProgressContext = {
+    completedLevels,
+    totalLevels: 20,
+    equippedAttack: stats.totalAttack,
+    equippedDefense: stats.totalDefense,
+    equippedMaxHp: stats.totalHpBonus,
+    playerTierAvg: tierAvg,
+  };
+
+  const [state, dispatch] = useReducer(battleReducer, level, (l) => initialBattleState(l, inventory, progressContext));
+
   useEffect(() => {
     dispatch({ type: 'SYNC_LEVEL', level });
   }, [level]);
 
-  // Enemy Attack Timer
-  // Use a ref to access latest state without recreating interval
   const stateRef = useRef(state);
-  useEffect(() => {
-    stateRef.current = state;
-  }, [state]);
+  useEffect(() => { stateRef.current = state; }, [state]);
 
-  // Compute isActive as a single dependency to avoid unnecessary timer restarts
-  const isActive = state.playerHP > 0 && state.enemyHP > 0 && !state.showVictory && !state.showDefeat;
+  const isActive = state.playerHP > 0 && state.enemyHP > 0 && !state.showVictory && !state.showDefeat && !state.isPaused;
+
+  const modeModifiers = useMemo(() => {
+    switch (gameMode) {
+      case 'BELAJAR': return { speedMult: 0.9, damageTakenMult: 0.8 };
+      case 'LATIHAN': return { speedMult: 1.4, damageTakenMult: 1.2 };
+      case 'TANTANGAN': default: return { speedMult: 1.2, damageTakenMult: 1.0 };
+    }
+  }, [gameMode]);
 
   useEffect(() => {
     if (!isActive) return;
-
     const timer = setInterval(() => {
       const currentState = stateRef.current;
       if (currentState.enemyCooldown >= 100) {
@@ -223,101 +243,73 @@ export const useBattleEngine = (
           setTimeout(() => dispatch({ type: 'CLEAR_FEEDBACK' }), 600);
         } else {
           const rawDamage = currentState.currentEnemy.damage;
-          const adjustedDamage = Math.max(1, Math.floor(rawDamage * modeModifiers.damageTakenMult));
-          dispatch({ type: 'ENEMY_ATTACK_HIT', damage: adjustedDamage });
+          const adjustedDamage = Math.max(1, Math.floor(rawDamage * (modeModifiers?.damageTakenMult ?? 1)));
+          const critRoll = Math.random() * 100;
+          const isFullBlock = false;
+          const blockTriggered = false;
+          const weaponBlock = currentState.equipped.weapon?.blockChance ?? 0;
+          const shieldBlock = currentState.equipped.shield?.blockChance ?? 0;
+          const armorBlock = currentState.equipped.armor?.blockChance ?? 0;
+          const helmBlock = currentState.equipped.helm?.blockChance ?? 0;
+          const accessoryBlock = currentState.equipped.accessory?.blockChance ?? 0;
+          const totalBlockChance = weaponBlock + shieldBlock + armorBlock + helmBlock + accessoryBlock;
+          const blockRoll = totalBlockChance > 0 ? Math.random() * 100 : 999;
+          const isFullBlockRoll = blockRoll < totalBlockChance * 0.35;
+          const blockTriggeredFinal = blockRoll < totalBlockChance;
+          dispatch({
+            type: 'ENEMY_ATTACK_HIT',
+            damage: adjustedDamage,
+            blockTriggered: blockTriggeredFinal,
+            isFullBlock: isFullBlockRoll,
+          });
           setTimeout(() => dispatch({ type: 'CLEAR_FEEDBACK' }), 500);
         }
       } else {
-        // Base speed modifier from tier, then apply mode multiplier
-        const baseSpeedModifier = 0.5 + (currentState.currentEnemy.tier * 0.2);
-        // Cap enemy speed at tier 4 effect (max multiplier 1.3 before mode mod)
-        const cappedTier = Math.min(currentState.currentEnemy.tier, 4);
-        const tierCappedSpeed = 0.5 + (cappedTier * 0.2);
-        const speedModifier = tierCappedSpeed * modeModifiers.speedMult;
+        const speedModifier = (1.5 + (currentState.currentEnemy.tier * 0.4)) * (modeModifiers?.speedMult ?? 1);
         dispatch({ type: 'ENEMY_ATTACK_TICK', speedModifier });
       }
     }, 500);
-
     return () => clearInterval(timer);
-  }, [isActive]); // Only restart when battle becomes active/inactive
+  }, [isActive, modeModifiers]);
 
-  // Mode-specific modifiers
-  const modeModifiers = useMemo(() => {
-    switch (gameMode) {
-      case 'LEARNING':
-        return { speedMult: 0.7, spGainMult: 1.5, damageTakenMult: 0.8 };
-      case 'PRACTICE':
-        return { speedMult: 1.3, spGainMult: 0.8, damageTakenMult: 1.2 };
-      case 'TANTANGAN':
-      default:
-        return { speedMult: 1.0, spGainMult: 1.0, damageTakenMult: 1.0 };
-    }
-  }, [gameMode]);
-
-  const activeWords = useMemo(() => {
-    if (isEndless || gameMode === 'TANTANGAN') {
-      // For TANTANGAN, behave like endless (random selection from unlocked words)
-      return state.currentLevel.words.slice(0, state.currentLevel.unlockedWordCount);
-    }
-    return state.currentLevel.words.slice(0, state.currentLevel.unlockedWordCount);
-  }, [state.currentLevel, isEndless, gameMode]);
-
-  const currentWord = useMemo(() => {
-    if (isEndless || gameMode === 'TANTANGAN') {
-      return activeWords[state.endlessRandomIndex % activeWords.length];
-    }
-    return activeWords[state.currentWordIndex % activeWords.length];
-  }, [state.currentWordIndex, state.endlessRandomIndex, activeWords, isEndless, gameMode]);
-
-  // Enemy Death logic
   useEffect(() => {
     if (state.enemyHP <= 0 && !state.showVictory && !state.showDefeat) {
-      const newlyGeneratedEnemy = generateEnemy(state.enemiesBeaten + 1);
-      dispatch({ type: 'ENEMY_DEFEATED', nextEnemy: newlyGeneratedEnemy });
-      
-      // Auto-advance word if enemy was killed by skill
-      if (state.feedback === null) {
-        dispatch({ type: 'NEXT_WORD', endlessRandomIndex: Math.floor(Math.random() * activeWords.length) });
+      if (state.isBossActive) {
+        dispatch({ type: 'TRIGGER_VICTORY' });
+      } else {
+        const next = state.enemiesBeaten + 1;
+        const newlyGeneratedEnemy = generateEnemy(next, false, progressContext);
+        dispatch({ type: 'ENEMY_DEFEATED', nextEnemy: newlyGeneratedEnemy });
       }
     }
-  }, [state.enemyHP, state.showVictory, state.showDefeat, state.enemiesBeaten, state.feedback, activeWords.length]);
+  }, [state.enemyHP, state.showVictory, state.showDefeat, state.enemiesBeaten, state.isBossActive, progressContext]);
 
-  // Unified Victory / Defeat Detection
   useEffect(() => {
     if (state.playerHP <= 0 && !state.showDefeat) {
       dispatch({ type: 'TRIGGER_DEFEAT' });
-    } else if (!isEndless && state.currentWordIndex >= activeWords.length && !state.showVictory) {
-      dispatch({ type: 'TRIGGER_VICTORY' });
     }
-  }, [state.playerHP, state.currentWordIndex, activeWords.length, isEndless, state.showVictory, state.showDefeat]);
+  }, [state.playerHP, state.showDefeat]);
 
-  // Actions API
   const answerWord = (isCorrect: boolean) => {
     if (isCorrect) {
-      const weaponBonus = state.equipped.weapon?.attackBonus || 0;
-      const spGain = Math.min(100, Math.floor(BASE_SP_GAIN * modeModifiers.spGainMult));
-      dispatch({ type: 'ANSWER_CORRECT', weaponBonus, spGain });
+      const weaponBonus = state.equipped.weapon?.attackBonus ?? 0;
+      const critChance = state.equipped.weapon?.critChance ?? 0;
+      const critTriggered = Math.random() * 100 < critChance;
+      dispatch({ type: 'ANSWER_CORRECT', weaponBonus, critTriggered });
     } else {
       dispatch({ type: 'ANSWER_WRONG' });
     }
-
-    setTimeout(() => {
-      dispatch({ type: 'CLEAR_FEEDBACK' });
-      dispatch({
-        type: 'NEXT_WORD',
-        endlessRandomIndex: Math.floor(Math.random() * activeWords.length)
-      });
-    }, 600);
+    setTimeout(() => dispatch({ type: 'CLEAR_FEEDBACK' }), 600);
   };
 
   const useAttackSkill = () => {
-    if (state.skillPoints >= 30 && state.enemyHP > 0) {
+    if (state.actionPoints >= 3 && state.enemyHP > 0) {
       dispatch({ type: 'USE_SKILL_ATTACK' });
     }
   };
 
   const useDefendSkill = () => {
-    if (state.skillPoints >= 20 && !state.isShieldActive) {
+    if (state.actionPoints >= 2 && !state.isShieldActive) {
       dispatch({ type: 'USE_SKILL_DEFEND' });
     }
   };
@@ -330,21 +322,24 @@ export const useBattleEngine = (
     dispatch({ type: 'USE_ITEM_CONSUME', itemId });
   };
 
-  const triggerVictory = () => {
-    dispatch({ type: 'TRIGGER_VICTORY' });
-  };
+  const triggerVictory = () => dispatch({ type: 'TRIGGER_VICTORY' });
+  const triggerDefeat = () => dispatch({ type: 'TRIGGER_DEFEAT' });
+
+  const setPaused = (paused: boolean) => dispatch({ type: 'SET_PAUSED', paused });
+  const setBoss = (isBoss: boolean) => dispatch({ type: 'SET_BOSS', isBoss });
 
   return {
     state,
-    activeWords,
-    currentWord,
     actions: {
       answerWord,
       useAttackSkill,
       useDefendSkill,
       healPlayer,
       consumeItem,
-      triggerVictory
-    }
+      triggerVictory,
+      triggerDefeat,
+      setPaused,
+      setBoss,
+    },
   };
 };

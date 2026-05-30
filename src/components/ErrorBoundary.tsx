@@ -45,16 +45,19 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             className="max-w-md w-full space-y-6 text-center"
           >
             <div className="space-y-4">
-              <AlertTriangle className="w-16 h-16 text-neon-pink mx-auto" />
-              <h2 className="text-2xl font-black uppercase tracking-widest text-neon-pink">
+              <div className="w-16 h-16 mx-auto rounded-full bg-danger/10 flex items-center justify-center">
+                <AlertTriangle className="w-8 h-8 text-danger" />
+              </div>
+              <h2 className="text-2xl font-bold text-danger"
+                style={{ fontFamily: 'var(--font-display)' }}>
                 Terjadi Kesalahan
               </h2>
-              <p className="text-text-secondary leading-relaxed">
+              <p className="text-text-secondary leading-relaxed text-sm">
                 Something went wrong. This error has been logged.
               </p>
               {this.state.error && (
-                <details className="text-left bg-bg-surface border border-text-primary/10 rounded-xl p-4">
-                  <summary className="cursor-pointer text-sm font-bold uppercase tracking-widest text-main">
+                <details className="text-left kawaii-card p-4">
+                  <summary className="cursor-pointer text-sm font-bold text-main">
                     Error Details
                   </summary>
                   <pre className="mt-3 text-xs text-text-secondary font-mono overflow-x-auto whitespace-pre-wrap">
@@ -65,7 +68,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             </div>
             <button
               onClick={this.handleRetry}
-              className="flex items-center justify-center gap-2 w-full px-8 py-3 bg-main text-bg-primary font-black uppercase tracking-widest rounded-xl hover:brightness-110 transition-all"
+              className="kawaii-btn w-full px-8 py-3"
             >
               <RefreshCw className="w-4 h-4" />
               Coba Lagi

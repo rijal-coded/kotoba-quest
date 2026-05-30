@@ -1,6 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Page } from '../types';
+import { Sparkles, Star } from 'lucide-react';
 
 interface HomeProps {
   onStart: (page: Page) => void;
@@ -41,24 +42,38 @@ export const Home = ({ onStart, username, onSetUsername, onResetData }: HomeProp
     }
   };
 
-  // Pre-computed class strings — avoids inline ternary logic inside JSX
-  const primaryBtnClass =
-    'w-full px-12 py-4 bg-main text-bg-primary font-black text-xl tracking-widest uppercase rounded-xl shadow-[0_4px_20px_rgba(0,156,255,0.3)] hover:brightness-110 transition-all';
-  const secondaryBtnClass =
-    'w-full px-12 py-4 border border-text-primary/20 text-text-secondary font-black text-xl tracking-widest uppercase rounded-xl hover:text-text-primary hover:border-text-primary/40 transition-all';
-
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] p-6 text-center">
+    <div className="flex flex-col items-center justify-center min-h-[70vh] p-6 text-center relative">
+      {/* Floating sparkles */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute text-main/10"
+            animate={{ y: [-10, -40], opacity: [0, 0.5, 0], rotate: [0, 180] }}
+            transition={{ duration: 3 + i * 0.5, delay: i * 0.4, repeat: Infinity }}
+            style={{ left: `${10 + i * 11}%`, top: '70%' }}
+          >
+            <Star className="w-3 h-3" />
+          </motion.div>
+        ))}
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-8 w-full max-w-sm"
+        className="space-y-8 w-full max-w-sm relative z-10"
       >
         <div className="space-y-3">
-          <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase text-main drop-shadow-[0_0_20px_rgba(0,156,255,0.3)]">
-            KOTOBA QUEST
-          </h2>
-          <p className="text-text-secondary tracking-[0.2em] uppercase text-sm">
+          <div className="flex items-center justify-center gap-2">
+            <Sparkles className="w-6 h-6 text-main" />
+            <h2 className="text-4xl md:text-6xl font-bold text-main"
+              style={{ fontFamily: 'var(--font-display)' }}>
+              Kotoba Quest
+            </h2>
+            <Sparkles className="w-6 h-6 text-main" />
+          </div>
+          <p className="text-text-secondary text-sm">
             Master the language. Win the battle.
           </p>
         </div>
@@ -73,21 +88,21 @@ export const Home = ({ onStart, username, onSetUsername, onResetData }: HomeProp
                 exit={{ opacity: 0, scale: 0.9 }}
                 className="space-y-5 w-full"
               >
-                <p className="text-neon-pink font-bold uppercase tracking-widest text-sm border border-neon-pink/40 p-4 bg-neon-pink/10 rounded-2xl leading-relaxed">
+                <p className="kawaii-badge kawaii-badge--danger text-sm p-4 w-full justify-center rounded-xl">
                   Memulai game baru akan menimpa data sebelumnya. Lanjutkan?
                 </p>
                 <div className="flex gap-3 justify-center">
                   <button
                     onClick={() => handleConfirmReset(true)}
-                    className="flex-1 px-8 py-3 bg-neon-pink text-bg-primary font-black uppercase tracking-widest rounded-xl hover:brightness-110 transition-all"
+                    className="kawaii-btn-danger flex-1 px-8 py-3"
                   >
-                    IYA
+                    Iya
                   </button>
                   <button
                     onClick={() => handleConfirmReset(false)}
-                    className="flex-1 px-8 py-3 border border-text-primary/20 text-text-secondary font-bold uppercase tracking-widest rounded-xl hover:text-text-primary hover:border-text-primary/40 transition-all"
+                    className="kawaii-btn-outline flex-1 px-8 py-3"
                   >
-                    TIDAK
+                    Tidak
                   </button>
                 </div>
               </motion.div>
@@ -104,15 +119,15 @@ export const Home = ({ onStart, username, onSetUsername, onResetData }: HomeProp
                   type="text"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="ENTER USERNAME"
-                  className="w-full bg-bg-surface border-2 border-main/50 px-6 py-3 rounded-xl text-center font-mono text-xl uppercase tracking-widest text-main focus:outline-none focus:border-main focus:shadow-[0_0_15px_rgba(0,156,255,0.2)] transition-all"
+                  placeholder="Masukkan namamu..."
+                  className="kawaii-input text-center text-lg"
                   autoFocus
                   maxLength={15}
                 />
                 <button
                   type="submit"
                   disabled={!inputValue.trim()}
-                  className="w-full px-8 py-3 bg-main text-bg-primary font-black tracking-widest uppercase disabled:opacity-50 transition-all rounded-xl hover:brightness-110 shadow-[0_4px_15px_rgba(0,156,255,0.3)]"
+                  className="kawaii-btn w-full px-8 py-3"
                 >
                   Mulai
                 </button>
@@ -130,7 +145,7 @@ export const Home = ({ onStart, username, onSetUsername, onResetData }: HomeProp
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => onStart('MODE_SELECT')}
-                    className={primaryBtnClass}
+                    className="kawaii-btn w-full px-12 py-4 text-lg"
                   >
                     Lanjutkan
                   </motion.button>
@@ -139,7 +154,7 @@ export const Home = ({ onStart, username, onSetUsername, onResetData }: HomeProp
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleNewGameClick}
-                  className={username ? secondaryBtnClass : primaryBtnClass}
+                  className={username ? 'kawaii-btn-outline w-full px-12 py-4 text-lg' : 'kawaii-btn w-full px-12 py-4 text-lg'}
                 >
                   Permainan Baru
                 </motion.button>

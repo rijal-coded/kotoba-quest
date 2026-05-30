@@ -1,0 +1,87 @@
+import { motion } from 'motion/react';
+import { CheckCircle, XCircle, ArrowRight, Sparkles } from 'lucide-react';
+import { Word } from '../../types';
+
+interface WordReviewItem {
+  word: Word;
+  correct: boolean;
+}
+
+interface WordReviewProps {
+  items: WordReviewItem[];
+  score: number;
+  onContinue: () => void;
+}
+
+export const WordReview = ({ items, score, onContinue }: WordReviewProps) => {
+  const correctCount = items.filter(i => i.correct).length;
+  const accuracy = items.length > 0 ? Math.round((correctCount / items.length) * 100) : 0;
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[70vh] p-6 text-center">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-lg space-y-6"
+      >
+        <div className="space-y-2">
+          <div className="flex items-center justify-center gap-2">
+            <Sparkles className="w-5 h-5 text-main" />
+            <h2 className="text-2xl md:text-3xl font-bold text-main"
+              style={{ fontFamily: 'var(--font-display)' }}>
+              Word Review
+            </h2>
+            <Sparkles className="w-5 h-5 text-main" />
+          </div>
+          <div className="flex justify-center gap-4 text-sm font-mono">
+            <span className="text-accent">{correctCount} benar</span>
+            <span className="text-text-secondary">|</span>
+            <span className="text-danger">{items.length - correctCount} salah</span>
+            <span className="text-text-secondary">|</span>
+            <span className="text-main">{accuracy}% akurasi</span>
+          </div>
+        </div>
+
+        <div className="space-y-2 max-h-[40vh] overflow-y-auto pr-1">
+          {items.map((item, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, x: item.correct ? -20 : 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.03 }}
+              className={`flex items-center gap-3 p-3 rounded-xl border ${
+                item.correct
+                  ? 'border-accent/30 bg-accent/5'
+                  : 'border-danger/30 bg-danger/5'
+              }`}
+            >
+              {item.correct ? (
+                <CheckCircle className="w-4 h-4 text-accent shrink-0" />
+              ) : (
+                <XCircle className="w-4 h-4 text-danger shrink-0" />
+              )}
+              <div className="flex-1 text-left min-w-0">
+                <span className="text-sm font-bold text-text-primary">
+                  {item.word.kanji || item.word.japanese}
+                </span>
+                <span className="text-xs text-text-secondary ml-2">
+                  {item.word.indonesian}
+                </span>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={onContinue}
+          className="kawaii-btn px-8 py-3"
+        >
+          Lanjut
+          <ArrowRight className="w-4 h-4" />
+        </motion.button>
+      </motion.div>
+    </div>
+  );
+};

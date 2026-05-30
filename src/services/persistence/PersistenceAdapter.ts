@@ -41,7 +41,7 @@ export const GAME_STATE_KEYS = {
   LEVELS: 'levels',
   INVENTORY: 'inventory',
   USERNAME: 'username',
-  POWER_SCORE: 'power_score',
+  STRENGTH: 'strength',
   ENDLESS_RECORDS: 'endless_records',
   THEME: 'theme',
 } as const;
