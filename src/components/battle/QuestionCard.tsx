@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Swords, Briefcase, Sparkles, Check, X, Sword, Shield } from 'lucide-react';
+import { Swords, Briefcase, Sparkles, Check, X, Sword, Shield, Zap } from 'lucide-react';
 import { Word, GameMode, AnswerType } from '../../types';
 
 interface QuestionCardProps {
@@ -18,6 +18,7 @@ interface QuestionCardProps {
   enemyHP: number;
   onUseAttack: () => void;
   onUseDefend: () => void;
+  speedFeedback?: 'quick' | 'normal' | 'slow' | null;
 }
 
 const ANSWER_TYPE_LABELS: Record<AnswerType, string> = {
@@ -42,6 +43,7 @@ export const QuestionCard = memo(({
   enemyHP,
   onUseAttack,
   onUseDefend,
+  speedFeedback,
 }: QuestionCardProps) => {
   const isFeedbackActive = feedback !== null && feedback !== 'SHIELD';
 
@@ -88,6 +90,29 @@ export const QuestionCard = memo(({
           onOpenInventory={onOpenInventory}
         />
       </div>
+
+      {/* Speed feedback (Belajar mode only) */}
+      <AnimatePresence>
+        {speedFeedback && feedback === 'CORRECT' && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="text-center"
+          >
+            {speedFeedback === 'quick' && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-warning/15 border border-warning/40 text-sm font-bold text-warning">
+                Quick Strike! +50%
+              </span>
+            )}
+            {speedFeedback === 'slow' && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-text-secondary/10 border border-border text-sm font-bold text-text-secondary">
+                Lambat... -25%
+              </span>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="text-center">
         <span className="text-sm font-bold uppercase tracking-wider text-text-secondary">

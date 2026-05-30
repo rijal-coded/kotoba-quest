@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { X, Sparkles } from 'lucide-react';
 import { Word } from '../../types';
 
@@ -9,26 +8,6 @@ interface WordCardProps {
 }
 
 export const WordCard = ({ word, onClose }: WordCardProps) => {
-  const [visibleFields, setVisibleFields] = useState<number>(0);
-
-  // Staggered reveal: each field appears every 2 seconds
-  useEffect(() => {
-    const timers: ReturnType<typeof setTimeout>[] = [];
-
-    timers.push(setTimeout(() => setVisibleFields(1), 500));   // Kanji
-    timers.push(setTimeout(() => setVisibleFields(2), 2000));  // Kana
-    timers.push(setTimeout(() => setVisibleFields(3), 4000));  // Romaji
-    timers.push(setTimeout(() => setVisibleFields(4), 6000));  // Indonesian meaning
-
-    return () => timers.forEach(clearTimeout);
-  }, []);
-
-  // Auto-close after 18 seconds
-  useEffect(() => {
-    const timer = setTimeout(onClose, 18000);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -68,73 +47,53 @@ export const WordCard = ({ word, onClose }: WordCardProps) => {
           <Sparkles className="w-4 h-4" />
         </div>
 
-        {/* Fields with staggered fade-in */}
+        {/* All fields shown at once */}
         <div className="space-y-4 text-center">
-          <AnimatePresence>
-            {visibleFields >= 1 && (
-              <motion.div
-                key="kanji"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <p className="text-xs text-text-secondary mb-1">Kanji</p>
-                <p className="text-4xl font-bold text-text-primary"
-                  style={{ fontFamily: 'var(--font-display)' }}>
-                  {word.kanji ?? '—'}
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <p className="text-xs text-text-secondary mb-1">Kanji</p>
+            <p className="text-4xl font-bold text-text-primary"
+              style={{ fontFamily: 'var(--font-display)' }}>
+              {word.kanji ?? '—'}
+            </p>
+          </motion.div>
 
-          <AnimatePresence>
-            {visibleFields >= 2 && (
-              <motion.div
-                key="kana"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <p className="text-xs text-text-secondary mb-1">Kana</p>
-                <p className="text-3xl font-bold text-main"
-                  style={{ fontFamily: 'var(--font-display)' }}>
-                  {word.japanese}
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.05 }}
+          >
+            <p className="text-xs text-text-secondary mb-1">Kana</p>
+            <p className="text-3xl font-bold text-main"
+              style={{ fontFamily: 'var(--font-display)' }}>
+              {word.japanese}
+            </p>
+          </motion.div>
 
-          <AnimatePresence>
-            {visibleFields >= 3 && (
-              <motion.div
-                key="romaji"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <p className="text-xs text-text-secondary mb-1">Romaji</p>
-                <p className="text-xl font-bold text-secondary">
-                  {word.romaji}
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+          >
+            <p className="text-xs text-text-secondary mb-1">Romaji</p>
+            <p className="text-xl font-bold text-secondary">
+              {word.romaji}
+            </p>
+          </motion.div>
 
-          <AnimatePresence>
-            {visibleFields >= 4 && (
-              <motion.div
-                key="indonesian"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <p className="text-xs text-text-secondary mb-1">Arti</p>
-                <p className="text-lg font-bold text-accent">
-                  {word.indonesian}
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.15 }}
+          >
+            <p className="text-xs text-text-secondary mb-1">Arti</p>
+            <p className="text-lg font-bold text-accent">
+              {word.indonesian}
+            </p>
+          </motion.div>
         </div>
 
         {/* Close button */}

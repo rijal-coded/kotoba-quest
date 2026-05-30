@@ -35,7 +35,7 @@ export interface BattleState {
 }
 
 export type BattleAction =
-  | { type: 'ANSWER_CORRECT'; weaponBonus: number; critTriggered: boolean }
+  | { type: 'ANSWER_CORRECT'; weaponBonus: number; critTriggered: boolean; speedMulti: number }
   | { type: 'ANSWER_WRONG' }
   | { type: 'CLEAR_FEEDBACK' }
   | { type: 'ENEMY_ATTACK_TICK'; speedModifier: number }
@@ -103,7 +103,8 @@ export const battleReducer = (state: BattleState, action: BattleAction): BattleS
     case 'SET_BOSS':
       return { ...state, isBossActive: action.isBoss };
     case 'ANSWER_CORRECT': {
-      const damage = BASE_DAMAGE + action.weaponBonus + (action.critTriggered ? action.weaponBonus : 0);
+      const baseDamage = BASE_DAMAGE + action.weaponBonus + (action.critTriggered ? action.weaponBonus : 0);
+      const damage = Math.round(baseDamage * action.speedMulti);
       return {
         ...state,
         feedback: 'CORRECT',
@@ -227,8 +228,8 @@ export const useBattleEngine = (
 
   const modeModifiers = useMemo(() => {
     switch (gameMode) {
-      case 'BELAJAR': return { speedMult: 0.9, damageTakenMult: 0.8 };
-      case 'LATIHAN': return { speedMult: 1.4, damageTakenMult: 1.2 };
+      case 'BELAJAR': return { speedMult: 0.7, damageTakenMult: 0.8 };
+      case 'LATIHAN': return { speedMult: 1.12, damageTakenMult: 1.2 };
       case 'TANTANGAN': default: return { speedMult: 1.2, damageTakenMult: 1.0 };
     }
   }, [gameMode]);
@@ -290,12 +291,12 @@ export const useBattleEngine = (
     }
   }, [state.playerHP, state.showDefeat]);
 
-  const answerWord = (isCorrect: boolean) => {
+  const answerWord = (isCorrect: boolean, speedMulti: number = 1) => {
     if (isCorrect) {
       const weaponBonus = state.equipped.weapon?.attackBonus ?? 0;
       const critChance = state.equipped.weapon?.critChance ?? 0;
       const critTriggered = Math.random() * 100 < critChance;
-      dispatch({ type: 'ANSWER_CORRECT', weaponBonus, critTriggered });
+      dispatch({ type: 'ANSWER_CORRECT', weaponBonus, critTriggered, speedMulti });
     } else {
       dispatch({ type: 'ANSWER_WRONG' });
     }

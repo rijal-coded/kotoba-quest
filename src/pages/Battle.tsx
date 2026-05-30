@@ -40,6 +40,8 @@ export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels,
   const prevEnemiesBeatenRef = useRef(0);
   const battleStreakRef = useRef(0);
   const [showWave, setShowWave] = useState(false);
+  const questionStartTimeRef = useRef(Date.now());
+  const [speedFeedback, setSpeedFeedback] = useState<'quick' | 'normal' | 'slow' | null>(null);
 
   const { state, actions } = useBattleEngine(level, isEndless, inventory, gameMode, completedLevels);
 
@@ -172,7 +174,25 @@ export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels,
   const handleAnswer = (isCorrect: boolean) => {
     if (!currentItem) return;
 
-    actions.answerWord(isCorrect);
+    // Compute speed multiplier (Belajar mode only)
+    const elapsed = (Date.now() - questionStartTimeRef.current) / 1000;
+    let speedMulti = 1;
+    let feedback: 'quick' | 'normal' | 'slow' = 'normal';
+    if (gameMode === 'BELAJAR') {
+      if (elapsed < 4) {
+        speedMulti = 1.5;
+        feedback = 'quick';
+      } else if (elapsed > 8) {
+        speedMulti = 0.75;
+        feedback = 'slow';
+      } else {
+        feedback = 'normal';
+      }
+      setSpeedFeedback(feedback);
+      setTimeout(() => setSpeedFeedback(null), 800);
+    }
+
+    actions.answerWord(isCorrect, speedMulti);
 
     // Track result
     setWordResults(prev => [...prev, { wordIndex: currentItem.wordIndex, questionType: currentItem.questionType, correct: isCorrect }]);
@@ -193,10 +213,12 @@ export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels,
       setTotalWrong(prev => prev + 1);
     }
 
-    // Advance queue after feedback delay
+    // Advance queue after feedback delay (longer on wrong answer)
+    const delay = isCorrect ? 600 : 2500;
     setTimeout(() => {
       setCurrentIndex(prev => prev + 1);
-    }, 600);
+      questionStartTimeRef.current = Date.now();
+    }, delay);
   };
 
   const handleFinish = (victory: boolean) => {
@@ -244,7 +266,7 @@ export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels,
     ? wordCoverage.every(wc => wc.coveredQuestions.length >= (level.words[wc.wordIndex]?.kanji ? 3 : 2))
     : false;
   const victoryMessage: 'hebat' | 'coba_lagi' | 'not_complete' = state.showVictory
-    ? accuracy === 100 && coverageComplete ? 'hebat' : !coverageComplete ? 'not_complete' : 'coba_lagi'
+    ? accuracy >= 90 && coverageComplete ? 'hebat' : !coverageComplete ? 'not_complete' : 'coba_lagi'
     : 'coba_lagi';
 
   // Reward loot system (3-layer gating)
@@ -336,6 +358,7 @@ export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels,
           wave={state.enemiesBeaten}
           enemyName={state.currentEnemy.name}
           enemyRank={state.currentEnemy.rank}
+          enemyTier={state.currentEnemy.tier}
         />
       )}
 
@@ -421,6 +444,7 @@ export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels,
               enemyHP={state.enemyHP}
               onUseAttack={handleAttackSkill}
               onUseDefend={handleDefendSkill}
+              speedFeedback={speedFeedback}
             />
           ) : (
             <div className="flex-1 flex items-center justify-center p-8">
