@@ -52,7 +52,8 @@ export type BattleAction =
   | { type: 'TRIGGER_DEFEAT' }
   | { type: 'SYNC_LEVEL'; level: Level }
   | { type: 'SET_PAUSED'; paused: boolean }
-  | { type: 'SET_BOSS'; isBoss: boolean };
+  | { type: 'SET_BOSS'; isBoss: boolean }
+  | { type: 'RESET_BATTLE'; level: Level; inventory: Item[]; progressContext: ProgressContext };
 
 export const initialBattleState = (level: Level, inventory: Item[] = [], progressContext?: ProgressContext): BattleState => {
   const equippedWeapon = inventory.find(i => i.type === 'WEAPON' && i.isEquipped) || null;
@@ -187,6 +188,8 @@ export const battleReducer = (state: BattleState, action: BattleAction): BattleS
     return { ...state, showVictory: true };
   case 'TRIGGER_DEFEAT':
     return { ...state, showDefeat: true };
+  case 'RESET_BATTLE':
+    return initialBattleState(action.level, action.inventory, action.progressContext);
   default:
     return state;
   }
@@ -346,6 +349,15 @@ export const useBattleEngine = (
   const triggerDefeat = () => dispatch({ type: 'TRIGGER_DEFEAT' });
   const setPaused = (paused: boolean) => dispatch({ type: 'SET_PAUSED', paused });
   const setBoss = (isBoss: boolean) => dispatch({ type: 'SET_BOSS', isBoss });
+  const resetBattle = (level: Level, inventory: Item[]) => {
+    const stats = computeEquippedStats(inventory);
+    const context: ProgressContext = {
+      equippedAttack: stats.totalAttack,
+      equippedDefense: stats.totalDefense,
+      equippedMaxHp: stats.totalHpBonus,
+    };
+    dispatch({ type: 'RESET_BATTLE', level, inventory, progressContext: context });
+  };
 
   return {
     state,
@@ -359,6 +371,7 @@ export const useBattleEngine = (
       triggerDefeat,
       setPaused,
       setBoss,
+      resetBattle,
     },
   };
 };

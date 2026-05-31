@@ -1,12 +1,13 @@
 import { motion } from 'motion/react';
-import { XCircle, Heart } from 'lucide-react';
+import { XCircle, Heart, ArrowRight } from 'lucide-react';
 
 interface DefeatScreenProps {
   stats: { correct: number; wrong: number; accuracy: number };
   onRetry: () => void;
+  onContinue: () => void;
 }
 
-export const DefeatScreen = ({ stats, onRetry }: DefeatScreenProps) => {
+export const DefeatScreen = ({ stats, onRetry, onContinue }: DefeatScreenProps) => {
   const total = stats.correct + stats.wrong;
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] p-6 text-center space-y-8">
@@ -37,15 +38,26 @@ export const DefeatScreen = ({ stats, onRetry }: DefeatScreenProps) => {
         )}
       </motion.div>
 
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={onRetry}
-        className="kawaii-btn-outline px-12 py-4 text-base border-danger text-danger hover:bg-danger/5"
-      >
-        <Heart className="w-4 h-4" />
-        Coba Lagi
-      </motion.button>
+      <div className="flex flex-col gap-3 w-full max-w-xs">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={onRetry}
+          className="kawaii-btn-outline px-12 py-4 text-base border-danger text-danger hover:bg-danger/5"
+        >
+          <Heart className="w-4 h-4" />
+          Coba Lagi
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={onContinue}
+          className="kawaii-btn px-12 py-4 text-base"
+        >
+          Lanjut
+          <ArrowRight className="w-4 h-4" />
+        </motion.button>
+      </div>
     </div>
   );
 };

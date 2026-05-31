@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { CheckCircle, XCircle, ArrowRight, Sparkles } from 'lucide-react';
+import { CheckCircle, XCircle, ArrowLeft, Sparkles } from 'lucide-react';
 import { Word } from '../../types';
 
 interface WordReviewItem {
@@ -10,10 +10,10 @@ interface WordReviewItem {
 interface WordReviewProps {
   items: WordReviewItem[];
   score: number;
-  onContinue: () => void;
+  onBack: () => void;
 }
 
-export const WordReview = ({ items, score, onContinue }: WordReviewProps) => {
+export const WordReview = ({ items, score, onBack }: WordReviewProps) => {
   const correctCount = items.filter(i => i.correct).length;
   const accuracy = items.length > 0 ? Math.round((correctCount / items.length) * 100) : 0;
 
@@ -75,11 +75,11 @@ export const WordReview = ({ items, score, onContinue }: WordReviewProps) => {
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          onClick={onContinue}
-          className="kawaii-btn px-8 py-3"
+          onClick={onBack}
+          className="kawaii-btn-outline px-8 py-3"
         >
-          Lanjut
-          <ArrowRight className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4" />
+          Kembali
         </motion.button>
       </motion.div>
     </div>

@@ -9,7 +9,7 @@ import { InventoryModal } from '../components/battle/InventoryModal';
 import { VictoryScreen } from '../components/battle/VictoryScreen';
 import { DefeatScreen } from '../components/battle/DefeatScreen';
 import { BattleLayout } from '../components/battle/BattleLayout';
-import { WaveTransition } from '../components/battle/WaveTransition';
+
 import { ParticleEffect } from '../components/battle/ParticleEffect';
 import { WordReview } from '../components/battle/WordReview';
 import { WordCard } from '../components/battle/WordCard';
@@ -39,6 +39,8 @@ export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels,
   const prevEnemiesBeatenRef = useRef(0);
   const battleStreakRef = useRef(0);
   const [showWave, setShowWave] = useState(false);
+  const [waveId, setWaveId] = useState(0);
+  const handleWaveDismiss = useCallback(() => setShowWave(false), []);
   const questionStartTimeRef = useRef(Date.now());
   const [speedFeedback, setSpeedFeedback] = useState<'quick' | 'normal' | 'slow' | null>(null);
 
@@ -153,7 +155,8 @@ useEffect(() => {
 
   useEffect(() => {
     if (state.enemiesBeaten > prevEnemiesBeatenRef.current && state.enemiesBeaten > 0) {
-  setShowWave(true);
+      setWaveId(id => id + 1);
+      setShowWave(true);
     }
     prevEnemiesBeatenRef.current = state.enemiesBeaten;
   }, [state.enemiesBeaten]);
@@ -241,6 +244,28 @@ useEffect(() => {
     );
   };
 
+  const handleRetry = () => {
+    actions.resetBattle(level, inventory);
+    setQueue([]);
+    setCurrentIndex(0);
+    setWordCoverage([]);
+    setTotalCorrect(0);
+    setTotalWrong(0);
+    setWordResults([]);
+    setShowWordReview(false);
+    setShowWave(false);
+    setWaveId(0);
+    setBossActivated(false);
+    setSpeedFeedback(null);
+    setShowWordCard(false);
+    setParticleEffect(null);
+    setHealPopup(null);
+    prevEnemiesBeatenRef.current = 0;
+    battleStreakRef.current = 0;
+    questionStartTimeRef.current = Date.now();
+    seenThisBattleRef.current = new Set();
+  };
+
   const handleUseItem = (item: Item) => {
     if (item.type === 'CONSUMABLE' && item.count && item.count > 0) {
       actions.healPlayer(item.hpBonus ?? 50);
@@ -307,13 +332,7 @@ useEffect(() => {
         coverageComplete={coverageComplete}
         rewards={earnedRewards}
         levelName={level.name}
-        onContinue={() => {
-          if (wordResults.length > 0) {
-            setShowWordReview(true);
-          } else {
-            handleFinish(true);
-          }
-        }}
+        onContinue={() => handleFinish(true)}
         onSeeStats={() => {
           if (wordResults.length > 0) {
             setShowWordReview(true);
@@ -329,14 +348,14 @@ useEffect(() => {
       <WordReview
         items={wordResults.map(r => ({ word: level.words[r.wordIndex], correct: r.correct }))}
         score={state.score}
-        onContinue={() => handleFinish(true)}
+        onBack={() => setShowWordReview(false)}
       />
     );
   }
 
   // Defeat screen
   if (state.showDefeat) {
-    return <DefeatScreen stats={{ correct: totalCorrect, wrong: totalWrong, accuracy }} onRetry={() => handleFinish(false)} />;
+    return <DefeatScreen stats={{ correct: totalCorrect, wrong: totalWrong, accuracy }} onRetry={handleRetry} onContinue={() => handleFinish(false)} />;
   }
 
   // Loading state while queue builds
@@ -357,16 +376,6 @@ useEffect(() => {
       <div className="orb orb--lavender" />
       <div className="orb orb--pink" />
 
-      {showWave && (
-        <WaveTransition
-          wave={state.enemiesBeaten}
-          enemyName={state.currentEnemy.name}
-          enemyRank={state.currentEnemy.rank}
-          enemyTier={state.currentEnemy.tier}
-          isBoss={state.isBossActive || bossActivated}
-          onDismiss={() => setShowWave(false)}
-        />
-      )}
 
       {/* Shield indicator */}
       {state.isShieldActive && (
@@ -431,6 +440,15 @@ useEffect(() => {
             enemy={state.currentEnemy}
             currentHP={state.enemyHP}
             cooldownPercentage={state.enemyCooldown}
+            waveAnnouncement={showWave ? {
+              waveId,
+              wave: state.enemiesBeaten,
+              enemyName: state.currentEnemy.name,
+              enemyRank: state.currentEnemy.rank,
+              enemyTier: state.currentEnemy.tier,
+              isBoss: state.isBossActive || bossActivated,
+            } : null}
+            onWaveDismiss={handleWaveDismiss}
           />
         }
         centerPanel={

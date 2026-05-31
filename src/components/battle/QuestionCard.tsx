@@ -124,13 +124,13 @@ export const QuestionCard = memo(({
             className="text-center"
           >
             {speedFeedback === 'quick' && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-warning/15 border border-warning/40 text-sm font-bold text-warning">
-                Quick Strike! +50%
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/15 border border-accent/40 text-sm font-bold text-accent">
+                ⚡ Cepat +1.5×
               </span>
             )}
             {speedFeedback === 'slow' && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-text-secondary/10 border border-border text-sm font-bold text-text-secondary">
-                Lambat... -25%
+                🐌 Lambat +0.75×
               </span>
             )}
           </motion.div>

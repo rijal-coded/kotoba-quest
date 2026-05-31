@@ -179,7 +179,7 @@ export const VictoryScreen = ({
           onClick={onContinue}
           className="kawaii-btn px-8 py-3 w-full"
         >
-          Lanjutkan
+          Lanjut
           <ArrowRight className="w-4 h-4" />
         </motion.button>
       </motion.div>
