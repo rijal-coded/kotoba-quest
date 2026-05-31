@@ -44,6 +44,7 @@ export const GAME_STATE_KEYS = {
   STRENGTH: 'strength',
   ENDLESS_RECORDS: 'endless_records',
   THEME: 'theme',
+  SAKURA_PETALS: 'sakura_petals',
 } as const;
 
 export type GameStateKey = typeof GAME_STATE_KEYS[keyof typeof GAME_STATE_KEYS];

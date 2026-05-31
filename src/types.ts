@@ -1,4 +1,4 @@
-export type Page = 'HOME' | 'MODE_SELECT' | 'BATTLE' | 'INVENTORY' | 'LEVEL_SELECT' | 'ABOUT' | 'WORDS';
+export type Page = 'HOME' | 'MODE_SELECT' | 'BATTLE' | 'INVENTORY' | 'LEVEL_SELECT' | 'ABOUT' | 'WORDS' | 'FORGE';
 
 export type GameMode = 'BELAJAR' | 'LATIHAN' | 'TANTANGAN';
 
@@ -62,7 +62,6 @@ export interface Item {
   tier: ItemTier;
   description: string;
   rarity: ItemRarity;
-  strengthRequired: number;
   attackBonus?: number;
   defenseBonus?: number;
   hpBonus?: number;
@@ -74,6 +73,7 @@ export interface Item {
   effectDuration?: number;
   affixes?: string[];
   isEquipped?: boolean;
+  isFavorite?: boolean;
 }
 
 export interface EquippedStats {
@@ -100,14 +100,6 @@ export const TIER_RARITY_MAP: Record<ItemTier, ItemRarity> = {
   3: 'RARE',
   4: 'EPIC',
   5: 'LEGENDARY',
-};
-
-export const STRENGTH_REQUIREMENTS: Record<ItemTier, number> = {
-  1: 0,
-  2: 200,
-  3: 1000,
-  4: 3000,
-  5: 8000,
 };
 
 export interface EndlessRecord {

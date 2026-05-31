@@ -24,7 +24,6 @@ interface BattleProps {
   gameMode: GameMode;
   inventory: Item[];
   completedLevels: number;
-  strength: number;
   onFinish: (victory: boolean, timeSpent: number, rewards?: Item[], scoreEarned?: number, enemiesBeaten?: number, wordsBeaten?: number, navigateTo?: Page, currentInventory?: Item[], wordCoverage?: WordCoverage[]) => void;
   onMarkWordSeen: (levelId: string, wordIndex: number) => void;
   pendingNav?: Page | null;
@@ -34,7 +33,7 @@ interface BattleProps {
 
 const BOSS_LEAD_UP = 6;
 
-export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels, strength, onFinish, onMarkWordSeen, pendingNav, onCancelNav, onConfirmNav }: BattleProps) => {
+export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels, onFinish, onMarkWordSeen, pendingNav, onCancelNav, onConfirmNav }: BattleProps) => {
   const [startTime] = useState(Date.now());
   const [showInventory, setShowInventory] = useState(false);
   const prevEnemiesBeatenRef = useRef(0);
@@ -43,7 +42,7 @@ export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels,
   const questionStartTimeRef = useRef(Date.now());
   const [speedFeedback, setSpeedFeedback] = useState<'quick' | 'normal' | 'slow' | null>(null);
 
-  const { state, actions } = useBattleEngine(level, isEndless, inventory, gameMode, completedLevels);
+  const { state, actions } = useBattleEngine(level, isEndless, inventory, gameMode);
 
   // Queue management
   const [queue, setQueue] = useState<QuestionItem[]>([]);
@@ -53,9 +52,15 @@ export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels,
   const [totalWrong, setTotalWrong] = useState(0);
   const [bossActivated, setBossActivated] = useState(false);
 
-  // Word review tracking
-  const [wordResults, setWordResults] = useState<{ wordIndex: number; questionType: QuestionType; correct: boolean }[]>([]);
-  const [showWordReview, setShowWordReview] = useState(false);
+// Word review tracking
+const [wordResults, setWordResults] = useState<{ wordIndex: number; questionType: QuestionType; correct: boolean }[]>([]);
+const [showWordReview, setShowWordReview] = useState(false);
+
+// Wave progress data (non-endless, non-tantangan)
+const showWaveProgress = !isEndless && gameMode !== 'TANTANGAN' && queue.length > 0;
+const currentWave = state.enemiesBeaten + 1;
+const queueProgress = showWaveProgress ? currentIndex / queue.length : 0;
+const isBossZone = showWaveProgress ? currentIndex >= queue.length - BOSS_LEAD_UP : false;
 
   // WordCard state for Belajar mode
   const [showWordCard, setShowWordCard] = useState(false);
@@ -87,13 +92,15 @@ export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels,
     actions.setBoss(true);
   }, [currentIndex, queue.length, bossActivated, actions]);
 
-  // WordCard for Belajar mode
-  useEffect(() => {
-    if (gameMode !== 'BELAJAR' || isEndless || !currentItem) return;
-    if (seenThisBattleRef.current.has(currentItem.wordIndex)) return;
-    setShowWordCard(true);
-    actions.setPaused(true);
-  }, [currentItem?.wordIndex, gameMode, isEndless, actions]);
+// WordCard for Belajar mode
+useEffect(() => {
+  if (gameMode !== 'BELAJAR' || isEndless || !currentItem) return;
+  if (seenThisBattleRef.current.has(currentItem.wordIndex)) return;
+  if (level.seenWordIndices?.includes(currentItem.wordIndex)) return;
+  if (showWave) return;
+  setShowWordCard(true);
+  actions.setPaused(true);
+}, [currentItem?.wordIndex, gameMode, isEndless, actions, showWave, level.seenWordIndices]);
 
   const handleWordCardClose = useCallback(() => {
     if (!currentItem) return;
@@ -146,9 +153,7 @@ export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels,
 
   useEffect(() => {
     if (state.enemiesBeaten > prevEnemiesBeatenRef.current && state.enemiesBeaten > 0) {
-      setShowWave(true);
-      const timer = setTimeout(() => setShowWave(false), 1500);
-      return () => clearTimeout(timer);
+  setShowWave(true);
     }
     prevEnemiesBeatenRef.current = state.enemiesBeaten;
   }, [state.enemiesBeaten]);
@@ -273,16 +278,15 @@ export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels,
   const earnedRewards = useMemo<Item[]>(() => {
     if (!state.showVictory) return [];
     const isBossKill = state.isBossActive || bossActivated;
-    const ctx: LootContext = {
-      strength,
-      enemiesBeaten: state.enemiesBeaten,
-      accuracy,
-      isBossKill,
-      battleStreak: battleStreakRef.current,
-      completedLevels,
-    };
-    return getLootDrop(ctx);
-  }, [state.showVictory, state.enemiesBeaten, state.isBossActive, accuracy, strength, completedLevels]);
+  const ctx: LootContext = {
+    enemiesBeaten: state.enemiesBeaten,
+    accuracy,
+    isBossKill: isBossKill,
+    battleStreak: battleStreakRef.current,
+    completedLevels,
+  };
+  return getLootDrop(ctx);
+}, [state.showVictory, state.enemiesBeaten, state.isBossActive, accuracy, completedLevels]);
 
   useEffect(() => {
     if (state.enemiesBeaten > prevEnemiesBeatenRef.current) {
@@ -359,6 +363,8 @@ export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels,
           enemyName={state.currentEnemy.name}
           enemyRank={state.currentEnemy.rank}
           enemyTier={state.currentEnemy.tier}
+          isBoss={state.isBossActive || bossActivated}
+          onDismiss={() => setShowWave(false)}
         />
       )}
 
@@ -445,6 +451,10 @@ export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels,
               onUseAttack={handleAttackSkill}
               onUseDefend={handleDefendSkill}
               speedFeedback={speedFeedback}
+              progress={showWaveProgress
+                ? { currentWave, queueProgress, isBossZone, totalQuestions: queue.length, currentQuestion: currentIndex + 1 }
+                : undefined
+              }
             />
           ) : (
             <div className="flex-1 flex items-center justify-center p-8">
@@ -516,13 +526,14 @@ interface ExitConfirmationModalProps {
 
 const ExitConfirmationModal = ({ targetPage, onConfirm, onCancel }: ExitConfirmationModalProps) => {
   const pageNames: Record<Page, string> = {
-    HOME: 'Beranda',
-    MODE_SELECT: 'Pemilihan Mode',
-    LEVEL_SELECT: 'Pemilihan Level',
-    BATTLE: 'Pertempuran',
-    INVENTORY: 'Inventori',
-    ABOUT: 'Tentang',
-    WORDS: 'Kata',
+  HOME: 'Beranda',
+  MODE_SELECT: 'Pemilihan Mode',
+  LEVEL_SELECT: 'Pemilihan Level',
+  BATTLE: 'Pertempuran',
+  INVENTORY: 'Inventori',
+  ABOUT: 'Tentang',
+  WORDS: 'Kata',
+  FORGE: 'Tempa',
   };
 
   return (

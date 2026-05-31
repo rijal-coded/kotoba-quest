@@ -1,9 +1,8 @@
-import { Item, ItemTier, STRENGTH_REQUIREMENTS, TIER_RARITY_MAP } from '../types';
+import { Item, ItemTier, TIER_RARITY_MAP } from '../types';
 import { HISTORICAL_ITEMS, TIER_MULTIPLIER } from './equipmentData';
 import { generateRandomItem } from './itemGenerator';
 
 export interface LootContext {
-  strength: number;
   enemiesBeaten: number;
   accuracy: number;
   isBossKill: boolean;
@@ -20,18 +19,17 @@ const BASE_DROP_CHANCES: Record<ItemTier, number> = {
 };
 
 interface TierReq {
-  minStrength: number;
   minEnemiesBeaten: number;
   requiresBoss?: boolean;
   requiresPerfect?: boolean;
 }
 
 const ELIGIBLE_TIERS: Record<ItemTier, TierReq> = {
-  1: { minStrength: 0, minEnemiesBeaten: 0 },
-  2: { minStrength: STRENGTH_REQUIREMENTS[2], minEnemiesBeaten: 5 },
-  3: { minStrength: STRENGTH_REQUIREMENTS[3], minEnemiesBeaten: 15 },
-  4: { minStrength: STRENGTH_REQUIREMENTS[4], minEnemiesBeaten: 30, requiresBoss: true },
-  5: { minStrength: STRENGTH_REQUIREMENTS[5], minEnemiesBeaten: 50, requiresBoss: true, requiresPerfect: true },
+  1: { minEnemiesBeaten: 0 },
+  2: { minEnemiesBeaten: 5 },
+  3: { minEnemiesBeaten: 15 },
+  4: { minEnemiesBeaten: 30, requiresBoss: true },
+  5: { minEnemiesBeaten: 50, requiresBoss: true, requiresPerfect: true },
 };
 
 export function getEligibleTiers(ctx: LootContext): ItemTier[] {
@@ -39,7 +37,6 @@ export function getEligibleTiers(ctx: LootContext): ItemTier[] {
   for (let t = 1; t <= 5; t++) {
     const tier = t as ItemTier;
     const req = ELIGIBLE_TIERS[tier];
-    if (ctx.strength < req.minStrength) continue;
     if (ctx.enemiesBeaten < req.minEnemiesBeaten) continue;
     if (req.requiresBoss && !ctx.isBossKill) continue;
     if (req.requiresPerfect && ctx.accuracy < 100) continue;
@@ -98,9 +95,9 @@ function calculateGuaranteedTier(ctx: LootContext): ItemTier | null {
 }
 
 function pickItemForTier(tier: ItemTier, ctx: LootContext): Item {
-  const strengthRatio = ctx.strength / (STRENGTH_REQUIREMENTS[tier] || 1);
-  if (tier === 1 || strengthRatio < 2) return generateRandomItem(tier);
-  const useHistorical = Math.random() < Math.min(0.8, strengthRatio * 0.2);
+  const baseQuality = Math.min(1, (ctx.enemiesBeaten + ctx.accuracy / 100) / 50);
+  if (tier === 1 || baseQuality < 0.5) return generateRandomItem(tier);
+  const useHistorical = Math.random() < Math.min(0.8, baseQuality * 0.4);
   if (useHistorical && tier >= 3) return generateHistoricalItem(tier);
   return generateRandomItem(tier);
 }
@@ -108,12 +105,6 @@ function pickItemForTier(tier: ItemTier, ctx: LootContext): Item {
 function generateHistoricalItem(tier: ItemTier): Item {
   const historical = HISTORICAL_ITEMS[tier];
   const base = historical[Math.floor(Math.random() * historical.length)];
-  const statNames: ('attackBonus' | 'defenseBonus' | 'hpBonus' | 'critChance' | 'blockChance')[] = [];
-  if (base.baseAttack) statNames.push('attackBonus');
-  if (base.baseDefense) statNames.push('defenseBonus');
-  if (base.baseHp) statNames.push('hpBonus');
-  if (base.baseCrit) statNames.push('critChance');
-  if (base.baseBlock) statNames.push('blockChance');
 
   const item: Item = {
     id: `hist_${tier}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
@@ -122,7 +113,6 @@ function generateHistoricalItem(tier: ItemTier): Item {
     tier,
     description: base.description || '',
     rarity: TIER_RARITY_MAP[tier],
-    strengthRequired: STRENGTH_REQUIREMENTS[tier],
     isEquipped: false,
   };
 

@@ -39,25 +39,26 @@ export const useGameState = () => {
   const [strength, setStrength] = useState<number>(0);
   const [endlessRecords, setEndlessRecords] = useState<EndlessRecord[]>(emptyEndlessRecords);
   const [gameMode, setGameMode] = useState<GameMode>('BELAJAR');
+  const [sakuraPetals, setSakuraPetals] = useState<number>(0);
 
-  // Ref to access latest state without re-creating callbacks
-  const stateRef = useRef({
+// Ref to access latest state without re-creating callbacks
+const stateRef = useRef({
+  currentPage,
+  selectedLevel,
+  gameMode,
+  inventory,
+  lastPage: null as Page | null,
+});
+
+useEffect(() => {
+  stateRef.current = {
     currentPage,
     selectedLevel,
     gameMode,
     inventory,
-    lastPage: null as Page | null,
-  });
-
-  useEffect(() => {
-    stateRef.current = {
-      currentPage,
-      selectedLevel,
-      gameMode,
-      inventory,
-      lastPage: stateRef.current.currentPage,
-    };
-  }, [currentPage, selectedLevel, gameMode, inventory]);
+    lastPage: stateRef.current.currentPage,
+  };
+}, [currentPage, selectedLevel, gameMode, inventory]);
 
   // ---------------------------------------------------------------------------
   // Hydration: Load all game state on mount
@@ -78,14 +79,16 @@ export const useGameState = () => {
         const loadedInventory = data[GAME_STATE_KEYS.INVENTORY] ?? INITIAL_INVENTORY;
         const loadedUsername = data[GAME_STATE_KEYS.USERNAME] ?? '';
         const loadedStrength = data[GAME_STATE_KEYS.STRENGTH] ?? data['power_score'] ?? 0;
-        const loadedEndlessRecords = ensureArray(data[GAME_STATE_KEYS.ENDLESS_RECORDS], emptyEndlessRecords);
+  const loadedEndlessRecords = ensureArray(data[GAME_STATE_KEYS.ENDLESS_RECORDS], emptyEndlessRecords);
+  const loadedPetals = data[GAME_STATE_KEYS.SAKURA_PETALS] ?? 0;
 
-        setLevels(loadedLevels);
-        setInventory(loadedInventory);
-        setUsername(loadedUsername);
-        setStrength(loadedStrength);
-        setEndlessRecords(loadedEndlessRecords);
-        // gameMode stays at default BELAJAR initially; we don't persist it
+  setLevels(loadedLevels);
+  setInventory(loadedInventory);
+  setUsername(loadedUsername);
+  setStrength(loadedStrength);
+  setEndlessRecords(loadedEndlessRecords);
+  setSakuraPetals(loadedPetals);
+  // gameMode stays at default BELAJAR initially; we don't persist it
 
         setIsHydrated(true);
       } catch (error) {
@@ -112,12 +115,13 @@ export const useGameState = () => {
 
     const timeoutId = setTimeout(async () => {
       try {
-        await Promise.all([
-          persistence.save(GAME_STATE_KEYS.LEVELS, levels),
-          persistence.save(GAME_STATE_KEYS.INVENTORY, inventory),
-          persistence.save(GAME_STATE_KEYS.STRENGTH, strength),
-          persistence.save(GAME_STATE_KEYS.ENDLESS_RECORDS, endlessRecords),
-        ]);
+  await Promise.all([
+    persistence.save(GAME_STATE_KEYS.LEVELS, levels),
+    persistence.save(GAME_STATE_KEYS.INVENTORY, inventory),
+    persistence.save(GAME_STATE_KEYS.STRENGTH, strength),
+    persistence.save(GAME_STATE_KEYS.ENDLESS_RECORDS, endlessRecords),
+    persistence.save(GAME_STATE_KEYS.SAKURA_PETALS, sakuraPetals),
+  ]);
       } catch (error) {
         console.error('[useGameState] Persistence save failed:', error);
       }
@@ -146,41 +150,59 @@ export const useGameState = () => {
     setCurrentPage('BATTLE');
   }, []);
 
-  // ---------------------------------------------------------------------------
-  // Battle finish handler
-  // ---------------------------------------------------------------------------
-  const handleBattleFinish = useCallback(
-    (
-      victory: boolean,
-      timeSpent: number,
-      rewards?: Item[],
-      scoreEarned: number = 0,
-      enemiesBeaten?: number,
-      wordsBeaten?: number,
-      navigateTo?: Page,
-      currentInventory?: Item[],
-      wordCoverage?: WordCoverage[]
-    ) => {
-      const { selectedLevel, gameMode, inventory: globalInventory } = stateRef.current;
-      const isTantangan = gameMode === 'TANTANGAN';
+// ---------------------------------------------------------------------------
+// First-clear petal bonus helper
+// ---------------------------------------------------------------------------
+function getFirstClearPetalBonus(level: Level): number {
+  const idx = INITIAL_LEVELS.findIndex(l => l.id === level.id);
+  if (idx < 0) return 0;
+  if (idx < 5) return 3;
+  if (idx < 10) return 5;
+  if (idx < 15) return 8;
+  return 12;
+}
 
-      if (selectedLevel && !isTantangan) {
-        setLevels(prev => prev.map(l => {
-          if (l.id !== selectedLevel.id) return l;
-          const newUnlocked = victory ? Math.min(l.words.length, l.unlockedWordCount + 5) : l.unlockedWordCount;
-          return {
-            ...l,
-            isCompleted: victory ? true : l.isCompleted,
-            bestTime: victory ? (l.bestTime === 0 ? timeSpent : Math.min(l.bestTime, timeSpent)) : l.bestTime,
-            unlockedWordCount: newUnlocked,
-            wordCoverage: wordCoverage ?? l.wordCoverage,
-          };
-        }));
-      }
+// ---------------------------------------------------------------------------
+// Battle finish handler
+// ---------------------------------------------------------------------------
+const handleBattleFinish = useCallback(
+  (
+    victory: boolean,
+    timeSpent: number,
+    rewards?: Item[],
+    scoreEarned: number = 0,
+    enemiesBeaten?: number,
+    wordsBeaten?: number,
+    navigateTo?: Page,
+    currentInventory?: Item[],
+    wordCoverage?: WordCoverage[]
+  ) => {
+    const { selectedLevel, gameMode, inventory: globalInventory } = stateRef.current;
+    const isTantangan = gameMode === 'TANTANGAN';
 
-      if (victory) {
-        setStrength(prev => prev + scoreEarned);
-      }
+  const wasAlreadyCompleted = selectedLevel ? selectedLevel.isCompleted : true;
+  const isFirstClear = victory && selectedLevel && !isTantangan && !wasAlreadyCompleted;
+  const petalBonus = isFirstClear ? getFirstClearPetalBonus(selectedLevel) : 0;
+
+  if (selectedLevel && !isTantangan) {
+    setLevels(prev => prev.map(l => {
+      if (l.id !== selectedLevel.id) return l;
+      const newUnlocked = victory ? Math.min(l.words.length, l.unlockedWordCount + 5) : l.unlockedWordCount;
+      return { ...l, isCompleted: victory ? true : l.isCompleted, bestTime: victory ? (l.bestTime === 0 ? timeSpent : Math.min(l.bestTime, timeSpent)) : l.bestTime, unlockedWordCount: newUnlocked, wordCoverage: wordCoverage ?? l.wordCoverage };
+    }));
+  }
+
+  if (petalBonus > 0 && victory) {
+    setSakuraPetals(prev => prev + petalBonus);
+  }
+
+    if (victory) {
+      setStrength(prev => prev + scoreEarned);
+    }
+
+    if (petalBonus > 0) {
+      setSakuraPetals(prev => prev + petalBonus);
+    }
 
       if (currentInventory !== undefined) {
         let finalInventory = currentInventory;
@@ -262,27 +284,28 @@ export const useGameState = () => {
         setCurrentPage('LEVEL_SELECT');
       }
     },
-    [setLevels, setStrength, setInventory, setEndlessRecords, setCurrentPage, setSelectedLevel, setPendingNav]
-  );
+[setLevels, setStrength, setInventory, setEndlessRecords, setCurrentPage, setSelectedLevel, setPendingNav, setSakuraPetals]
+);
 
   const handleSetUsername = useCallback((name: string) => {
     setUsername(name);
   }, []);
 
-  const handleResetData = useCallback(() => {
-    // Reset all state to defaults
-    setLevels(INITIAL_LEVELS);
-    setInventory(INITIAL_INVENTORY);
-    setUsername('');
-    setStrength(0);
-    setEndlessRecords(emptyEndlessRecords);
-    setGameMode('BELAJAR');
-    setCurrentPage('HOME');
-    setSelectedLevel(null);
-    setPendingNav(null);
-    // Clear persistence
-    persistence.clear().catch(console.error);
-  }, [persistence]);
+const handleResetData = useCallback(() => {
+  // Reset all state to defaults
+  setLevels(INITIAL_LEVELS);
+  setInventory(INITIAL_INVENTORY);
+  setUsername('');
+  setStrength(0);
+  setEndlessRecords(emptyEndlessRecords);
+  setSakuraPetals(0);
+  setGameMode('BELAJAR');
+  setCurrentPage('HOME');
+  setSelectedLevel(null);
+  setPendingNav(null);
+  // Clear persistence
+  persistence.clear().catch(console.error);
+}, [persistence]);
 
   // Persistence: Save username separately (immediate, not debounced) - using persistence
   useEffect(() => {
@@ -342,16 +365,18 @@ strength,
   setStrength,
     endlessRecords,
     setEndlessRecords,
-    gameMode,
-    setGameMode,
-    // Actions
-    handleNavigate,
-    handleLevelSelect,
-    handleBattleFinish,
-    handleSetUsername,
-    handleResetData,
-    markWordSeen,
-    unlockLevel,
-    unlockAllLevels,
-  };
+  gameMode,
+  setGameMode,
+  sakuraPetals,
+  setSakuraPetals,
+  // Actions
+  handleNavigate,
+  handleLevelSelect,
+  handleBattleFinish,
+  handleSetUsername,
+  handleResetData,
+  markWordSeen,
+  unlockLevel,
+  unlockAllLevels,
+};
 };

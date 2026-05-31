@@ -9,6 +9,7 @@ import { Home } from './pages/Home';
 import { ModeSelect } from './pages/ModeSelect';
 import { Battle } from './pages/Battle';
 import { Inventory } from './pages/Inventory';
+import { Forge } from './pages/Forge';
 import { LevelSelect } from './pages/LevelSelect';
 import { About } from './pages/About';
 import { Words } from './pages/Words';
@@ -31,12 +32,14 @@ export default function App() {
     levels,
     inventory,
     username,
-    strength,
-    endlessRecords,
-    gameMode,
-    setInventory,
-    setGameMode,
-    handleNavigate,
+  strength,
+  endlessRecords,
+  gameMode,
+  sakuraPetals,
+  setSakuraPetals,
+  setInventory,
+  setGameMode,
+  handleNavigate,
     handleLevelSelect,
     handleBattleFinish,
     handleSetUsername,
@@ -74,26 +77,26 @@ export default function App() {
         return <LevelSelect levels={levels} gameMode={gameMode} onSelect={handleLevelSelect} onNavigate={handleNavigate} />;
 case 'BATTLE':
       return selectedLevel ? (
-        <Battle
-          level={selectedLevel}
-          isEndless={gameMode === 'TANTANGAN'}
-          gameMode={gameMode}
-          inventory={inventory}
-          completedLevels={levels.filter(l => l.isCompleted).length}
-          strength={strength}
-
-          onFinish={handleBattleFinish}
-          onMarkWordSeen={markWordSeen}
-          pendingNav={pendingNav}
-          onCancelNav={() => setPendingNav(null)}
-          onConfirmNav={() => { if (pendingNav) { setCurrentPage(pendingNav); setSelectedLevel(null); setPendingNav(null); } }}
-        />
+      <Battle
+        level={selectedLevel}
+        isEndless={gameMode === 'TANTANGAN'}
+        gameMode={gameMode}
+        inventory={inventory}
+        completedLevels={levels.filter(l => l.isCompleted).length}
+        onFinish={handleBattleFinish}
+        onMarkWordSeen={markWordSeen}
+        pendingNav={pendingNav}
+        onCancelNav={() => setPendingNav(null)}
+        onConfirmNav={() => { if (pendingNav) { setCurrentPage(pendingNav); setSelectedLevel(null); setPendingNav(null); } }}
+      />
       ) : (
         <LevelSelect levels={levels} gameMode={gameMode} onSelect={handleLevelSelect} onNavigate={handleNavigate} />
       );
-      case 'INVENTORY':
-        return <Inventory username={username} inventory={inventory} setInventory={setInventory} strength={strength} />;
-      case 'ABOUT':
+case 'INVENTORY':
+return       <Inventory username={username} inventory={inventory} setInventory={setInventory} sakuraPetals={sakuraPetals} onNavigate={handleNavigate} setSakuraPetals={setSakuraPetals} />;
+case 'FORGE':
+return       <Forge sakuraPetals={sakuraPetals} setSakuraPetals={setSakuraPetals} inventory={inventory} setInventory={setInventory} onNavigate={handleNavigate} />;
+case 'ABOUT':
         return <About onNavigate={handleNavigate} onResetData={handleResetData} onUnlockAllLevels={unlockAllLevels} onUnlockLevel={unlockLevel} levels={levels} />;
       case 'WORDS':
         return <Words levels={levels} onNavigate={handleNavigate} />;
@@ -102,7 +105,7 @@ case 'BATTLE':
     }
   };
 
-  const showNav = currentPage !== 'HOME' && currentPage !== 'ABOUT' && currentPage !== 'MODE_SELECT';
+  const showNav = currentPage !== 'HOME' && currentPage !== 'ABOUT' && currentPage !== 'MODE_SELECT' && currentPage !== 'FORGE';
 
   return (
     <ErrorBoundary>

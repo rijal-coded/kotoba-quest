@@ -1,4 +1,4 @@
-import { Item, ItemType, ItemTier, STRENGTH_REQUIREMENTS, TIER_RARITY_MAP } from '../types';
+import { Item, ItemType, ItemTier, TIER_RARITY_MAP } from '../types';
 import {
   BaseItemDef,
   ConsumableDef,
@@ -19,16 +19,18 @@ function pickRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function pickRandomAffixCount(tier: ItemTier): number {
+function pickRandomAffixCount(tier: ItemTier, forceAffixCount?: number): number {
   if (tier <= 2) return 0;
+  if (forceAffixCount !== undefined) return Math.min(forceAffixCount, 2);
   if (tier === 3) return Math.random() < 0.4 ? 1 : 0;
   if (tier === 4) return Math.random() < 0.6 ? 1 : (Math.random() < 0.3 ? 2 : 0);
   return Math.random() < 0.5 ? 2 : 1;
 }
 
-export function generateEquipment(type: ItemType, tier: ItemTier): Item {
+export function generateEquipment(type: ItemType, tier: ItemTier, forceAffixCount?: number): Item {
   const historical = HISTORICAL_ITEMS[tier]?.filter(h => h.type === type);
-  const useHistorical = historical && historical.length > 0 && Math.random() < (tier >= 4 ? 0.7 : 0.3);
+  const historicalChance = forceAffixCount !== undefined ? 0.05 : (tier >= 4 ? 0.7 : tier >= 3 ? 0.3 : 0);
+  const useHistorical = historical && historical.length > 0 && Math.random() < historicalChance;
 
   let base: BaseItemDef;
   if (useHistorical && historical!.length > 0) {
@@ -39,7 +41,7 @@ export function generateEquipment(type: ItemType, tier: ItemTier): Item {
   }
 
   const prefix = pickRandom(PREFIXES[tier]);
-  const affixCount = pickRandomAffixCount(tier);
+  const affixCount = pickRandomAffixCount(tier, forceAffixCount);
   const chosenSuffixes: typeof SUFFIXES = [];
   const usedSuffixLabels = new Set<string>();
   for (let i = 0; i < affixCount; i++) {
@@ -86,9 +88,8 @@ export function generateEquipment(type: ItemType, tier: ItemTier): Item {
     type,
     tier,
     description,
-    rarity: TIER_RARITY_MAP[tier],
-    strengthRequired: STRENGTH_REQUIREMENTS[tier],
-    affixes: affixLabels.length > 0 ? affixLabels : undefined,
+  rarity: TIER_RARITY_MAP[tier],
+  affixes: affixLabels.length > 0 ? affixLabels : undefined,
     isEquipped: false,
   };
 
@@ -117,9 +118,8 @@ export function generateConsumable(tier: ItemTier): Item {
     type: 'CONSUMABLE',
     tier,
     description: def.description,
-    rarity: TIER_RARITY_MAP[tier],
-    strengthRequired: 0,
-    count: 1,
+  rarity: TIER_RARITY_MAP[tier],
+  count: 1,
     effectType: def.effectType,
     effectValue: def.effectValue,
     effectDuration: def.effectDuration,
@@ -132,7 +132,7 @@ export function generateConsumable(tier: ItemTier): Item {
   return item;
 }
 
-export function generateRandomItem(tier: ItemTier): Item {
+export function generateRandomItem(tier: ItemTier, forceAffixCount?: number): Item {
   const equipTypes: ItemType[] = ['WEAPON', 'SHIELD', 'ARMOR', 'HELM', 'ACCESSORY'];
   const isConsumable = Math.random() < 0.35;
 
@@ -141,7 +141,7 @@ export function generateRandomItem(tier: ItemTier): Item {
   }
 
   const type = pickRandom(equipTypes);
-  return generateEquipment(type, tier);
+  return generateEquipment(type, tier, forceAffixCount);
 }
 
 function buildDescription(type: ItemType, tier: ItemTier, prefix: string, affixes: string[]): string {

@@ -1,96 +1,101 @@
-import { motion, AnimatePresence } from 'motion/react';
-import { useEffect, useState } from 'react';
-import { Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { Sparkles, Skull } from 'lucide-react';
 
 interface WaveTransitionProps {
   wave: number;
   enemyName: string;
   enemyRank: string;
   enemyTier: number;
+  isBoss: boolean;
+  onDismiss?: () => void;
 }
 
-const SPEED_LABELS: Record<number, string> = {
-  1: 'Lambat',
-  2: 'Sedang',
-  3: 'Cepat',
-  4: 'Sangat Cepat',
-  5: 'Brutal',
-};
+const TIER_LABELS = ['Ashigaru', 'Samurai', 'Hatamoto', 'Daimyo', 'Shogun'];
 
-export const WaveTransition = ({ wave, enemyName, enemyRank, enemyTier }: WaveTransitionProps) => {
-  const [show, setShow] = useState(true);
+export const WaveTransition = ({ wave, enemyName, enemyRank, enemyTier, isBoss, onDismiss }: WaveTransitionProps) => {
+  const [dismissing, setDismissing] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setShow(false), 1800);
-    return () => clearTimeout(timer);
-  }, [wave]);
+  const handleDismiss = () => {
+    setDismissing(true);
+    setTimeout(() => onDismiss?.(), 300);
+  };
 
   return (
-    <AnimatePresence>
-      {show && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-50 flex items-center justify-center"
-        >
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-bg-primary/80 backdrop-blur-sm"
-          />
+    <div
+      className={`fixed inset-0 z-[60] flex items-center justify-center cursor-pointer bg-bg-primary/90 backdrop-blur-sm transition-opacity duration-300 ${dismissing ? 'opacity-0' : 'opacity-100'}`}
+      onClick={handleDismiss}
+    >
+      <div className="text-center space-y-3">
+        {/* Boss badge */}
+        {isBoss && (
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-warning/20 border-2 border-warning text-warning">
+            <Skull className="w-4 h-4" />
+            <span className="text-sm font-black uppercase tracking-widest">BOSS</span>
+          </div>
+        )}
 
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 1.1, opacity: 0, y: -10 }}
-            transition={{ type: 'spring', damping: 15, stiffness: 200 }}
-            className="text-center space-y-3"
-          >
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <Sparkles className="w-4 h-4 text-main/40" />
-              <p className="text-xs font-bold uppercase tracking-[0.3em] text-text-secondary">
-                Wave {wave}
-              </p>
-              <Sparkles className="w-4 h-4 text-main/40" />
-            </div>
+        <div className="flex items-center justify-center gap-2 mb-3">
+          <Sparkles className="w-4 h-4 text-main/40" />
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-text-secondary">
+            {isBoss ? 'Pertempuran' : `Gelombang ${wave}`}
+          </p>
+          <Sparkles className="w-4 h-4 text-main/40" />
+        </div>
 
-            <h2 className="text-3xl md:text-5xl font-bold text-main"
-              style={{ fontFamily: 'var(--font-display)' }}>
-              {enemyName}
-            </h2>
+        <h2 className="text-3xl md:text-5xl font-bold text-main" style={{ fontFamily: 'var(--font-display)' }}>
+          {enemyName}
+        </h2>
 
-            <p className="text-xs font-bold text-text-secondary uppercase tracking-wider">
-              {enemyRank} · Tier {enemyTier}
-            </p>
+        <p className="text-xs font-bold text-text-secondary uppercase tracking-wider">
+          {enemyRank} · Tier {enemyTier}
+        </p>
 
-            {/* Speed indicator */}
-            <div className="flex items-center justify-center gap-2 pt-1">
-              <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">
-                Serangan
-              </span>
-              <div className="flex gap-1">
-                {Array.from({ length: 5 }, (_, i) => (
-                  <div
-                    key={i}
-                    className={`w-3 h-2 rounded-sm transition-all ${
-                      i < enemyTier
-                        ? 'bg-warning shadow-[0_0_4px_rgba(255,217,125,0.5)]'
-                        : 'bg-bg-surface border border-border'
-                    }`}
-                  />
-                ))}
+        {/* Tier progression ladder */}
+        <div className="flex items-center justify-center gap-1.5 pt-1">
+          {TIER_LABELS.map((label, i) => {
+            const tierNum = i + 1;
+            const isCurrent = tierNum === enemyTier;
+            const isPast = tierNum < enemyTier;
+            return (
+              <div
+                key={label}
+                className={`flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all ${
+                  isCurrent
+                    ? 'bg-warning/20 text-warning border border-warning/60 shadow-[0_0_8px_rgba(255,217,125,0.3)]'
+                    : isPast
+                    ? 'text-text-secondary/50'
+                    : 'text-text-secondary/30'
+                }`}
+              >
+                <span className="hidden md:inline">{label}</span>
+                <span className="md:hidden">{tierNum}</span>
               </div>
-              <span className="text-[10px] font-bold text-warning uppercase tracking-wider">
-                {SPEED_LABELS[enemyTier] ?? 'Brutal'}
-              </span>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+            );
+          })}
+        </div>
+
+        {/* Speed indicator */}
+        <div className="flex items-center justify-center gap-2 pt-1">
+          <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">
+            Serangan
+          </span>
+          <div className="flex gap-1">
+            {Array.from({ length: 5 }, (_, i) => (
+              <div
+                key={i}
+                className={`w-3 h-2 rounded-sm transition-all ${
+                  i < enemyTier
+                    ? 'bg-warning shadow-[0_0_4px_rgba(255,217,125,0.5)]'
+                    : 'bg-bg-surface border border-border'
+                }`}
+              />
+            ))}
+          </div>
+          <span className="text-[10px] font-bold text-warning uppercase tracking-wider">
+            {enemyTier}
+          </span>
+        </div>
+      </div>
+    </div>
   );
 };

@@ -19,6 +19,7 @@ interface QuestionCardProps {
   onUseAttack: () => void;
   onUseDefend: () => void;
   speedFeedback?: 'quick' | 'normal' | 'slow' | null;
+  progress?: { currentWave: number; queueProgress: number; isBossZone: boolean; totalQuestions: number; currentQuestion: number } | null;
 }
 
 const ANSWER_TYPE_LABELS: Record<AnswerType, string> = {
@@ -44,6 +45,7 @@ export const QuestionCard = memo(({
   onUseAttack,
   onUseDefend,
   speedFeedback,
+  progress,
 }: QuestionCardProps) => {
   const isFeedbackActive = feedback !== null && feedback !== 'SHIELD';
 
@@ -57,6 +59,27 @@ export const QuestionCard = memo(({
           onOpenInventory={onOpenInventory}
         />
       </div>
+
+      {/* Wave progress bar */}
+      {progress && (
+        <div className="px-1">
+          <div className="flex items-center justify-between mb-1">
+            <span className={`text-[11px] font-bold uppercase tracking-wider ${progress.isBossZone ? 'text-warning' : 'text-text-secondary'}`}>
+              {progress.isBossZone ? 'Boss' : `Gelombang ${progress.currentWave}`}
+            </span>
+            <span className="text-[11px] font-mono font-bold text-text-secondary">
+              {progress.currentQuestion}/{progress.totalQuestions}
+            </span>
+          </div>
+          <div className="h-1.5 bg-bg-surface-alt rounded-full overflow-hidden border border-border">
+            <motion.div
+              className={`h-full rounded-full ${progress.isBossZone ? 'bg-warning' : 'bg-main'}`}
+              animate={{ width: `${progress.queueProgress * 100}%` }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
+            />
+          </div>
+        </div>
+      )}
 
       <div className="kawaii-panel text-center p-6 md:p-8">
         <AnimatePresence mode="wait">
