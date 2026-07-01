@@ -17,9 +17,9 @@ export const HPBar = ({ current, max, label, color }: HPBarProps) => {
         <span className="text-xs md:text-sm font-bold uppercase tracking-wider text-text-secondary">{label}</span>
         <span className="text-xs md:text-sm font-mono text-text-secondary">{current}/{max}</span>
       </div>
-      <div className="hp-bar">
+      <div className="kawaii-hp-bar">
         <motion.div
-          className={`hp-bar-fill ${color}`}
+          className={`kawaii-hp-fill ${color}`}
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
           transition={{ type: 'spring', stiffness: 50, damping: 20 }}
@@ -45,7 +45,7 @@ export const NavButton = ({ icon, label, active, disabled, onClick }: NavButtonP
     whileTap={!disabled ? { scale: 0.95 } : {}}
     className={`flex flex-col items-center justify-center gap-1.5 p-2 transition-all ${
       active
-        ? 'text-main glow-cyan'
+        ? 'text-main'
         : 'text-text-secondary hover:text-text-primary'
     } ${disabled ? 'opacity-40 cursor-not-allowed' : ''}`}
   >

@@ -1,4 +1,4 @@
-import { Home, Info, Sun, Moon, Sparkles } from 'lucide-react';
+import { Sun, Moon, Sparkles } from 'lucide-react';
 import { Page } from '../types';
 import { useState, useEffect } from 'react';
 

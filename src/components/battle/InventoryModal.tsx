@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react';
+import { useMemo } from 'react';
 import { Item } from '../../types';
 import { X, Sparkles } from 'lucide-react';
 
@@ -10,6 +11,11 @@ interface InventoryModalProps {
 }
 
 export const InventoryModal = ({ isOpen, inventory, onClose, onUseItem }: InventoryModalProps) => {
+  const consumables = useMemo(
+    () => inventory.filter(i => i.type === 'CONSUMABLE').sort((a, b) => a.name.localeCompare(b.name)),
+    [inventory]
+  );
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -46,12 +52,10 @@ export const InventoryModal = ({ isOpen, inventory, onClose, onUseItem }: Invent
               </div>
 
               <div className="space-y-2 max-h-[40vh] overflow-y-auto pr-1">
-                {inventory.filter(i => i.type === 'CONSUMABLE').length === 0 ? (
+                {consumables.length === 0 ? (
                   <p className="text-center text-text-secondary py-8 text-sm">Tidak ada item yang bisa digunakan</p>
                 ) : (
-                  inventory.filter(i => i.type === 'CONSUMABLE')
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .map(item => (
+                  consumables.map(item => (
                     <button
                       key={item.id}
                       onClick={() => { onUseItem(item); onClose(); }}

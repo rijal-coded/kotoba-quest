@@ -19,12 +19,7 @@ const formatTime = (seconds: number) => {
 };
 
 export const LevelSelect = ({ levels, gameMode, onSelect, onNavigate }: LevelSelectProps) => {
-  const availableLevels = useMemo(() =>
-    gameMode === 'TANTANGAN'
-      ? levels.filter(l => l.isCompleted)
-      : levels,
-    [levels, gameMode]
-  );
+  const availableLevels = useMemo(() => levels, [levels]);
 
   const hasNoAvailable = availableLevels.length === 0;
 
@@ -34,7 +29,7 @@ export const LevelSelect = ({ levels, gameMode, onSelect, onNavigate }: LevelSel
         <Sparkles className="w-5 h-5 text-main" />
         <h2 className="text-2xl md:text-3xl font-bold text-main"
           style={{ fontFamily: 'var(--font-display)' }}>
-          {gameMode === 'TANTANGAN' ? 'Tantangan Mode' : `${gameMode} Mode`}
+          {`${gameMode} Mode`}
         </h2>
         <span className="kawaii-badge kawaii-badge--primary">
           {availableLevels.length} Level
@@ -43,7 +38,7 @@ export const LevelSelect = ({ levels, gameMode, onSelect, onNavigate }: LevelSel
 
       {hasNoAvailable ? (
         <div className="text-center py-12 space-y-4">
-          <p className="text-text-secondary">Tidak ada level yang tersedia. Selesaikan setidaknya satu level di mode Learning atau Practice untuk membuka Tantangan!</p>
+          <p className="text-text-secondary">Tidak ada level yang tersedia.</p>
           <button
             onClick={() => onNavigate?.('MODE_SELECT')}
             className="kawaii-btn-outline px-6 py-3 text-sm"
@@ -61,9 +56,9 @@ export const LevelSelect = ({ levels, gameMode, onSelect, onNavigate }: LevelSel
                 key={level.id}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.04 }}
-                whileHover={{ scale: 1.02, y: -2 }}
-                whileTap={{ scale: 0.98 }}
+                transition={{ delay: index * 0.02, duration: 0.15 }}
+  whileHover={{ scale: 1.01, y: -1 }}
+  whileTap={{ scale: 0.99 }}
                 onClick={() => onSelect(level)}
                 className="w-full kawaii-card p-4 flex items-center gap-4 group text-left"
               >

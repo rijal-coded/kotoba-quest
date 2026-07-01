@@ -122,11 +122,15 @@ export const ParticleEffect = ({ active, type, originX, originY }: ParticleEffec
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    const dpr = window.devicePixelRatio || 1;
     const resize = () => {
-      canvas.width = canvas.offsetWidth * (window.devicePixelRatio || 1);
-      canvas.height = canvas.offsetHeight * (window.devicePixelRatio || 1);
+      canvas.width = canvas.offsetWidth * dpr;
+      canvas.height = canvas.offsetHeight * dpr;
+      ctx.scale(dpr, dpr);
     };
     resize();
+
+    window.addEventListener('resize', resize);
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -184,6 +188,7 @@ export const ParticleEffect = ({ active, type, originX, originY }: ParticleEffec
     }
 
     return () => {
+      window.removeEventListener('resize', resize);
       if (animFrameRef.current) {
         cancelAnimationFrame(animFrameRef.current);
       }

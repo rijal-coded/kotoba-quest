@@ -30,7 +30,7 @@ function getHPBarClass(percent: number): string {
 }
 
 export const EnemyPanel = ({ enemy, currentHP, cooldownPercentage, waveAnnouncement, onWaveDismiss }: EnemyPanelProps) => {
-  const hpPercent = Math.max(0, Math.min(100, (currentHP / enemy.maxHp) * 100));
+  const hpPercent = Math.max(0, Math.min(100, enemy.maxHp > 0 ? (currentHP / enemy.maxHp) * 100 : 0));
   const hpBarClass = useMemo(() => getHPBarClass(hpPercent), [hpPercent]);
   const isBoss = enemy.tier >= 4;
   const [stripVisible, setStripVisible] = useState(false);

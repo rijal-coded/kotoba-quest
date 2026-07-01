@@ -1,4 +1,4 @@
-import { useState, useCallback, createContext, useContext, ReactNode } from 'react';
+import { useState, useCallback, createContext, useContext, ReactNode, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CheckCircle, AlertCircle, Info, X, Sparkles } from 'lucide-react';
 
@@ -18,17 +18,16 @@ export const useToast = () => useContext(ToastContext);
 
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const [nextId, setNextId] = useState(0);
+  const nextIdRef = useRef(0);
 
   const showToast = useCallback((message: string, type: Toast['type'] = 'info') => {
-    const id = nextId;
-    setNextId(prev => prev + 1);
+    const id = nextIdRef.current++;
     setToasts(prev => [...prev, { id, message, type }]);
 
     setTimeout(() => {
       setToasts(prev => prev.filter(t => t.id !== id));
     }, 3000);
-  }, [nextId]);
+  }, []);
 
   const dismiss = (id: number) => {
     setToasts(prev => prev.filter(t => t.id !== id));

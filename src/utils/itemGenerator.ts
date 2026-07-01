@@ -74,9 +74,9 @@ export function generateEquipment(type: ItemType, tier: ItemTier, forceAffixCoun
   };
 
   const isHistoricalItem = useHistorical && !!base.description;
-  const displayName = isHistoricalItem
-    ? base.name
-    : `${prefix.label} ${base.name}`.trim();
+ const displayName = isHistoricalItem
+ ? base.name
+ : `${base.name} ${prefix.label}`.trim();
 
   const description = isHistoricalItem
     ? base.description!

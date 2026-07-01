@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Item, ItemTier, ItemType, Page, TIER_LABELS, EQUIP_SLOTS } from '../types';
 import { generateEquipment } from '../utils/itemGenerator';
-import { MAX_INVENTORY_SLOTS } from '../constants';
+import { MAX_INVENTORY_SLOTS, TIER_COLORS } from '../constants';
 import { Hammer, Sword, Shield, ShieldIcon, Zap, Star, Sparkles, X } from 'lucide-react';
 
 interface ForgeProps {
@@ -15,13 +15,6 @@ interface ForgeProps {
 
 const FORGE_COSTS_RANDOM: Record<ItemTier, number> = { 1: 3, 2: 10, 3: 25, 4: 60, 5: 150 };
 const FORGE_COSTS_SPECIFIC: Record<ItemTier, number> = { 1: 5, 2: 15, 3: 38, 4: 90, 5: 225 };
-const TIER_COLORS: Record<ItemTier, string> = {
-  1: 'border-text-secondary text-text-secondary',
-  2: 'border-gray-400 text-gray-300',
-  3: 'border-yellow-500 text-yellow-400',
-  4: 'border-purple-400 text-purple-300',
-  5: 'border-accent text-accent',
-};
 
 const SLOT_ICONS: Record<ItemType, React.ReactNode> = {
   WEAPON: <Sword className="w-5 h-5" />,
@@ -132,11 +125,11 @@ export const Forge = ({ sakuraPetals, setSakuraPetals, inventory, setInventory, 
             className="kawaii-card p-6 space-y-4 text-center"
           >
             <h3 className="text-sm font-bold text-text-secondary uppercase tracking-wider">Item Ditempa!</h3>
-            <div className={`kawaii-card p-4 border-2 ${TIER_COLORS[forgedItem.tier]}`}>
+            <div className={`kawaii-card p-4 border-2 ${TIER_COLORS[forgedItem.tier].border} ${TIER_COLORS[forgedItem.tier].text}`}>
               <h4 className="text-base font-bold text-text-primary truncate" style={{ fontFamily: 'var(--font-display)' }}>
                 {forgedItem.name}
               </h4>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-bg-surface-alt text-text-secondary uppercase">
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${TIER_COLORS[forgedItem.tier].bg} ${TIER_COLORS[forgedItem.tier].text} uppercase`}>
                 {TIER_LABELS[forgedItem.tier]}
               </span>
               <p className="text-[10px] text-text-secondary mt-2 leading-relaxed">{forgedItem.description}</p>
@@ -183,10 +176,9 @@ export const Forge = ({ sakuraPetals, setSakuraPetals, inventory, setInventory, 
                     <button
                       key={tier}
                       onClick={() => { setSelectedTier(tier); setSelectedSlot(null); }}
-      disabled={!selected}
       className={`p-3 rounded-xl border text-center transition-all ${
         selected
-          ? `${TIER_COLORS[tier]} border-current bg-current/5`
+          ? `${TIER_COLORS[tier].border} ${TIER_COLORS[tier].text} ${TIER_COLORS[tier].bg}`
           : 'border-border text-text-secondary hover:border-text-secondary'
       }`}
     >

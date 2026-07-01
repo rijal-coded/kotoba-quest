@@ -3,17 +3,18 @@ interface SkeletonProps {
   variant?: 'text' | 'rect' | 'circle';
 }
 
-export const Skeleton = ({ className = '', variant = 'rect' }: SkeletonProps) => {
-  const baseClass = 'kawaii-skeleton';
+const baseSkeletonClass = 'kawaii-skeleton';
 
-  const variants = {
-    text: `${baseClass} h-4`,
-    rect: `${baseClass} rounded-2xl`,
-    circle: `${baseClass} rounded-full`,
-  };
+const skeletonVariants: Record<string, string> = {
+  text: `${baseSkeletonClass} h-4`,
+  rect: `${baseSkeletonClass} rounded-2xl`,
+  circle: `${baseSkeletonClass} rounded-full`,
+};
+
+export const Skeleton = ({ className = '', variant = 'rect' }: SkeletonProps) => {
 
   return (
-    <div className={`${variants[variant]} ${className}`} />
+    <div className={`${skeletonVariants[variant]} ${className}`} />
   );
 };
 

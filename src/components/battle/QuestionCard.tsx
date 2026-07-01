@@ -11,7 +11,7 @@ interface QuestionCardProps {
   answerType: AnswerType;
   feedback: 'CORRECT' | 'WRONG' | 'SHIELD' | null;
   isShieldActive: boolean;
-  onAnswer: (isCorrect: boolean) => void;
+  onAnswer: (isCorrect: boolean, option: string) => void;
   onOpenInventory: () => void;
   gameMode: GameMode;
   actionPoints: number;
@@ -20,12 +20,14 @@ interface QuestionCardProps {
   onUseDefend: () => void;
   speedFeedback?: 'quick' | 'normal' | 'slow' | null;
   progress?: { currentWave: number; queueProgress: number; isBossZone: boolean; totalQuestions: number; currentQuestion: number } | null;
+  wrongOptions?: string[];
+  currentFaults?: number;
+  maxFaults?: number;
 }
 
 const ANSWER_TYPE_LABELS: Record<AnswerType, string> = {
   kana: 'Kana',
   kanji: 'Kanji',
-  romaji: 'Romaji',
   indonesian: 'Arti',
 };
 
@@ -46,6 +48,9 @@ export const QuestionCard = memo(({
   onUseDefend,
   speedFeedback,
   progress,
+  wrongOptions = [],
+  currentFaults = 0,
+  maxFaults = 3,
 }: QuestionCardProps) => {
   const isFeedbackActive = feedback !== null && feedback !== 'SHIELD';
 
@@ -143,10 +148,27 @@ export const QuestionCard = memo(({
         </span>
       </div>
 
+      {currentFaults > 0 && (
+        <div className="flex items-center justify-center gap-1.5">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">Kesempatan</span>
+          <div className="flex gap-1">
+            {Array.from({ length: maxFaults }, (_, i) => (
+              <span
+                key={i}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  i < currentFaults ? 'bg-danger' : 'bg-border'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
       <AnswerGrid
         options={options}
         correctAnswer={correctAnswer}
         feedback={feedback}
+        wrongOptions={wrongOptions}
         onAnswer={onAnswer}
       />
 
@@ -213,16 +235,21 @@ interface AnswerGridProps {
   options: string[];
   correctAnswer: string;
   feedback: 'CORRECT' | 'WRONG' | 'SHIELD' | null;
-  onAnswer: (isCorrect: boolean) => void;
+  wrongOptions: string[];
+  onAnswer: (isCorrect: boolean, option: string) => void;
 }
 
-const AnswerGrid = ({ options, correctAnswer, feedback, onAnswer }: AnswerGridProps) => (
+const AnswerGrid = ({ options, correctAnswer, feedback, wrongOptions, onAnswer }: AnswerGridProps) => (
   <div className="grid grid-cols-2 gap-3 md:gap-4">
     {options.map((opt, i) => {
       const isCorrectAnswer = opt === correctAnswer;
       const isWrongAnswer = feedback === 'WRONG' && !isCorrectAnswer;
+      const isEliminated = wrongOptions.includes(opt);
 
       let optionClass = 'kawaii-btn-answer disabled:opacity-40 disabled:cursor-not-allowed';
+      if (isEliminated && feedback === null) {
+        optionClass += ' opacity-30 line-through cursor-not-allowed';
+      }
       if (feedback === 'WRONG') {
         if (isCorrectAnswer) {
           optionClass += ' ring-2 ring-accent bg-accent/10';
@@ -242,13 +269,14 @@ const AnswerGrid = ({ options, correctAnswer, feedback, onAnswer }: AnswerGridPr
           transition={{ delay: i * 0.05, duration: 0.25 }}
           whileHover={feedback === null ? { y: -1 } : {}}
           whileTap={feedback === null ? { scale: 0.98 } : {}}
-          onClick={() => onAnswer(opt === correctAnswer)}
-          disabled={feedback !== null && feedback !== 'SHIELD'}
+          onClick={() => onAnswer(opt === correctAnswer, opt)}
+          disabled={(feedback !== null && feedback !== 'SHIELD') || isEliminated}
           className={optionClass}
         >
           <span className="flex items-center justify-center gap-2 text-sm md:text-base">
             {feedback === 'CORRECT' && isCorrectAnswer && <Check className="w-4 h-4 text-accent" />}
             {isWrongAnswer && <X className="w-4 h-4 text-danger" />}
+            {isEliminated && feedback === null && <X className="w-3 h-3 text-danger" />}
             {opt}
           </span>
           {feedback === 'WRONG' && isCorrectAnswer && (

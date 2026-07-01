@@ -45,6 +45,7 @@ export default function App() {
     handleSetUsername,
     handleResetData,
     markWordSeen,
+    toggleFavorite,
     unlockLevel,
     unlockAllLevels,
   } = useGameState();
@@ -76,19 +77,19 @@ export default function App() {
       case 'LEVEL_SELECT':
         return <LevelSelect levels={levels} gameMode={gameMode} onSelect={handleLevelSelect} onNavigate={handleNavigate} />;
 case 'BATTLE':
-      return selectedLevel ? (
-      <Battle
-        level={selectedLevel}
-        isEndless={gameMode === 'TANTANGAN'}
-        gameMode={gameMode}
-        inventory={inventory}
-        completedLevels={levels.filter(l => l.isCompleted).length}
-        onFinish={handleBattleFinish}
-        onMarkWordSeen={markWordSeen}
-        pendingNav={pendingNav}
-        onCancelNav={() => setPendingNav(null)}
-        onConfirmNav={() => { if (pendingNav) { setCurrentPage(pendingNav); setSelectedLevel(null); setPendingNav(null); } }}
-      />
+  return selectedLevel ? (
+  <Battle
+    level={selectedLevel}
+    gameMode={gameMode}
+    inventory={inventory}
+    completedLevels={levels.filter(l => l.isCompleted).length}
+    onFinish={handleBattleFinish}
+    onMarkWordSeen={markWordSeen}
+    pendingNav={pendingNav}
+    onCancelNav={() => setPendingNav(null)}
+    onConfirmNav={() => { if (pendingNav) { setCurrentPage(pendingNav); setSelectedLevel(null); setPendingNav(null); } }}
+    onNavigate={handleNavigate}
+  />
       ) : (
         <LevelSelect levels={levels} gameMode={gameMode} onSelect={handleLevelSelect} onNavigate={handleNavigate} />
       );
@@ -99,7 +100,7 @@ return       <Forge sakuraPetals={sakuraPetals} setSakuraPetals={setSakuraPetals
 case 'ABOUT':
         return <About onNavigate={handleNavigate} onResetData={handleResetData} onUnlockAllLevels={unlockAllLevels} onUnlockLevel={unlockLevel} levels={levels} />;
       case 'WORDS':
-        return <Words levels={levels} onNavigate={handleNavigate} />;
+        return <Words levels={levels} onNavigate={handleNavigate} onToggleFavorite={toggleFavorite} />;
       default:
         return <Home onStart={() => handleNavigate('MODE_SELECT')} username={username} onSetUsername={handleSetUsername} onResetData={handleResetData} />;
     }

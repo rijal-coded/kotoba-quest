@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Sparkles, Skull } from 'lucide-react';
 
 interface WaveTransitionProps {
@@ -14,10 +14,17 @@ const TIER_LABELS = ['Ashigaru', 'Samurai', 'Hatamoto', 'Daimyo', 'Shogun'];
 
 export const WaveTransition = ({ wave, enemyName, enemyRank, enemyTier, isBoss, onDismiss }: WaveTransitionProps) => {
   const [dismissing, setDismissing] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   const handleDismiss = () => {
     setDismissing(true);
-    setTimeout(() => onDismiss?.(), 300);
+    timeoutRef.current = setTimeout(() => onDismiss?.(), 300);
   };
 
   return (

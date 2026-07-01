@@ -20,7 +20,7 @@ function getHPBarClass(percent: number): string {
 }
 
 export const PlayerPanel = memo(({ hp, maxHp, actionPoints, enemyHP, isShieldActive, onUseAttack, onUseDefend }: PlayerPanelProps) => {
-  const hpPercent = Math.max(0, Math.min(100, (hp / maxHp) * 100));
+  const hpPercent = Math.max(0, Math.min(100, maxHp > 0 ? (hp / maxHp) * 100 : 0));
   const hpBarClass = useMemo(() => getHPBarClass(hpPercent), [hpPercent]);
 
   return (

@@ -462,8 +462,6 @@
 
   /* ---- Kawaii Nav ---- */
   .kawaii-nav {
-    background-color: var(--bg-surface);
-    border-top: 1px solid var(--border);
     padding: var(--space-2) var(--space-5);
     padding-bottom: calc(var(--space-2) + env(safe-area-inset-bottom, 0px));
     transition: all 0.3s var(--ease-smooth);

@@ -12,6 +12,7 @@ export const HelpModal = ({ isOpen, onClose, title, children }: HelpModalProps) 
     <AnimatePresence>
       {isOpen && (
         <motion.div
+          key="help-modal"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

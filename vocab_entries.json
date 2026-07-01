@@ -1,0 +1,2114 @@
+[
+  {
+    "word": "わたし",
+    "reading": "watashi",
+    "kanji": "私",
+    "indonesian": "SAYA",
+    "level": "Sapaan & Perkenalan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "あなた",
+    "reading": "anata",
+    "kanji": "-",
+    "indonesian": "ANDA",
+    "level": "Sapaan & Perkenalan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "かぞく",
+    "reading": "kazoku",
+    "kanji": "家族",
+    "indonesian": "KELUARGA",
+    "level": "Sapaan & Perkenalan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "おはよう",
+    "reading": "ohayou",
+    "kanji": "-",
+    "indonesian": "SELAMAT PAGI",
+    "level": "Sapaan & Perkenalan",
+    "word_class": "Expression"
+  },
+  {
+    "word": "なまえ",
+    "reading": "namae",
+    "kanji": "名前",
+    "indonesian": "NAMA",
+    "level": "Sapaan & Perkenalan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "だれ",
+    "reading": "dare",
+    "kanji": "誰",
+    "indonesian": "SIAPA",
+    "level": "Sapaan & Perkenalan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "なに",
+    "reading": "nani",
+    "kanji": "何",
+    "indonesian": "APA",
+    "level": "Sapaan & Perkenalan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "はい",
+    "reading": "hai",
+    "kanji": "-",
+    "indonesian": "IYA",
+    "level": "Sapaan & Perkenalan",
+    "word_class": "Expression"
+  },
+  {
+    "word": "いいえ",
+    "reading": "iie",
+    "kanji": "-",
+    "indonesian": "TIDAK",
+    "level": "Sapaan & Perkenalan",
+    "word_class": "Expression"
+  },
+  {
+    "word": "せんせい",
+    "reading": "sensei",
+    "kanji": "先生",
+    "indonesian": "GURU",
+    "level": "Sapaan & Perkenalan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "がくせい",
+    "reading": "gakusei",
+    "kanji": "学生",
+    "indonesian": "SISWA",
+    "level": "Sapaan & Perkenalan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "いしゃ",
+    "reading": "isha",
+    "kanji": "医者",
+    "indonesian": "DOKTER",
+    "level": "Sapaan & Perkenalan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "にほん",
+    "reading": "nihon",
+    "kanji": "日本",
+    "indonesian": "JEPANG",
+    "level": "Sapaan & Perkenalan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "じん",
+    "reading": "jin",
+    "kanji": "人",
+    "indonesian": "ORANG (NEGARA)",
+    "level": "Sapaan & Perkenalan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "こんにちは",
+    "reading": "konnichiwa",
+    "kanji": "-",
+    "indonesian": "HALO / SIANG",
+    "level": "Sapaan & Perkenalan",
+    "word_class": "Expression"
+  },
+  {
+    "word": "こんばんは",
+    "reading": "konbanwa",
+    "kanji": "-",
+    "indonesian": "SELAMAT MALAM",
+    "level": "Sapaan & Perkenalan",
+    "word_class": "Expression"
+  },
+  {
+    "word": "おやすみ",
+    "reading": "oyasumi",
+    "kanji": "お休み",
+    "indonesian": "SELAMAT TIDUR",
+    "level": "Sapaan & Perkenalan",
+    "word_class": "Expression"
+  },
+  {
+    "word": "ありがとう",
+    "reading": "arigatou",
+    "kanji": "-",
+    "indonesian": "TERIMA KASIH",
+    "level": "Sapaan & Perkenalan",
+    "word_class": "Expression"
+  },
+  {
+    "word": "ともだち",
+    "reading": "tomodachi",
+    "kanji": "友達",
+    "indonesian": "TEMAN",
+    "level": "Sapaan & Perkenalan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "こども",
+    "reading": "kodomo",
+    "kanji": "子供",
+    "indonesian": "ANAK-ANAK",
+    "level": "Sapaan & Perkenalan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "がっこう",
+    "reading": "gakkou",
+    "kanji": "学校",
+    "indonesian": "SEKOLAH",
+    "level": "Sekolah & Belajar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "べんきょう",
+    "reading": "benkyou",
+    "kanji": "勉強",
+    "indonesian": "BELAJAR",
+    "level": "Sekolah & Belajar",
+    "word_class": "Noun/Verb"
+  },
+  {
+    "word": "きょうしつ",
+    "reading": "kyoushitsu",
+    "kanji": "教室",
+    "indonesian": "RUANG KELAS",
+    "level": "Sekolah & Belajar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "つくえ",
+    "reading": "tsukue",
+    "kanji": "机",
+    "indonesian": "MEJA",
+    "level": "Sekolah & Belajar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "いす",
+    "reading": "isu",
+    "kanji": "椅子",
+    "indonesian": "KURSI",
+    "level": "Sekolah & Belajar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ほん",
+    "reading": "hon",
+    "kanji": "本",
+    "indonesian": "BUKU",
+    "level": "Sekolah & Belajar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "じしょ",
+    "reading": "jisho",
+    "kanji": "辞書",
+    "indonesian": "KAMUS",
+    "level": "Sekolah & Belajar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "のーと",
+    "reading": "nooto",
+    "kanji": "-",
+    "indonesian": "CATATAN",
+    "level": "Sekolah & Belajar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "えんぴつ",
+    "reading": "enpitsu",
+    "kanji": "鉛筆",
+    "indonesian": "PENSIL",
+    "level": "Sekolah & Belajar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "びじゅつ",
+    "reading": "bijutsu",
+    "kanji": "美術",
+    "indonesian": "SENI",
+    "level": "Sekolah & Belajar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "きょう",
+    "reading": "kyou",
+    "kanji": "今日",
+    "indonesian": "HARI INI",
+    "level": "Sekolah & Belajar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "きのう",
+    "reading": "kinou",
+    "kanji": "昨日",
+    "indonesian": "KEMARIN",
+    "level": "Sekolah & Belajar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "あした",
+    "reading": "ashita",
+    "kanji": "明日",
+    "indonesian": "BESOK",
+    "level": "Sekolah & Belajar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "よむ",
+    "reading": "yomu",
+    "kanji": "読む",
+    "indonesian": "MEMBACA",
+    "level": "Sekolah & Belajar",
+    "word_class": "Verb"
+  },
+  {
+    "word": "かく",
+    "reading": "kaku",
+    "kanji": "書く",
+    "indonesian": "MENULIS",
+    "level": "Sekolah & Belajar",
+    "word_class": "Verb"
+  },
+  {
+    "word": "きく",
+    "reading": "kiku",
+    "kanji": "聞く",
+    "indonesian": "MENDENGAR",
+    "level": "Sekolah & Belajar",
+    "word_class": "Verb"
+  },
+  {
+    "word": "わかる",
+    "reading": "wakaru",
+    "kanji": "分かる",
+    "indonesian": "MENGERTI",
+    "level": "Sekolah & Belajar",
+    "word_class": "Verb"
+  },
+  {
+    "word": "たべる",
+    "reading": "taberu",
+    "kanji": "食べる",
+    "indonesian": "MAKAN",
+    "level": "Aktivitas Harian",
+    "word_class": "Verb"
+  },
+  {
+    "word": "のむ",
+    "reading": "nomu",
+    "kanji": "飲む",
+    "indonesian": "MINUM",
+    "level": "Aktivitas Harian",
+    "word_class": "Verb"
+  },
+  {
+    "word": "いく",
+    "reading": "iku",
+    "kanji": "行く",
+    "indonesian": "PERGI",
+    "level": "Aktivitas Harian",
+    "word_class": "Verb"
+  },
+  {
+    "word": "くる",
+    "reading": "kuru",
+    "kanji": "来る",
+    "indonesian": "DATANG",
+    "level": "Aktivitas Harian",
+    "word_class": "Verb"
+  },
+  {
+    "word": "かえる",
+    "reading": "kaeru",
+    "kanji": "帰る",
+    "indonesian": "PULANG",
+    "level": "Aktivitas Harian",
+    "word_class": "Verb"
+  },
+  {
+    "word": "ねる",
+    "reading": "neru",
+    "kanji": "寝る",
+    "indonesian": "TIDUR",
+    "level": "Aktivitas Harian",
+    "word_class": "Verb"
+  },
+  {
+    "word": "おきる",
+    "reading": "okiru",
+    "kanji": "起きる",
+    "indonesian": "BANGUN",
+    "level": "Aktivitas Harian",
+    "word_class": "Verb"
+  },
+  {
+    "word": "みる",
+    "reading": "miru",
+    "kanji": "見る",
+    "indonesian": "MELIHAT",
+    "level": "Aktivitas Harian",
+    "word_class": "Verb"
+  },
+  {
+    "word": "はなす",
+    "reading": "hanasu",
+    "kanji": "話す",
+    "indonesian": "BERBICARA",
+    "level": "Aktivitas Harian",
+    "word_class": "Verb"
+  },
+  {
+    "word": "あう",
+    "reading": "au",
+    "kanji": "会う",
+    "indonesian": "BERTEMU",
+    "level": "Aktivitas Harian",
+    "word_class": "Verb"
+  },
+  {
+    "word": "まつ",
+    "reading": "matsu",
+    "kanji": "待つ",
+    "indonesian": "MENUNGGU",
+    "level": "Aktivitas Harian",
+    "word_class": "Verb"
+  },
+  {
+    "word": "かう",
+    "reading": "kau",
+    "kanji": "買う",
+    "indonesian": "MEMBELI",
+    "level": "Aktivitas Harian",
+    "word_class": "Verb"
+  },
+  {
+    "word": "とる",
+    "reading": "toru",
+    "kanji": "撮る",
+    "indonesian": "MENGAMBIL",
+    "level": "Aktivitas Harian",
+    "word_class": "Verb"
+  },
+  {
+    "word": "つく",
+    "reading": "tsuku",
+    "kanji": "着く",
+    "indonesian": "SAMPAI",
+    "level": "Aktivitas Harian",
+    "word_class": "Verb"
+  },
+  {
+    "word": "でる",
+    "reading": "deru",
+    "kanji": "出る",
+    "indonesian": "KELUAR",
+    "level": "Aktivitas Harian",
+    "word_class": "Verb"
+  },
+  {
+    "word": "はいる",
+    "reading": "hairu",
+    "kanji": "入る",
+    "indonesian": "MASUK",
+    "level": "Aktivitas Harian",
+    "word_class": "Verb"
+  },
+  {
+    "word": "ごはん",
+    "reading": "gohan",
+    "kanji": "ご飯",
+    "indonesian": "NASI",
+    "level": "Makanan & Minuman",
+    "word_class": "Noun"
+  },
+  {
+    "word": "みず",
+    "reading": "mizu",
+    "kanji": "水",
+    "indonesian": "AIR",
+    "level": "Makanan & Minuman",
+    "word_class": "Noun"
+  },
+  {
+    "word": "おちゃ",
+    "reading": "ocha",
+    "kanji": "お茶",
+    "indonesian": "TEH",
+    "level": "Makanan & Minuman",
+    "word_class": "Noun"
+  },
+  {
+    "word": "にく",
+    "reading": "niku",
+    "kanji": "肉",
+    "indonesian": "DAGING",
+    "level": "Makanan & Minuman",
+    "word_class": "Noun"
+  },
+  {
+    "word": "さかな",
+    "reading": "sakana",
+    "kanji": "魚",
+    "indonesian": "IKAN",
+    "level": "Makanan & Minuman",
+    "word_class": "Noun"
+  },
+  {
+    "word": "やさい",
+    "reading": "yasai",
+    "kanji": "野菜",
+    "indonesian": "SAYURAN",
+    "level": "Makanan & Minuman",
+    "word_class": "Noun"
+  },
+  {
+    "word": "くだもの",
+    "reading": "kudamono",
+    "kanji": "果物",
+    "indonesian": "BUAH",
+    "level": "Makanan & Minuman",
+    "word_class": "Noun"
+  },
+  {
+    "word": "たまご",
+    "reading": "tamago",
+    "kanji": "卵",
+    "indonesian": "TELUR",
+    "level": "Makanan & Minuman",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ぱん",
+    "reading": "pan",
+    "kanji": "-",
+    "indonesian": "ROTI",
+    "level": "Makanan & Minuman",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ぎゅうにゅう",
+    "reading": "gyuunyuu",
+    "kanji": "牛乳",
+    "indonesian": "SUSU",
+    "level": "Makanan & Minuman",
+    "word_class": "Noun"
+  },
+  {
+    "word": "あまい",
+    "reading": "amai",
+    "kanji": "甘い",
+    "indonesian": "MANIS",
+    "level": "Makanan & Minuman",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "からい",
+    "reading": "karai",
+    "kanji": "辛い",
+    "indonesian": "PEDAS",
+    "level": "Makanan & Minuman",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "おいしい",
+    "reading": "oishii",
+    "kanji": "-",
+    "indonesian": "ENAK",
+    "level": "Makanan & Minuman",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "おなか",
+    "reading": "onaka",
+    "kanji": "お腹",
+    "indonesian": "PERUT",
+    "level": "Makanan & Minuman",
+    "word_class": "Noun"
+  },
+  {
+    "word": "いえ",
+    "reading": "ie",
+    "kanji": "家",
+    "indonesian": "RUMAH",
+    "level": "Rumah & Kamar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "へや",
+    "reading": "heya",
+    "kanji": "部屋",
+    "indonesian": "KAMAR",
+    "level": "Rumah & Kamar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "どあ",
+    "reading": "doa",
+    "kanji": "-",
+    "indonesian": "PINTU",
+    "level": "Rumah & Kamar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "まど",
+    "reading": "mado",
+    "kanji": "窓",
+    "indonesian": "JENDELA",
+    "level": "Rumah & Kamar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "べっど",
+    "reading": "beddo",
+    "kanji": "-",
+    "indonesian": "TEMPAT TIDUR",
+    "level": "Rumah & Kamar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "といれ",
+    "reading": "toire",
+    "kanji": "-",
+    "indonesian": "TOILET",
+    "level": "Rumah & Kamar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "だいどころ",
+    "reading": "daidokoro",
+    "kanji": "台所",
+    "indonesian": "DAPUR",
+    "level": "Rumah & Kamar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "てれび",
+    "reading": "terebi",
+    "kanji": "-",
+    "indonesian": "TELEVISI",
+    "level": "Rumah & Kamar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "れいぞうこ",
+    "reading": "reizouko",
+    "kanji": "冷蔵庫",
+    "indonesian": "KULKAS",
+    "level": "Rumah & Kamar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "せんたく",
+    "reading": "sentaku",
+    "kanji": "洗濯",
+    "indonesian": "CUCI BAJU",
+    "level": "Rumah & Kamar",
+    "word_class": "Noun/Verb"
+  },
+  {
+    "word": "そうじ",
+    "reading": "souji",
+    "kanji": "掃除",
+    "indonesian": "BERSIH-BERSIH",
+    "level": "Rumah & Kamar",
+    "word_class": "Noun/Verb"
+  },
+  {
+    "word": "にわ",
+    "reading": "niwa",
+    "kanji": "庭",
+    "indonesian": "HALAMAN",
+    "level": "Rumah & Kamar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "かいだん",
+    "reading": "kaidan",
+    "kanji": "階段",
+    "indonesian": "TANGGA",
+    "level": "Rumah & Kamar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "てんき",
+    "reading": "tenki",
+    "kanji": "天気",
+    "indonesian": "CUACA",
+    "level": "Cuaca & Alam",
+    "word_class": "Noun"
+  },
+  {
+    "word": "はれ",
+    "reading": "hare",
+    "kanji": "晴れ",
+    "indonesian": "CERAH",
+    "level": "Cuaca & Alam",
+    "word_class": "Noun"
+  },
+  {
+    "word": "あめ",
+    "reading": "ame",
+    "kanji": "雨",
+    "indonesian": "HUJAN",
+    "level": "Cuaca & Alam",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ゆき",
+    "reading": "yuki",
+    "kanji": "雪",
+    "indonesian": "SALJU",
+    "level": "Cuaca & Alam",
+    "word_class": "Noun"
+  },
+  {
+    "word": "かぜ",
+    "reading": "kaze",
+    "kanji": "風",
+    "indonesian": "ANGIN",
+    "level": "Cuaca & Alam",
+    "word_class": "Noun"
+  },
+  {
+    "word": "くも",
+    "reading": "kumo",
+    "kanji": "雲",
+    "indonesian": "AWAN",
+    "level": "Cuaca & Alam",
+    "word_class": "Noun"
+  },
+  {
+    "word": "そら",
+    "reading": "sora",
+    "kanji": "空",
+    "indonesian": "LANGIT",
+    "level": "Cuaca & Alam",
+    "word_class": "Noun"
+  },
+  {
+    "word": "うみ",
+    "reading": "umi",
+    "kanji": "海",
+    "indonesian": "LAUT",
+    "level": "Cuaca & Alam",
+    "word_class": "Noun"
+  },
+  {
+    "word": "やま",
+    "reading": "yama",
+    "kanji": "山",
+    "indonesian": "GUNUNG",
+    "level": "Cuaca & Alam",
+    "word_class": "Noun"
+  },
+  {
+    "word": "かわ",
+    "reading": "kawa",
+    "kanji": "川",
+    "indonesian": "SUNGAI",
+    "level": "Cuaca & Alam",
+    "word_class": "Noun"
+  },
+  {
+    "word": "き",
+    "reading": "ki",
+    "kanji": "木",
+    "indonesian": "POHON",
+    "level": "Cuaca & Alam",
+    "word_class": "Noun"
+  },
+  {
+    "word": "はな",
+    "reading": "hana",
+    "kanji": "花",
+    "indonesian": "BUNGA",
+    "level": "Cuaca & Alam",
+    "word_class": "Noun"
+  },
+  {
+    "word": "たいよう",
+    "reading": "taiyou",
+    "kanji": "太陽",
+    "indonesian": "MATAHARI",
+    "level": "Cuaca & Alam",
+    "word_class": "Noun"
+  },
+  {
+    "word": "じかん",
+    "reading": "jikan",
+    "kanji": "時間",
+    "indonesian": "WAKTU",
+    "level": "Waktu & Tanggal",
+    "word_class": "Noun"
+  },
+  {
+    "word": "いま",
+    "reading": "ima",
+    "kanji": "今",
+    "indonesian": "SEKARANG",
+    "level": "Waktu & Tanggal",
+    "word_class": "Noun"
+  },
+  {
+    "word": "あさ",
+    "reading": "asa",
+    "kanji": "朝",
+    "indonesian": "PAGI",
+    "level": "Waktu & Tanggal",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ひる",
+    "reading": "hiru",
+    "kanji": "昼",
+    "indonesian": "SIANG",
+    "level": "Waktu & Tanggal",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ばん",
+    "reading": "ban",
+    "kanji": "晩",
+    "indonesian": "MALAM",
+    "level": "Waktu & Tanggal",
+    "word_class": "Noun"
+  },
+  {
+    "word": "よる",
+    "reading": "yoru",
+    "kanji": "夜",
+    "indonesian": "MALAM (LATE)",
+    "level": "Waktu & Tanggal",
+    "word_class": "Noun"
+  },
+  {
+    "word": "しゅう",
+    "reading": "shuu",
+    "kanji": "週",
+    "indonesian": "MINGGU",
+    "level": "Waktu & Tanggal",
+    "word_class": "Noun"
+  },
+  {
+    "word": "つき",
+    "reading": "tsuki",
+    "kanji": "月",
+    "indonesian": "BULAN",
+    "level": "Waktu & Tanggal",
+    "word_class": "Noun"
+  },
+  {
+    "word": "とし",
+    "reading": "toshi",
+    "kanji": "年",
+    "indonesian": "TAHUN",
+    "level": "Waktu & Tanggal",
+    "word_class": "Noun"
+  },
+  {
+    "word": "まいにち",
+    "reading": "mainichi",
+    "kanji": "毎日",
+    "indonesian": "SETIAP HARI",
+    "level": "Waktu & Tanggal",
+    "word_class": "Noun/Adv"
+  },
+  {
+    "word": "からだ",
+    "reading": "karada",
+    "kanji": "体",
+    "indonesian": "TUBUH",
+    "level": "Tubuh & Kesehatan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "あたま",
+    "reading": "atama",
+    "kanji": "頭",
+    "indonesian": "KEPALA",
+    "level": "Tubuh & Kesehatan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "め",
+    "reading": "me",
+    "kanji": "目",
+    "indonesian": "MATA",
+    "level": "Tubuh & Kesehatan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "みみ",
+    "reading": "mimi",
+    "kanji": "耳",
+    "indonesian": "TELINGA",
+    "level": "Tubuh & Kesehatan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "はな",
+    "reading": "hana",
+    "kanji": "鼻",
+    "indonesian": "HIDUNG",
+    "level": "Tubuh & Kesehatan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "くち",
+    "reading": "kuchi",
+    "kanji": "口",
+    "indonesian": "MULUT",
+    "level": "Tubuh & Kesehatan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "て",
+    "reading": "te",
+    "kanji": "手",
+    "indonesian": "TANGAN",
+    "level": "Tubuh & Kesehatan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "あし",
+    "reading": "ashi",
+    "kanji": "足",
+    "indonesian": "KAKI",
+    "level": "Tubuh & Kesehatan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "は",
+    "reading": "ha",
+    "kanji": "歯",
+    "indonesian": "GIGI",
+    "level": "Tubuh & Kesehatan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "びょうき",
+    "reading": "byouki",
+    "kanji": "病気",
+    "indonesian": "SAKIT",
+    "level": "Tubuh & Kesehatan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "くすり",
+    "reading": "kusuri",
+    "kanji": "薬",
+    "indonesian": "OBAT",
+    "level": "Tubuh & Kesehatan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "びょういん",
+    "reading": "byouin",
+    "kanji": "病院",
+    "indonesian": "RUMAH SAKIT",
+    "level": "Tubuh & Kesehatan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ふく",
+    "reading": "fuku",
+    "kanji": "服",
+    "indonesian": "PAKAIAN",
+    "level": "Pakaian & Mode",
+    "word_class": "Noun"
+  },
+  {
+    "word": "しゃつ",
+    "reading": "shatsu",
+    "kanji": "-",
+    "indonesian": "KEMEJA",
+    "level": "Pakaian & Mode",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ずぼん",
+    "reading": "zubon",
+    "kanji": "-",
+    "indonesian": "CELANA",
+    "level": "Pakaian & Mode",
+    "word_class": "Noun"
+  },
+  {
+    "word": "くつ",
+    "reading": "kutsu",
+    "kanji": "靴",
+    "indonesian": "SEPATU",
+    "level": "Pakaian & Mode",
+    "word_class": "Noun"
+  },
+  {
+    "word": "くつした",
+    "reading": "kutsushita",
+    "kanji": "靴下",
+    "indonesian": "KAOS KAKI",
+    "level": "Pakaian & Mode",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ぼうし",
+    "reading": "boushi",
+    "kanji": "帽子",
+    "indonesian": "TOPI",
+    "level": "Pakaian & Mode",
+    "word_class": "Noun"
+  },
+  {
+    "word": "めがね",
+    "reading": "megane",
+    "kanji": "眼鏡",
+    "indonesian": "KACAMATA",
+    "level": "Pakaian & Mode",
+    "word_class": "Noun"
+  },
+  {
+    "word": "かばん",
+    "reading": "kaban",
+    "kanji": "鞄",
+    "indonesian": "TAS",
+    "level": "Pakaian & Mode",
+    "word_class": "Noun"
+  },
+  {
+    "word": "きる",
+    "reading": "kiru",
+    "kanji": "着る",
+    "indonesian": "MEMAKAI (ATASAN)",
+    "level": "Pakaian & Mode",
+    "word_class": "Verb"
+  },
+  {
+    "word": "はく",
+    "reading": "haku",
+    "kanji": "履く",
+    "indonesian": "MEMAKAI (BAWAHAN)",
+    "level": "Pakaian & Mode",
+    "word_class": "Verb"
+  },
+  {
+    "word": "どうぶつ",
+    "reading": "doubutsu",
+    "kanji": "動物",
+    "indonesian": "HEWAN",
+    "level": "Hewan & Binatang",
+    "word_class": "Noun"
+  },
+  {
+    "word": "いぬ",
+    "reading": "inu",
+    "kanji": "犬",
+    "indonesian": "ANJING",
+    "level": "Hewan & Binatang",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ねこ",
+    "reading": "neko",
+    "kanji": "猫",
+    "indonesian": "KUCING",
+    "level": "Hewan & Binatang",
+    "word_class": "Noun"
+  },
+  {
+    "word": "とり",
+    "reading": "tori",
+    "kanji": "鳥",
+    "indonesian": "BURUNG",
+    "level": "Hewan & Binatang",
+    "word_class": "Noun"
+  },
+  {
+    "word": "うま",
+    "reading": "uma",
+    "kanji": "馬",
+    "indonesian": "KUDA",
+    "level": "Hewan & Binatang",
+    "word_class": "Noun"
+  },
+  {
+    "word": "うし",
+    "reading": "ushi",
+    "kanji": "牛",
+    "indonesian": "SAPI",
+    "level": "Hewan & Binatang",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ぶた",
+    "reading": "buta",
+    "kanji": "豚",
+    "indonesian": "BABI",
+    "level": "Hewan & Binatang",
+    "word_class": "Noun"
+  },
+  {
+    "word": "うさぎ",
+    "reading": "usagi",
+    "kanji": "兎",
+    "indonesian": "KELINCI",
+    "level": "Hewan & Binatang",
+    "word_class": "Noun"
+  },
+  {
+    "word": "さる",
+    "reading": "saru",
+    "kanji": "猿",
+    "indonesian": "MONYET",
+    "level": "Hewan & Binatang",
+    "word_class": "Noun"
+  },
+  {
+    "word": "むし",
+    "reading": "mushi",
+    "kanji": "虫",
+    "indonesian": "SERANGGA",
+    "level": "Hewan & Binatang",
+    "word_class": "Noun"
+  },
+  {
+    "word": "のりもの",
+    "reading": "norimono",
+    "kanji": "乗り物",
+    "indonesian": "KENDARAAN",
+    "level": "Transportasi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "くるま",
+    "reading": "kuruma",
+    "kanji": "車",
+    "indonesian": "MOBIL",
+    "level": "Transportasi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "でんしゃ",
+    "reading": "densha",
+    "kanji": "電車",
+    "indonesian": "KERETA",
+    "level": "Transportasi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ばす",
+    "reading": "basu",
+    "kanji": "-",
+    "indonesian": "BUS",
+    "level": "Transportasi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ひこうき",
+    "reading": "hikouki",
+    "kanji": "飛行機",
+    "indonesian": "PESAWAT",
+    "level": "Transportasi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ふね",
+    "reading": "fune",
+    "kanji": "船",
+    "indonesian": "KAPAL",
+    "level": "Transportasi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "じてんしゃ",
+    "reading": "jitensha",
+    "kanji": "自転車",
+    "indonesian": "SEPEDA",
+    "level": "Transportasi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "えき",
+    "reading": "eki",
+    "kanji": "駅",
+    "indonesian": "STASIUN",
+    "level": "Transportasi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "みち",
+    "reading": "michi",
+    "kanji": "道",
+    "indonesian": "JALAN",
+    "level": "Transportasi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "たかい",
+    "reading": "takai",
+    "kanji": "高い",
+    "indonesian": "MAHAL / TINGGI",
+    "level": "Kata Sifat I",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "やすい",
+    "reading": "yasui",
+    "kanji": "安い",
+    "indonesian": "MURAH",
+    "level": "Kata Sifat I",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "あたらしい",
+    "reading": "atarashii",
+    "kanji": "新しい",
+    "indonesian": "BARU",
+    "level": "Kata Sifat I",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "ふるい",
+    "reading": "furui",
+    "kanji": "古い",
+    "indonesian": "LAMA",
+    "level": "Kata Sifat I",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "いい",
+    "reading": "ii",
+    "kanji": "-",
+    "indonesian": "BAGUS",
+    "level": "Kata Sifat I",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "わるい",
+    "reading": "warui",
+    "kanji": "悪い",
+    "indonesian": "BURUK",
+    "level": "Kata Sifat I",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "あつい",
+    "reading": "atsui",
+    "kanji": "暑い",
+    "indonesian": "PANAS",
+    "level": "Kata Sifat I",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "さむい",
+    "reading": "samui",
+    "kanji": "寒い",
+    "indonesian": "DINGIN",
+    "level": "Kata Sifat I",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "おおきい",
+    "reading": "ookii",
+    "kanji": "大きい",
+    "indonesian": "BESAR",
+    "level": "Kata Sifat I",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "ちいさい",
+    "reading": "chiisai",
+    "kanji": "小さい",
+    "indonesian": "KECIL",
+    "level": "Kata Sifat I",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "むずかしい",
+    "reading": "muzukashii",
+    "kanji": "難しい",
+    "indonesian": "SULIT",
+    "level": "Kata Sifat I",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "やさしい",
+    "reading": "yasashii",
+    "kanji": "易しい",
+    "indonesian": "MUDAH",
+    "level": "Kata Sifat I",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "すき",
+    "reading": "suki",
+    "kanji": "好き",
+    "indonesian": "SUKA",
+    "level": "Kata Sifat NA",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "きらい",
+    "reading": "kirai",
+    "kanji": "嫌い",
+    "indonesian": "BENCI",
+    "level": "Kata Sifat NA",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "じょうず",
+    "reading": "jouzu",
+    "kanji": "上手",
+    "indonesian": "PANDAI",
+    "level": "Kata Sifat NA",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "へた",
+    "reading": "heta",
+    "kanji": "下手",
+    "indonesian": "BODOH",
+    "level": "Kata Sifat NA",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "しずか",
+    "reading": "shizuka",
+    "kanji": "静か",
+    "indonesian": "TENANG",
+    "level": "Kata Sifat NA",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "にぎやか",
+    "reading": "nigiyaka",
+    "kanji": "-",
+    "indonesian": "RAMAI",
+    "level": "Kata Sifat NA",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "べんり",
+    "reading": "benri",
+    "kanji": "便利",
+    "indonesian": "PRAKTIS",
+    "level": "Kata Sifat NA",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "げんき",
+    "reading": "genki",
+    "kanji": "元気",
+    "indonesian": "SEHAT",
+    "level": "Kata Sifat NA",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "ひま",
+    "reading": "hima",
+    "kanji": "暇",
+    "indonesian": "SENGGANG",
+    "level": "Kata Sifat NA",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "たいへん",
+    "reading": "taihen",
+    "kanji": "大変",
+    "indonesian": "BERAT/SULIT",
+    "level": "Kata Sifat NA",
+    "word_class": "Adjective"
+  },
+  {
+    "word": "ここ",
+    "reading": "koko",
+    "kanji": "-",
+    "indonesian": "DI SINI",
+    "level": "Tempat & Lokasi",
+    "word_class": "Noun/Pronoun"
+  },
+  {
+    "word": "そこ",
+    "reading": "soko",
+    "kanji": "-",
+    "indonesian": "DI SITU",
+    "level": "Tempat & Lokasi",
+    "word_class": "Noun/Pronoun"
+  },
+  {
+    "word": "あそこ",
+    "reading": "asoko",
+    "kanji": "-",
+    "indonesian": "DI SANA",
+    "level": "Tempat & Lokasi",
+    "word_class": "Noun/Pronoun"
+  },
+  {
+    "word": "みせ",
+    "reading": "mise",
+    "kanji": "店",
+    "indonesian": "TOKO",
+    "level": "Tempat & Lokasi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ぎんこう",
+    "reading": "ginkou",
+    "kanji": "銀行",
+    "indonesian": "BANK",
+    "level": "Tempat & Lokasi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ゆうびんきょく",
+    "reading": "yuubinkyoku",
+    "kanji": "郵便局",
+    "indonesian": "KANTOR POS",
+    "level": "Tempat & Lokasi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "としょかん",
+    "reading": "toshokan",
+    "kanji": "図書館",
+    "indonesian": "PERPUSTAKAAN",
+    "level": "Tempat & Lokasi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "とうきょう",
+    "reading": "toukyou",
+    "kanji": "東京",
+    "indonesian": "TOKYO",
+    "level": "Tempat & Lokasi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "まち",
+    "reading": "machi",
+    "kanji": "町",
+    "indonesian": "KOTA",
+    "level": "Tempat & Lokasi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "あるく",
+    "reading": "aruku",
+    "kanji": "歩く",
+    "indonesian": "BERJALAN",
+    "level": "Tindakan Fisik",
+    "word_class": "Verb"
+  },
+  {
+    "word": "はしる",
+    "reading": "hashiru",
+    "kanji": "走る",
+    "indonesian": "BERLARI",
+    "level": "Tindakan Fisik",
+    "word_class": "Verb"
+  },
+  {
+    "word": "とぶ",
+    "reading": "tobu",
+    "kanji": "飛ぶ",
+    "indonesian": "TERBANG",
+    "level": "Tindakan Fisik",
+    "word_class": "Verb"
+  },
+  {
+    "word": "およぐ",
+    "reading": "oyogu",
+    "kanji": "泳ぐ",
+    "indonesian": "BERENANG",
+    "level": "Tindakan Fisik",
+    "word_class": "Verb"
+  },
+  {
+    "word": "たつ",
+    "reading": "tatsu",
+    "kanji": "立つ",
+    "indonesian": "BERDIRI",
+    "level": "Tindakan Fisik",
+    "word_class": "Verb"
+  },
+  {
+    "word": "すわる",
+    "reading": "suwaru",
+    "kanji": "座る",
+    "indonesian": "DUDUK",
+    "level": "Tindakan Fisik",
+    "word_class": "Verb"
+  },
+  {
+    "word": "あそぶ",
+    "reading": "asobu",
+    "kanji": "遊ぶ",
+    "indonesian": "BERMAIN",
+    "level": "Tindakan Fisik",
+    "word_class": "Verb"
+  },
+  {
+    "word": "いそぐ",
+    "reading": "isogu",
+    "kanji": "急ぐ",
+    "indonesian": "TERBURU-BURU",
+    "level": "Tindakan Fisik",
+    "word_class": "Verb"
+  },
+  {
+    "word": "やすむ",
+    "reading": "yasumu",
+    "kanji": "休む",
+    "indonesian": "ISTIRAHAT",
+    "level": "Tindakan Fisik",
+    "word_class": "Verb"
+  },
+  {
+    "word": "はたらく",
+    "reading": "hataraku",
+    "kanji": "働く",
+    "indonesian": "BEKERJA",
+    "level": "Tindakan Fisik",
+    "word_class": "Verb"
+  },
+  {
+    "word": "でんき",
+    "reading": "denki",
+    "kanji": "電気",
+    "indonesian": "LISTRIK",
+    "level": "Benda Sekitar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "かめら",
+    "reading": "kamera",
+    "kanji": "-",
+    "indonesian": "KAMERA",
+    "level": "Benda Sekitar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ぱそこん",
+    "reading": "pasokon",
+    "kanji": "-",
+    "indonesian": "KOMPUTER",
+    "level": "Benda Sekitar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "けいたい",
+    "reading": "keitai",
+    "kanji": "携帯",
+    "indonesian": "PONSEL",
+    "level": "Benda Sekitar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "てがみ",
+    "reading": "tegami",
+    "kanji": "手紙",
+    "indonesian": "SURAT",
+    "level": "Benda Sekitar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "かぎ",
+    "reading": "kagi",
+    "kanji": "鍵",
+    "indonesian": "KUNCI",
+    "level": "Benda Sekitar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "かさ",
+    "reading": "kasa",
+    "kanji": "傘",
+    "indonesian": "PAYUNG",
+    "level": "Benda Sekitar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "はこ",
+    "reading": "hako",
+    "kanji": "箱",
+    "indonesian": "KOTAK",
+    "level": "Benda Sekitar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ごみ",
+    "reading": "gomi",
+    "kanji": "-",
+    "indonesian": "SAMPAH",
+    "level": "Benda Sekitar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "しごと",
+    "reading": "shigoto",
+    "kanji": "仕事",
+    "indonesian": "PEKERJAAN",
+    "level": "Pekerjaan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "かいしゃいん",
+    "reading": "kaishain",
+    "kanji": "会社員",
+    "indonesian": "KARYAWAN",
+    "level": "Pekerjaan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ぎんこういん",
+    "reading": "ginkouin",
+    "kanji": "銀行員",
+    "indonesian": "PEGAWAI BANK",
+    "level": "Pekerjaan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "きょうし",
+    "reading": "kyoushi",
+    "kanji": "教師",
+    "indonesian": "PENGAJAR",
+    "level": "Pekerjaan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "いしゃ",
+    "reading": "isha",
+    "kanji": "医者",
+    "indonesian": "DOKTER",
+    "level": "Pekerjaan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "べんごし",
+    "reading": "bengoshi",
+    "kanji": "弁護士",
+    "indonesian": "PENGACARA",
+    "level": "Pekerjaan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "こうむいん",
+    "reading": "koumuin",
+    "kanji": "公務員",
+    "indonesian": "PNS",
+    "level": "Pekerjaan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "てんいん",
+    "reading": "tenin",
+    "kanji": "店員",
+    "indonesian": "PELAYAN TOKO",
+    "level": "Pekerjaan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "おんがく",
+    "reading": "ongaku",
+    "kanji": "音楽",
+    "indonesian": "MUSIK",
+    "level": "Hobi & Hiburan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "うた",
+    "reading": "uta",
+    "kanji": "歌",
+    "indonesian": "LAGU",
+    "level": "Hobi & Hiburan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "えいが",
+    "reading": "eiga",
+    "kanji": "映画",
+    "indonesian": "FILM",
+    "level": "Hobi & Hiburan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "しゃしん",
+    "reading": "shashin",
+    "kanji": "写真",
+    "indonesian": "FOTO",
+    "level": "Hobi & Hiburan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "え",
+    "reading": "e",
+    "kanji": "絵",
+    "indonesian": "LUKISAN",
+    "level": "Hobi & Hiburan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "どくしょ",
+    "reading": "dokusho",
+    "kanji": "読書",
+    "indonesian": "BACA BUKU",
+    "level": "Hobi & Hiburan",
+    "word_class": "Noun/Verb"
+  },
+  {
+    "word": "りょこう",
+    "reading": "ryokou",
+    "kanji": "旅行",
+    "indonesian": "WISATA",
+    "level": "Hobi & Hiburan",
+    "word_class": "Noun/Verb"
+  },
+  {
+    "word": "すぽーつ",
+    "reading": "supootsu",
+    "kanji": "-",
+    "indonesian": "OLAHRAGA",
+    "level": "Hobi & Hiburan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "おかね",
+    "reading": "okane",
+    "kanji": "お金",
+    "indonesian": "UANG",
+    "level": "Belanja & Uang",
+    "word_class": "Noun"
+  },
+  {
+    "word": "げんきん",
+    "reading": "genkin",
+    "kanji": "現金",
+    "indonesian": "TUNAI",
+    "level": "Belanja & Uang",
+    "word_class": "Noun"
+  },
+  {
+    "word": "かーど",
+    "reading": "kaado",
+    "kanji": "-",
+    "indonesian": "KARTU",
+    "level": "Belanja & Uang",
+    "word_class": "Noun"
+  },
+  {
+    "word": "うりば",
+    "reading": "uriba",
+    "kanji": "売り場",
+    "indonesian": "TEMPAT JUAL",
+    "level": "Belanja & Uang",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ねだん",
+    "reading": "nedan",
+    "kanji": "値段",
+    "indonesian": "HARGA",
+    "level": "Belanja & Uang",
+    "word_class": "Noun"
+  },
+  {
+    "word": "おつり",
+    "reading": "otsuri",
+    "kanji": "-",
+    "indonesian": "KEMBALIAN",
+    "level": "Belanja & Uang",
+    "word_class": "Noun"
+  },
+  {
+    "word": "さいふ",
+    "reading": "saifu",
+    "kanji": "財布",
+    "indonesian": "DOMPET",
+    "level": "Belanja & Uang",
+    "word_class": "Noun"
+  },
+  {
+    "word": "おもいだす",
+    "reading": "omoidasu",
+    "kanji": "思い出す",
+    "indonesian": "MENGINGAT",
+    "level": "Kata Kerja Lanjutan",
+    "word_class": "Verb"
+  },
+  {
+    "word": "かんがえる",
+    "reading": "kangaeru",
+    "kanji": "考える",
+    "indonesian": "BERPIKIR",
+    "level": "Kata Kerja Lanjutan",
+    "word_class": "Verb"
+  },
+  {
+    "word": "しらべる",
+    "reading": "shiraberu",
+    "kanji": "調べる",
+    "indonesian": "MEMERIKSA",
+    "level": "Kata Kerja Lanjutan",
+    "word_class": "Verb"
+  },
+  {
+    "word": "つかう",
+    "reading": "tsukau",
+    "kanji": "使う",
+    "indonesian": "PAKAI",
+    "level": "Kata Kerja Lanjutan",
+    "word_class": "Verb"
+  },
+  {
+    "word": "つくる",
+    "reading": "tsukuru",
+    "kanji": "作る",
+    "indonesian": "BUAT",
+    "level": "Kata Kerja Lanjutan",
+    "word_class": "Verb"
+  },
+  {
+    "word": "なおす",
+    "reading": "naosu",
+    "kanji": "直す",
+    "indonesian": "PERBAIKI",
+    "level": "Kata Kerja Lanjutan",
+    "word_class": "Verb"
+  },
+  {
+    "word": "ならう",
+    "reading": "narau",
+    "kanji": "習う",
+    "indonesian": "BELAJAR",
+    "level": "Kata Kerja Lanjutan",
+    "word_class": "Verb"
+  },
+  {
+    "word": "おしえる",
+    "reading": "oshieru",
+    "kanji": "教える",
+    "indonesian": "MENGAJAR",
+    "level": "Kata Kerja Lanjutan",
+    "word_class": "Verb"
+  },
+  {
+    "word": "いろ",
+    "reading": "iro",
+    "kanji": "色",
+    "indonesian": "WARNA",
+    "level": "Warna & Bentuk",
+    "word_class": "Noun"
+  },
+  {
+    "word": "あか",
+    "reading": "aka",
+    "kanji": "赤",
+    "indonesian": "MERAH",
+    "level": "Warna & Bentuk",
+    "word_class": "Noun/Adj"
+  },
+  {
+    "word": "あお",
+    "reading": "ao",
+    "kanji": "青",
+    "indonesian": "BIRU",
+    "level": "Warna & Bentuk",
+    "word_class": "Noun/Adj"
+  },
+  {
+    "word": "きいろ",
+    "reading": "kiiro",
+    "kanji": "黄色",
+    "indonesian": "KUNING",
+    "level": "Warna & Bentuk",
+    "word_class": "Noun/Adj"
+  },
+  {
+    "word": "しろ",
+    "reading": "shiro",
+    "kanji": "白",
+    "indonesian": "PUTIH",
+    "level": "Warna & Bentuk",
+    "word_class": "Noun/Adj"
+  },
+  {
+    "word": "くろ",
+    "reading": "kuro",
+    "kanji": "黒",
+    "indonesian": "HITAM",
+    "level": "Warna & Bentuk",
+    "word_class": "Noun/Adj"
+  },
+  {
+    "word": "みどり",
+    "reading": "midori",
+    "kanji": "緑",
+    "indonesian": "HIJAU",
+    "level": "Warna & Bentuk",
+    "word_class": "Noun/Adj"
+  },
+  {
+    "word": "まる",
+    "reading": "maru",
+    "kanji": "丸",
+    "indonesian": "LINGKARAN",
+    "level": "Warna & Bentuk",
+    "word_class": "Noun"
+  },
+  {
+    "word": "しかく",
+    "reading": "shikaku",
+    "kanji": "四角",
+    "indonesian": "PERSEGI",
+    "level": "Warna & Bentuk",
+    "word_class": "Noun"
+  },
+  {
+    "word": "うえ",
+    "reading": "ue",
+    "kanji": "上",
+    "indonesian": "ATAS",
+    "level": "Arah & Posisi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "した",
+    "reading": "shita",
+    "kanji": "下",
+    "indonesian": "BAWAH",
+    "level": "Arah & Posisi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "まえ",
+    "reading": "mae",
+    "kanji": "前",
+    "indonesian": "DEPAN",
+    "level": "Arah & Posisi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "うしろ",
+    "reading": "ushiro",
+    "kanji": "後ろ",
+    "indonesian": "BELAKANG",
+    "level": "Arah & Posisi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "なか",
+    "reading": "naka",
+    "kanji": "中",
+    "indonesian": "DALAM",
+    "level": "Arah & Posisi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "そら",
+    "reading": "sora",
+    "kanji": "外",
+    "indonesian": "LUAR",
+    "level": "Arah & Posisi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ひだり",
+    "reading": "hidari",
+    "kanji": "左",
+    "indonesian": "KIRI",
+    "level": "Arah & Posisi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "みぎ",
+    "reading": "migi",
+    "kanji": "右",
+    "indonesian": "KANAN",
+    "level": "Arah & Posisi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "きた",
+    "reading": "kita",
+    "kanji": "北",
+    "indonesian": "UTARA",
+    "level": "Arah & Posisi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "みなみ",
+    "reading": "minami",
+    "kanji": "南",
+    "indonesian": "SELATAN",
+    "level": "Arah & Posisi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ひがし",
+    "reading": "higashi",
+    "kanji": "東",
+    "indonesian": "TIMUR",
+    "level": "Arah & Posisi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "にし",
+    "reading": "nish",
+    "kanji": "西",
+    "indonesian": "BARAT",
+    "level": "Arah & Posisi",
+    "word_class": "Noun"
+  },
+  {
+    "word": "びる",
+    "reading": "biru",
+    "kanji": "-",
+    "indonesian": "GEDUNG",
+    "level": "Kehidupan Kota",
+    "word_class": "Noun"
+  },
+  {
+    "word": "こうえん",
+    "reading": "kouen",
+    "kanji": "公園",
+    "indonesian": "TAMAN",
+    "level": "Kehidupan Kota",
+    "word_class": "Noun"
+  },
+  {
+    "word": "どおり",
+    "reading": "doori",
+    "kanji": "通り",
+    "indonesian": "JALAN RAYA",
+    "level": "Kehidupan Kota",
+    "word_class": "Noun"
+  },
+  {
+    "word": "こうもん",
+    "reading": "koumon",
+    "kanji": "校門",
+    "indonesian": "G. SEKOLAH",
+    "level": "Kehidupan Kota",
+    "word_class": "Noun"
+  },
+  {
+    "word": "えきまえ",
+    "reading": "ekimae",
+    "kanji": "駅前",
+    "indonesian": "DP. STASIUN",
+    "level": "Kehidupan Kota",
+    "word_class": "Noun"
+  },
+  {
+    "word": "きっさてん",
+    "reading": "kissaten",
+    "kanji": "喫茶店",
+    "indonesian": "KAFE",
+    "level": "Kehidupan Kota",
+    "word_class": "Noun"
+  },
+  {
+    "word": "れすとらん",
+    "reading": "resutoran",
+    "kanji": "-",
+    "indonesian": "RESTORAN",
+    "level": "Kehidupan Kota",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ほし",
+    "reading": "hoshi",
+    "kanji": "星",
+    "indonesian": "BINTANG",
+    "level": "Alam Lanjutan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "もり",
+    "reading": "mori",
+    "kanji": "森",
+    "indonesian": "HUTAN",
+    "level": "Alam Lanjutan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "いけ",
+    "reading": "ike",
+    "kanji": "池",
+    "indonesian": "KOLAM",
+    "level": "Alam Lanjutan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "いし",
+    "reading": "ishi",
+    "kanji": "石",
+    "indonesian": "BATU",
+    "level": "Alam Lanjutan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "すな",
+    "reading": "suna",
+    "kanji": "砂",
+    "indonesian": "PASIR",
+    "level": "Alam Lanjutan",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ことば",
+    "reading": "kotoba",
+    "kanji": "言葉",
+    "indonesian": "KATA",
+    "level": "Konsep Dasar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ゆめ",
+    "reading": "yume",
+    "kanji": "夢",
+    "indonesian": "MIMPI",
+    "level": "Konsep Dasar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "あい",
+    "reading": "ai",
+    "kanji": "愛",
+    "indonesian": "CINTA",
+    "level": "Konsep Dasar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "こころ",
+    "reading": "kokoro",
+    "kanji": "心",
+    "indonesian": "HATI",
+    "level": "Konsep Dasar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "ちから",
+    "reading": "chikara",
+    "kanji": "力",
+    "indonesian": "TENAGA",
+    "level": "Konsep Dasar",
+    "word_class": "Noun"
+  },
+  {
+    "word": "へいわ",
+    "reading": "heiwa",
+    "kanji": "平和",
+    "indonesian": "DAMAI",
+    "level": "Konsep Dasar",
+    "word_class": "Noun"
+  }
+]

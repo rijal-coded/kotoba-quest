@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { Page, GameMode } from '../types';
-import { Sparkles, Leaf, Flame, Zap } from 'lucide-react';
+import { Sparkles, Leaf, Flame } from 'lucide-react';
 
 interface ModeSelectProps {
   onSelectMode: (mode: GameMode) => void;
@@ -33,14 +33,7 @@ const MODES: ModeConfig[] = [
     icon: <Flame className="w-6 h-6" />,
     colorClass: 'border-danger/40 hover:border-danger text-danger hover:bg-danger/5',
   },
-  {
-    mode: 'TANTANGAN',
-    label: 'Tantangan',
-    difficulty: 'Tantangan',
-    description: 'Pilih level yang sudah kamu kuasai dan hadapi skala kesulitan tanpa batas.',
-    icon: <Zap className="w-6 h-6" />,
-    colorClass: 'border-secondary/40 hover:border-secondary text-secondary hover:bg-secondary/5',
-  },
+
 ];
 
 export const ModeSelect = ({ onSelectMode, onNavigate }: ModeSelectProps) => {

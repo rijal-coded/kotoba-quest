@@ -15,7 +15,7 @@ import { WordReview } from '../components/battle/WordReview';
 import { WordCard } from '../components/battle/WordCard';
 import { buildQuestionQueue, buildQuestionConfig, ALL_QUESTION_TYPES } from '../utils/questionUtils';
 import { generateEnemy, ProgressContext } from '../utils/enemyUtils';
-import { Shield, Heart } from 'lucide-react';
+import { Shield, Heart, Play, Pause } from 'lucide-react';
 import { getLootDrop, LootContext } from '../utils/lootTables';
 
 interface BattleProps {
@@ -29,11 +29,12 @@ interface BattleProps {
   pendingNav?: Page | null;
   onCancelNav?: () => void;
   onConfirmNav?: () => void;
+  onNavigate?: (page: Page) => void;
 }
 
 const BOSS_LEAD_UP = 6;
 
-export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels, onFinish, onMarkWordSeen, pendingNav, onCancelNav, onConfirmNav }: BattleProps) => {
+export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels, onFinish, onMarkWordSeen, pendingNav, onCancelNav, onConfirmNav, onNavigate }: BattleProps) => {
   const [startTime] = useState(Date.now());
   const [showInventory, setShowInventory] = useState(false);
   const prevEnemiesBeatenRef = useRef(0);
@@ -45,6 +46,8 @@ export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels,
   const [speedFeedback, setSpeedFeedback] = useState<'quick' | 'normal' | 'slow' | null>(null);
 
   const { state, actions } = useBattleEngine(level, isEndless, inventory, gameMode);
+  const actionsRef = useRef(actions);
+  useEffect(() => { actionsRef.current = actions; });
 
   // Queue management
   const [queue, setQueue] = useState<QuestionItem[]>([]);
@@ -53,13 +56,15 @@ export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels,
   const [totalCorrect, setTotalCorrect] = useState(0);
   const [totalWrong, setTotalWrong] = useState(0);
   const [bossActivated, setBossActivated] = useState(false);
+  const [currentFaults, setCurrentFaults] = useState(0);
+  const [wrongOptions, setWrongOptions] = useState<string[]>([]);
 
 // Word review tracking
 const [wordResults, setWordResults] = useState<{ wordIndex: number; questionType: QuestionType; correct: boolean }[]>([]);
 const [showWordReview, setShowWordReview] = useState(false);
 
 // Wave progress data (non-endless, non-tantangan)
-const showWaveProgress = !isEndless && gameMode !== 'TANTANGAN' && queue.length > 0;
+const showWaveProgress = !isEndless && gameMode === 'BELAJAR' && queue.length > 0;
 const currentWave = state.enemiesBeaten + 1;
 const queueProgress = showWaveProgress ? currentIndex / queue.length : 0;
 const isBossZone = showWaveProgress ? currentIndex >= queue.length - BOSS_LEAD_UP : false;
@@ -72,7 +77,7 @@ const isBossZone = showWaveProgress ? currentIndex >= queue.length - BOSS_LEAD_U
 
   // Build queue on mount (non-endless only)
   useEffect(() => {
-    if (queue.length > 0 || isEndless || gameMode === 'TANTANGAN') return;
+    if (queue.length > 0 || isEndless || gameMode === 'LATIHAN') return;
     const newQueue = buildQuestionQueue(level.words, level.unlockedWordCount);
     setQueue(newQueue);
     setWordCoverage(level.words.map((_, i) => ({
@@ -91,8 +96,8 @@ const isBossZone = showWaveProgress ? currentIndex >= queue.length - BOSS_LEAD_U
     if (bossActivated || currentIndex < queue.length - BOSS_LEAD_UP) return;
     if (queue.length === 0) return;
     setBossActivated(true);
-    actions.setBoss(true);
-  }, [currentIndex, queue.length, bossActivated, actions]);
+    actionsRef.current.setBoss(true);
+  }, [currentIndex, queue.length, bossActivated]);
 
 // WordCard for Belajar mode
 useEffect(() => {
@@ -101,8 +106,8 @@ useEffect(() => {
   if (level.seenWordIndices?.includes(currentItem.wordIndex)) return;
   if (showWave) return;
   setShowWordCard(true);
-  actions.setPaused(true);
-}, [currentItem?.wordIndex, gameMode, isEndless, actions, showWave, level.seenWordIndices]);
+  actionsRef.current.setPaused(true);
+}, [currentItem?.wordIndex, gameMode, isEndless, showWave, level.seenWordIndices]);
 
   const handleWordCardClose = useCallback(() => {
     if (!currentItem) return;
@@ -126,23 +131,28 @@ useEffect(() => {
 
   // Keyboard shortcuts
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (state.showVictory || state.showDefeat || showInventory) return;
-      switch (e.key.toLowerCase()) {
-        case 'z':
-          handleAttackSkill();
-          break;
-        case 'n':
-          handleDefendSkill();
-          break;
-        case 'i':
-          setShowInventory(prev => !prev);
-          break;
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [state.showVictory, state.showDefeat, showInventory, actions]);
+ const handleKeyDown = (e: KeyboardEvent) => {
+  const blockingUI = state.showVictory || state.showDefeat || showWordReview || showWordCard || showInventory;
+  if (blockingUI) return;
+  switch (e.key.toLowerCase()) {
+  case 'z':
+    handleAttackSkill();
+    break;
+  case 'n':
+    handleDefendSkill();
+    break;
+  case 'i':
+    setShowInventory(prev => !prev);
+    break;
+  case 'p':
+  case 'escape':
+    actions.setPaused(!state.isPaused);
+    break;
+  }
+ };
+ window.addEventListener('keydown', handleKeyDown);
+ return () => window.removeEventListener('keydown', handleKeyDown);
+}, [state.showVictory, state.showDefeat, showWordReview, showWordCard, showInventory, state.isPaused, actions]);
 
   // Trigger particles on feedback
   useEffect(() => {
@@ -179,7 +189,7 @@ useEffect(() => {
     }
   }, [state.feedback]);
 
-  const handleAnswer = (isCorrect: boolean) => {
+  const handleAnswer = (isCorrect: boolean, option: string) => {
     if (!currentItem) return;
 
     // Compute speed multiplier (Belajar mode only)
@@ -200,7 +210,7 @@ useEffect(() => {
       setTimeout(() => setSpeedFeedback(null), 800);
     }
 
-    actions.answerWord(isCorrect, speedMulti);
+    onMarkWordSeen(level.id, currentItem.wordIndex);
 
     // Track result
     setWordResults(prev => [...prev, { wordIndex: currentItem.wordIndex, questionType: currentItem.questionType, correct: isCorrect }]);
@@ -217,16 +227,28 @@ useEffect(() => {
 
     if (isCorrect) {
       setTotalCorrect(prev => prev + 1);
+      actions.answerWord(true, speedMulti, 0);
+      setCurrentFaults(0);
+      setWrongOptions([]);
+      setTimeout(() => {
+        setCurrentIndex(prev => prev + 1);
+        questionStartTimeRef.current = Date.now();
+      }, 600);
     } else {
-      setTotalWrong(prev => prev + 1);
+      setWrongOptions(prev => prev.includes(option) ? prev : [...prev, option]);
+      const nextFaults = currentFaults + 1;
+      setCurrentFaults(nextFaults);
+      actions.answerWord(false, 1, nextFaults);
+      if (nextFaults >= 3) {
+        setTotalWrong(prev => prev + 1);
+        setTimeout(() => {
+          setCurrentFaults(0);
+          setWrongOptions([]);
+          setCurrentIndex(prev => prev + 1);
+          questionStartTimeRef.current = Date.now();
+        }, 1200);
+      }
     }
-
-    // Advance queue after feedback delay (longer on wrong answer)
-    const delay = isCorrect ? 600 : 2500;
-    setTimeout(() => {
-      setCurrentIndex(prev => prev + 1);
-      questionStartTimeRef.current = Date.now();
-    }, delay);
   };
 
   const handleFinish = (victory: boolean) => {
@@ -260,6 +282,8 @@ useEffect(() => {
     setShowWordCard(false);
     setParticleEffect(null);
     setHealPopup(null);
+    setCurrentFaults(0);
+    setWrongOptions([]);
     prevEnemiesBeatenRef.current = 0;
     battleStreakRef.current = 0;
     questionStartTimeRef.current = Date.now();
@@ -293,7 +317,11 @@ useEffect(() => {
   const totalQuestions = totalCorrect + totalWrong;
   const accuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
   const coverageComplete = wordCoverage.length > 0
-    ? wordCoverage.every(wc => wc.coveredQuestions.length >= (level.words[wc.wordIndex]?.kanji ? 3 : 2))
+    ? wordCoverage.every(wc => {
+        const word = level.words[wc.wordIndex];
+        const requiredTypes = (word?.kanji && !word?.kanjiInfoOnly) ? 3 : 2;
+        return wc.coveredQuestions.length >= requiredTypes;
+      })
     : false;
   const victoryMessage: 'hebat' | 'coba_lagi' | 'not_complete' = state.showVictory
     ? accuracy >= 90 && coverageComplete ? 'hebat' : !coverageComplete ? 'not_complete' : 'coba_lagi'
@@ -355,11 +383,22 @@ useEffect(() => {
 
   // Defeat screen
   if (state.showDefeat) {
-    return <DefeatScreen stats={{ correct: totalCorrect, wrong: totalWrong, accuracy }} onRetry={handleRetry} onContinue={() => handleFinish(false)} />;
+    return (
+      <DefeatScreen
+        stats={{ correct: totalCorrect, wrong: totalWrong, accuracy }}
+        onRetry={handleRetry}
+        onContinue={() => handleFinish(false)}
+        onSeeStats={() => {
+          if (wordResults.length > 0) {
+            setShowWordReview(true);
+          }
+        }}
+      />
+    );
   }
 
   // Loading state while queue builds
-  if (queue.length === 0 && !isEndless && gameMode !== 'TANTANGAN') {
+  if (queue.length === 0 && !isEndless && gameMode === 'BELAJAR') {
     return (
       <div className="min-h-[80vh] flex items-center justify-center">
         <p className="text-text-secondary">Mempersiapkan pertanyaan...</p>
@@ -368,7 +407,7 @@ useEffect(() => {
   }
 
   // Endless mode fallback: use engine's currentWord
-  const endlessWord = isEndless || gameMode === 'TANTANGAN';
+  const endlessWord = isEndless || gameMode === 'LATIHAN';
 
   return (
     <div className="bg-ambient min-h-full pb-24 md:pb-0">
@@ -432,9 +471,36 @@ useEffect(() => {
             </motion.span>
           </motion.div>
         )}
-      </AnimatePresence>
+</AnimatePresence>
 
-      <BattleLayout
+{/* Pause overlay */}
+{state.isPaused && !state.showVictory && !state.showDefeat && !showWordReview && !showWordCard && !showInventory && (
+  <div className="fixed inset-0 flex items-center justify-center z-40 bg-black/50 backdrop-blur-sm">
+    <div className="space-y-6 text-center">
+      <div className="text-5xl font-bold text-white animate-pulse">PAUSED</div>
+      <div className="flex space-x-4">
+        <button
+          onClick={() => actions.setPaused(false)}
+          className="px-6 py-3 rounded-xl bg-main/80 text-white hover:bg-main/90 transition-colors"
+        >
+          RESUME
+        </button>
+        <button
+          onClick={() => {
+            if (onNavigate) {
+              onNavigate('LEVEL_SELECT');
+            }
+          }}
+          className="px-6 py-3 rounded-xl bg-main/80 text-white hover:bg-main/90 transition-colors"
+        >
+          EXIT
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+<BattleLayout
         leftPanel={
           <EnemyPanel
             enemy={state.currentEnemy}
@@ -473,11 +539,14 @@ useEffect(() => {
                 ? { currentWave, queueProgress, isBossZone, totalQuestions: queue.length, currentQuestion: currentIndex + 1 }
                 : undefined
               }
+              wrongOptions={wrongOptions}
+              currentFaults={currentFaults}
+              maxFaults={3}
             />
           ) : (
             <div className="flex-1 flex items-center justify-center p-8">
               <p className="text-text-secondary text-center">
-                {endlessWord ? 'Mode Tantangan' : 'Semua pertanyaan telah dijawab. Kalahkan bos untuk menyelesaikan level!'}
+                {endlessWord ? 'Mode Latihan' : 'Semua pertanyaan telah dijawab. Kalahkan bos untuk menyelesaikan level!'}
               </p>
             </div>
           )
@@ -496,21 +565,32 @@ useEffect(() => {
         shake={state.shake}
       />
 
-      {/* Mobile HUD HP pill — bottom-right */}
-      <div className="fixed bottom-[calc(100px+env(safe-area-inset-bottom,0px))] right-4 z-40 md:hidden">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-bg-surface/90 backdrop-blur-sm border border-border shadow-lg">
-          <Heart className="w-3.5 h-3.5 text-danger" />
-          <motion.span
-            key={state.playerHP}
-            initial={{ scale: 1.15 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
-            className="text-xs font-mono font-bold text-text-primary"
-          >
-            {state.playerHP}/{state.maxPlayerHP}
-          </motion.span>
-        </div>
-      </div>
+{/* Mobile HUD HP pill and pause button — bottom-right */}
+<div className="fixed bottom-[calc(100px+env(safe-area-inset-bottom,0px))] right-4 z-40 md:hidden flex items-center gap-2">
+  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-bg-surface/90 backdrop-blur-sm border border-border shadow-lg">
+    <Heart className="w-3.5 h-3.5 text-danger" />
+    <motion.span
+      key={state.playerHP}
+      initial={{ scale: 1.15 }}
+      animate={{ scale: 1 }}
+      transition={{ duration: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
+      className="text-xs font-mono font-bold text-text-primary"
+    >
+      {state.playerHP}/{state.maxPlayerHP}
+    </motion.span>
+  </div>
+  <button
+    onClick={() => actions.setPaused(!state.isPaused)}
+    className="p-2 rounded-full hover:bg-main/20 transition-colors"
+    aria-label={state.isPaused ? 'Resume Game' : 'Pause Game'}
+  >
+    {state.isPaused ? (
+      <Play className="w-5 h-5 text-main" />
+    ) : (
+      <Pause className="w-5 h-5 text-main" />
+    )}
+  </button>
+</div>
 
       <InventoryModal
         isOpen={showInventory}

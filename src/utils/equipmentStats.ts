@@ -20,12 +20,6 @@ export function computeEquippedStats(items: Item[]): EquippedStats {
     if (item.type === 'ARMOR' || item.type === 'HELM' || item.type === 'ACCESSORY') {
       totalHpBonus += item.hpBonus ?? 0;
     }
-    if (item.type === 'ACCESSORY') {
-      totalAttack += item.attackBonus ?? 0;
-      totalCritChance += item.critChance ?? 0;
-      totalBlockChance += item.blockChance ?? 0;
-      totalHpBonus += item.hpBonus ?? 0;
-    }
   }
 
   return {

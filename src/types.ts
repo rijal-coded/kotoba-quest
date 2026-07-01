@@ -1,13 +1,14 @@
 export type Page = 'HOME' | 'MODE_SELECT' | 'BATTLE' | 'INVENTORY' | 'LEVEL_SELECT' | 'ABOUT' | 'WORDS' | 'FORGE';
 
-export type GameMode = 'BELAJAR' | 'LATIHAN' | 'TANTANGAN';
+export type GameMode = 'BELAJAR' | 'LATIHAN';
 
-export type QuestionType = 'kana' | 'kanji' | 'romaji' | 'indonesian';
-export type AnswerType = 'kana' | 'kanji' | 'romaji' | 'indonesian';
+export type QuestionType = 'kana' | 'kanji' | 'indonesian';
+export type AnswerType = 'kana' | 'kanji' | 'indonesian';
 
 export interface Word {
   japanese: string;
   kanji?: string;
+  kanjiInfoOnly?: boolean;
   indonesian: string;
   romaji: string;
 }
@@ -47,6 +48,7 @@ export interface Level {
   bestTime: number;
   unlockedWordCount: number;
   seenWordIndices: number[];
+  favoriteWordIndices: number[];
   wordCoverage?: WordCoverage[];
 }
 

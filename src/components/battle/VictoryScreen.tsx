@@ -26,7 +26,7 @@ export const VictoryScreen = ({
   const totalQuestions = stats.correct + stats.wrong;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] p-6 text-center">
+    <div className="flex flex-col items-center justify-center min-h-[70vh] p-6 text-center pb-32 md:pb-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -172,17 +172,20 @@ export const VictoryScreen = ({
           </div>
         )}
 
-        {/* Continue button */}
+        {/* Continue button (floating above bottom nav) */}
+      </motion.div>
+
+      <div className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+88px)] left-0 right-0 px-4 md:bottom-8 md:left-0 md:right-28 z-40 pointer-events-none flex justify-center">
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={onContinue}
-          className="kawaii-btn px-8 py-3 w-full"
+          className="kawaii-btn px-8 py-3 w-full max-w-md pointer-events-auto shadow-2xl shadow-main/20"
         >
           Lanjut
           <ArrowRight className="w-4 h-4" />
         </motion.button>
-      </motion.div>
+      </div>
     </div>
   );
 };

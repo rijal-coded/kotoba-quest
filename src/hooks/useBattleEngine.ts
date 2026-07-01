@@ -37,12 +37,12 @@ export interface BattleState {
 
 export type BattleAction =
   | { type: 'ANSWER_CORRECT'; weaponBonus: number; critTriggered: boolean; speedMulti: number }
-  | { type: 'ANSWER_WRONG' }
+  | { type: 'ANSWER_WRONG'; faults: number }
   | { type: 'CLEAR_FEEDBACK' }
   | { type: 'ENEMY_ATTACK_TICK'; speedModifier: number }
   | { type: 'ENEMY_ATTACK_HIT'; damage: number; blockTriggered: boolean; isFullBlock: boolean }
-  | { type: 'ENEMY_ATTACK_BLOCKED' }
   | { type: 'ENEMY_WARNING' }
+  | { type: 'ENEMY_ATTACK_BLOCKED'; damage: number; blockTriggered: boolean; isFullBlock: boolean }
   | { type: 'ENEMY_DEFEATED'; nextEnemy: EnemyTemplate }
   | { type: 'USE_SKILL_ATTACK' }
   | { type: 'USE_SKILL_DEFEND' }
@@ -120,7 +120,9 @@ export const battleReducer = (state: BattleState, action: BattleAction): BattleS
   }
   case 'ANSWER_WRONG': {
     const tierAvg = getEquippedTierAvg(state.equipped);
-    const scalingDmg = Math.max(10, Math.floor(25 * (1 + tierAvg * 0.15)));
+    const faultMulti = 1 + Math.max(0, action.faults - 1) * 0.5;
+    const baseDmg = Math.max(10, Math.floor(25 * (1 + tierAvg * 0.15)));
+    const scalingDmg = Math.max(10, Math.floor(baseDmg * faultMulti));
     return {
       ...state,
       feedback: 'WRONG',
@@ -155,8 +157,18 @@ export const battleReducer = (state: BattleState, action: BattleAction): BattleS
       enemyCooldown: 0,
     };
   }
-  case 'ENEMY_ATTACK_BLOCKED':
-    return { ...state, enemyWarning: false, feedback: 'SHIELD', isShieldActive: false, enemyCooldown: 0 };
+  case 'ENEMY_ATTACK_BLOCKED': {
+    const defenseBonus = state.equipped.shield?.defenseBonus ?? 0;
+    const blockedDamage = action.isFullBlock ? 0 : Math.max(1, Math.floor(action.damage * 0.3) - defenseBonus);
+    return {
+      ...state,
+      enemyWarning: false,
+      feedback: 'SHIELD',
+      isShieldActive: false,
+      enemyCooldown: 0,
+      playerHP: Math.max(0, state.playerHP - blockedDamage),
+    };
+  }
   case 'ENEMY_WARNING':
     return { ...state, enemyWarning: true };
   case 'ENEMY_DEFEATED':
@@ -222,11 +234,11 @@ export const useBattleEngine = (
     accessory: equippedAccessory,
   } as BattleState['equipped']);
 
-  const progressContext: ProgressContext = {
+  const progressContext = useMemo<ProgressContext>(() => ({
     equippedAttack: stats.totalAttack,
     equippedDefense: stats.totalDefense,
     equippedMaxHp: stats.totalHpBonus,
-  };
+  }), [stats.totalAttack, stats.totalDefense, stats.totalHpBonus]);
 
   const [state, dispatch] = useReducer(battleReducer, level, (l) => initialBattleState(l, inventory, progressContext));
 
@@ -242,13 +254,11 @@ export const useBattleEngine = (
 
   const modeModifiers = useMemo(() => {
     switch (gameMode) {
-    case 'BELAJAR':
-      return { speedMult: 0.7, damageTakenMult: 0.8 };
-    case 'LATIHAN':
-      return { speedMult: 1.12, damageTakenMult: 1.2 };
-    case 'TANTANGAN':
-    default:
-      return { speedMult: 1.2, damageTakenMult: 1.0 };
+      case 'BELAJAR':
+        return { speedMult: 0.7, damageTakenMult: 0.8 };
+      case 'LATIHAN':
+      default:
+        return { speedMult: 1.12, damageTakenMult: 1.2 };
     }
   }, [gameMode]);
 
@@ -260,7 +270,11 @@ export const useBattleEngine = (
         if (pendingAttackRef.current) {
           pendingAttackRef.current = false;
           if (currentState.isShieldActive) {
-            dispatch({ type: 'ENEMY_ATTACK_BLOCKED' });
+            const rawDamage = currentState.currentEnemy.damage;
+            const adjustedDamage = Math.max(1, Math.floor(rawDamage * (modeModifiers?.damageTakenMult ?? 1)));
+            const shieldBlock = currentState.equipped.shield?.blockChance ?? 0;
+            const isFullBlock = Math.random() * 100 < shieldBlock * 0.35;
+            dispatch({ type: 'ENEMY_ATTACK_BLOCKED', damage: adjustedDamage, blockTriggered: true, isFullBlock });
             setTimeout(() => dispatch({ type: 'CLEAR_FEEDBACK' }), 600);
           } else {
             const rawDamage = currentState.currentEnemy.damage;
@@ -313,14 +327,14 @@ export const useBattleEngine = (
     }
   }, [state.playerHP, state.showDefeat]);
 
-  const answerWord = (isCorrect: boolean, speedMulti: number = 1) => {
+  const answerWord = (isCorrect: boolean, speedMulti: number = 1, faults: number = 1) => {
     if (isCorrect) {
       const weaponBonus = state.equipped.weapon?.attackBonus ?? 0;
       const critChance = state.equipped.weapon?.critChance ?? 0;
       const critTriggered = Math.random() * 100 < critChance;
       dispatch({ type: 'ANSWER_CORRECT', weaponBonus, critTriggered, speedMulti });
     } else {
-      dispatch({ type: 'ANSWER_WRONG' });
+      dispatch({ type: 'ANSWER_WRONG', faults });
     }
     setTimeout(() => dispatch({ type: 'CLEAR_FEEDBACK' }), 600);
   };

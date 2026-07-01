@@ -8,7 +8,7 @@ interface BottomNavProps {
 
 export const BottomNav = ({ currentPage, onNavigate }: BottomNavProps) => {
   return (
-    <nav className="kawaii-nav fixed bottom-0 left-0 right-0 md:top-[61px] md:bottom-0 md:left-auto md:w-24 md:flex-col md:justify-start md:pt-6 md:gap-4 md:border-t-0 md:border-l md:rounded-none md:px-0 md:pb-8 flex justify-around md:items-center z-50 md:shadow-none">
+    <nav className="kawaii-nav fixed bottom-0 left-0 right-0 mb-4 mx-4 rounded-2xl bg-white/80 dark:bg-[#2D2640]/80 backdrop-blur-sm shadow-lg border border-border/50 md:top-[61px] md:bottom-0 md:left-auto md:right-0 md:w-24 md:mx-0 md:mr-4 md:my-4 md:rounded-xl md:flex-col md:justify-start md:pt-6 md:gap-4 md:px-0 md:pb-8 flex justify-around md:items-center z-50">
       <NavItem
         icon={<Play className="w-5 h-5 fill-current" />}
         label="Play"
@@ -47,7 +47,7 @@ interface NavItemProps {
 const NavItem = ({ icon, label, active, onClick }: NavItemProps) => (
   <button
     onClick={onClick}
-    className={`kawaii-nav-item ${active ? 'kawaii-nav-item--active' : ''}`}
+    className={`kawaii-nav-item transition-transform duration-150 hover:scale-[1.02] active:scale-[0.98] ${active ? 'kawaii-nav-item--active' : ''}`}
   >
     {icon}
     <span className="text-[10px] md:text-xs font-bold">{label}</span>

@@ -74,7 +74,15 @@ useEffect(() => {
 
         // Apply loaded data with fallback to defaults if null/undefined
         const loadedLevels = (data[GAME_STATE_KEYS.LEVELS] ?? INITIAL_LEVELS).map(
-          (l: Level) => ({ ...l, seenWordIndices: l.seenWordIndices ?? [] })
+          (l: Level) => ({
+            ...l,
+            seenWordIndices: l.seenWordIndices ?? [],
+            favoriteWordIndices: l.favoriteWordIndices ?? [],
+            unlockedWordCount: l.unlockedWordCount ?? 10,
+            bestTime: l.bestTime ?? 0,
+            isCompleted: l.isCompleted ?? false,
+            wordCoverage: l.wordCoverage ?? [],
+          })
         );
         const loadedInventory = data[GAME_STATE_KEYS.INVENTORY] ?? INITIAL_INVENTORY;
         const loadedUsername = data[GAME_STATE_KEYS.USERNAME] ?? '';
@@ -128,7 +136,7 @@ useEffect(() => {
     }, 500);
 
     return () => clearTimeout(timeoutId);
-  }, [isHydrated, persistence, levels, inventory, strength, endlessRecords]);
+  }, [isHydrated, persistence, levels, inventory, strength, endlessRecords, sakuraPetals]);
 
   // ---------------------------------------------------------------------------
   // Navigation
@@ -177,14 +185,13 @@ const handleBattleFinish = useCallback(
     currentInventory?: Item[],
     wordCoverage?: WordCoverage[]
   ) => {
-    const { selectedLevel, gameMode, inventory: globalInventory } = stateRef.current;
-    const isTantangan = gameMode === 'TANTANGAN';
+  const { selectedLevel, gameMode, inventory: globalInventory } = stateRef.current;
 
   const wasAlreadyCompleted = selectedLevel ? selectedLevel.isCompleted : true;
-  const isFirstClear = victory && selectedLevel && !isTantangan && !wasAlreadyCompleted;
+  const isFirstClear = victory && selectedLevel && !wasAlreadyCompleted;
   const petalBonus = isFirstClear ? getFirstClearPetalBonus(selectedLevel) : 0;
 
-  if (selectedLevel && !isTantangan) {
+  if (selectedLevel) {
     setLevels(prev => prev.map(l => {
       if (l.id !== selectedLevel.id) return l;
       const newUnlocked = victory ? Math.min(l.words.length, l.unlockedWordCount + 5) : l.unlockedWordCount;
@@ -192,16 +199,12 @@ const handleBattleFinish = useCallback(
     }));
   }
 
-  if (petalBonus > 0 && victory) {
-    setSakuraPetals(prev => prev + petalBonus);
-  }
+    if (petalBonus > 0) {
+      setSakuraPetals(prev => prev + petalBonus);
+    }
 
     if (victory) {
       setStrength(prev => prev + scoreEarned);
-    }
-
-    if (petalBonus > 0) {
-      setSakuraPetals(prev => prev + petalBonus);
     }
 
       if (currentInventory !== undefined) {
@@ -273,16 +276,7 @@ const handleBattleFinish = useCallback(
         });
       }
 
-      if (isTantangan) {
-        if (enemiesBeaten !== undefined && wordsBeaten !== undefined) {
-          setEndlessRecords(prev => [...prev, { date: Date.now(), enemiesBeaten, wordsBeaten }]);
-        }
-        setSelectedLevel(null);
-        setPendingNav(null);
-        setCurrentPage(navigateTo ?? 'LEVEL_SELECT');
-      } else {
-        setCurrentPage('LEVEL_SELECT');
-      }
+  setCurrentPage('LEVEL_SELECT');
     },
 [setLevels, setStrength, setInventory, setEndlessRecords, setCurrentPage, setSelectedLevel, setPendingNav, setSakuraPetals]
 );
@@ -321,6 +315,23 @@ const handleResetData = useCallback(() => {
       if (l.id !== levelId) return l;
       if (l.seenWordIndices.includes(wordIndex)) return l;
       return { ...l, seenWordIndices: [...l.seenWordIndices, wordIndex] };
+    }));
+  }, [setLevels]);
+
+  // ---------------------------------------------------------------------------
+  // Toggle favorite word in a level (for Words page)
+  // ---------------------------------------------------------------------------
+  const toggleFavorite = useCallback((levelId: string, wordIndex: number) => {
+    setLevels(prev => prev.map(l => {
+      if (l.id !== levelId) return l;
+      const favs = l.favoriteWordIndices ?? [];
+      const isFav = favs.includes(wordIndex);
+      return {
+        ...l,
+        favoriteWordIndices: isFav
+          ? favs.filter(i => i !== wordIndex)
+          : [...favs, wordIndex],
+      };
     }));
   }, [setLevels]);
 
@@ -376,6 +387,7 @@ strength,
   handleSetUsername,
   handleResetData,
   markWordSeen,
+  toggleFavorite,
   unlockLevel,
   unlockAllLevels,
 };

@@ -26,7 +26,7 @@
 - **Modes**:
     - **KANA**: Focuses on Hiragana and Katakana.
     - **KANJI**: Displays Kanji with full Furigana/Okurigana support (e.g., 行く).
-- **Target**: 1000 unique vocab items.
+- **Target**: 200 unique vocab items.
 
 ## 3. Visual & UI Design
 - **Theme**: Dark background with neon accents (Cyan, Pink, Orange).

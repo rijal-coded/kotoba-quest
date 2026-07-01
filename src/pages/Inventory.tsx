@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Item, EquippedStats, Page } from '../types';
 import { Heart, Shield, Sword, Star, Sparkles, Hammer, Trash2, HelpCircle, Lock as LockIcon, Shield as ShieldIcon, Swords, Crosshair } from 'lucide-react';
-import { MAX_INVENTORY_SLOTS } from '../constants';
+import { MAX_INVENTORY_SLOTS, TIER_COLORS } from '../constants';
 import { TIER_LABELS } from '../types';
 import { computeEquippedStats } from '../utils/equipmentStats';
 
@@ -244,12 +244,12 @@ export const Inventory = ({ username, inventory, setInventory, sakuraPetals, set
           <h4 className="text-xs font-bold text-text-secondary uppercase tracking-wider">Equipped</h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
             {equipped.map(item => (
-              <div key={item.id} className={`kawaii-card p-4 space-y-2 ${item.isEquipped ? 'border-main/30 bg-main/5' : ''}`}>
+              <div key={item.id} className={`kawaii-card p-4 space-y-2 ${item.tier ? TIER_COLORS[item.tier].border : ''} ${item.isEquipped ? 'bg-main/5' : ''}`}>
                 <div className="flex items-center gap-2">
                   <span className={getTypeColor(item.type)}>{typeIcon(item.type)}</span>
                   <span className="text-[10px] font-bold text-text-secondary uppercase">{item.type}</span>
                   {item.tier && (
-                    <span className="text-[8px] font-bold px-1 py-0.5 rounded-full bg-bg-surface-alt text-text-secondary">
+                    <span className={`text-[8px] font-bold px-1 py-0.5 rounded-full ${TIER_COLORS[item.tier].bg} ${TIER_COLORS[item.tier].text}`}>
                       T{item.tier}
                     </span>
                   )}
@@ -369,18 +369,18 @@ export const Inventory = ({ username, inventory, setInventory, sakuraPetals, set
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.04 }}
               className={`kawaii-card p-4 flex justify-between items-start group ${
-                item.isEquipped ? 'border-main/30 bg-main/5' : ''
-              } ${!canEquip && item.type !== 'CONSUMABLE' && !salvageMode ? 'opacity-60' : ''}`}
+                item.tier ? TIER_COLORS[item.tier].border : ''
+              } ${item.isEquipped ? 'bg-main/5' : ''} ${!canEquip && item.type !== 'CONSUMABLE' && !salvageMode ? 'opacity-60' : ''}`}
             >
               <div className="flex items-start gap-3 flex-1 min-w-0">
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 border border-border ${getTypeColor(item.type)}`}>
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 border ${item.tier ? TIER_COLORS[item.tier].border : 'border-border'} ${getTypeColor(item.type)}`}>
                   {typeIcon(item.type)}
                 </div>
                 <div className="space-y-1 min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h6 className="text-sm font-bold text-text-primary truncate">{item.name}</h6>
                     {item.tier && (
-                      <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-full bg-bg-surface-alt text-text-secondary uppercase">
+                      <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full ${TIER_COLORS[item.tier].bg} ${TIER_COLORS[item.tier].text} uppercase`}>
                         {TIER_LABELS[item.tier]}
                       </span>
                     )}

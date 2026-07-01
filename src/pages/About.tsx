@@ -1,4 +1,4 @@
-import { useState, FormEvent, useCallback } from 'react';
+import { useState, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Page, Level } from '../types';
 import { Heart, Sparkles, Shield } from 'lucide-react';
@@ -53,7 +53,7 @@ export const About = ({ onNavigate, onResetData, onUnlockAllLevels, onUnlockLeve
     setDebugError(false);
   };
 
-  const handleDebugPasswordSubmit = useCallback(async (e: FormEvent) => {
+  const handleDebugPasswordSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const hash = await sha256(debugPassword);
     if (hash === PASSWORD_HASH) {
@@ -65,7 +65,7 @@ export const About = ({ onNavigate, onResetData, onUnlockAllLevels, onUnlockLeve
       setDebugError(true);
       setDebugPassword('');
     }
-  }, [debugPassword]);
+  };
 
   return (
     <div className="p-8 max-w-2xl mx-auto space-y-8 text-center relative">
@@ -135,6 +135,7 @@ export const About = ({ onNavigate, onResetData, onUnlockAllLevels, onUnlockLeve
       <AnimatePresence>
         {showDebugPanel && (
           <motion.div
+            key="debug-panel"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
@@ -193,6 +194,7 @@ export const About = ({ onNavigate, onResetData, onUnlockAllLevels, onUnlockLeve
       <AnimatePresence>
         {showPasswordPrompt && (
           <motion.div
+            key="password-backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -242,6 +244,7 @@ export const About = ({ onNavigate, onResetData, onUnlockAllLevels, onUnlockLeve
       <AnimatePresence>
         {showDebugPrompt && (
           <motion.div
+            key="debug-backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
