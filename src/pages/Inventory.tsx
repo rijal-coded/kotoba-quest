@@ -6,7 +6,7 @@ import { MAX_INVENTORY_SLOTS, TIER_COLORS } from '../constants';
 import { TIER_LABELS } from '../types';
 import { computeEquippedStats } from '../utils/equipmentStats';
 
-const PETA_TABLE: Record<number, number> = { 1: 1, 2: 3, 3: 8, 4: 20, 5: 50 };
+const PETAL_TABLE: Record<number, number> = { 1: 1, 2: 3, 3: 8, 4: 20, 5: 50 };
 
 const TYPE_ORDER = { WEAPON: 0, SHIELD: 1, ARMOR: 2, HELM: 3, ACCESSORY: 4, CONSUMABLE: 5 } as const;
 
@@ -174,10 +174,10 @@ export const Inventory = ({ username, inventory, setInventory, sakuraPetals, set
   };
 
   const calculateSalvagePetals = (item: Item): number => {
-    const base = PETA_TABLE[item.tier] ?? 1;
+    const base = PETAL_TABLE[item.tier] ?? 1;
     const affixBonus = (item.affixes?.length ?? 0);
     if (item.type === 'CONSUMABLE') {
-      return (item.count ?? 1) * PETA_TABLE[item.tier];
+      return (item.count ?? 1) * PETAL_TABLE[item.tier];
     }
     return base + affixBonus;
   };
