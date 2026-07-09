@@ -3,7 +3,7 @@ import { Target, Skull } from 'lucide-react';
 import { EnemyTemplate } from '../../utils/enemyUtils';
 import { useEffect, useMemo, useState } from 'react';
 
-const TIER_LABELS = ['Ashigaru', 'Samurai', 'Hatamoto', 'Daimyo', 'Shogun'];
+
 
 interface WaveAnnouncement {
   waveId: number;
