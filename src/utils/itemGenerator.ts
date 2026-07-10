@@ -33,8 +33,8 @@ export function generateEquipment(type: ItemType, tier: ItemTier, forceAffixCoun
   const useHistorical = historical && historical.length > 0 && Math.random() < historicalChance;
 
   let base: BaseItemDef;
-  if (useHistorical && historical!.length > 0) {
-    base = pickRandom(historical!);
+  if (useHistorical && historical.length > 0) {
+    base = pickRandom(historical);
   } else {
     const bases = getBaseItems(type);
     base = pickRandom(bases.length > 0 ? bases : [{ name: 'Unknown', type }]);

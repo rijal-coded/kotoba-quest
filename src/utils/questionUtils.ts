@@ -94,7 +94,11 @@ export function buildQuestionQueue(words: Word[], unlockedCount: number): Questi
   const targetPerWord = Math.max(2, Math.floor((40 - queue.length) / activeWords.length));
   const totalTarget = Math.min(50, Math.max(30, activeWords.length * targetPerWord));
 
-  while (queue.length < totalTarget) {
+  const MAX_ITERATIONS = 1000;
+  let iterations = 0;
+
+  while (queue.length < totalTarget && iterations < MAX_ITERATIONS) {
+    iterations++;
     for (let wi = 0; wi < activeWords.length && queue.length < totalTarget; wi++) {
       const word = activeWords[wi];
       const wordValidTypes = validTypes.filter(t => {
@@ -115,6 +119,10 @@ export function buildQuestionQueue(words: Word[], unlockedCount: number): Questi
         answerType: allowed[Math.floor(Math.random() * allowed.length)],
       });
     }
+  }
+
+  if (iterations >= MAX_ITERATIONS) {
+    console.warn('[questionUtils] buildQuestionQueue reached max iterations');
   }
 
   return shuffleArray(queue);
