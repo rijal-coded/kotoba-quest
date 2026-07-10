@@ -13,7 +13,8 @@ import { BattleLayout } from '../components/battle/BattleLayout';
 import { ParticleEffect } from '../components/battle/ParticleEffect';
 import { WordReview } from '../components/battle/WordReview';
 import { WordCard } from '../components/battle/WordCard';
-import { buildQuestionQueue, buildQuestionConfig, ALL_QUESTION_TYPES } from '../utils/questionUtils';
+import { buildQuestionQueue, buildQuestionConfig, generateQuestionConfig, ALL_QUESTION_TYPES } from '../utils/questionUtils';
+import type { QuestionConfig } from '../utils/questionUtils';
 import { generateEnemy, ProgressContext } from '../utils/enemyUtils';
 import { Shield, Heart, Play, Pause } from 'lucide-react';
 import { getLootDrop, LootContext } from '../utils/lootTables';
@@ -58,6 +59,7 @@ export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels,
   const [bossActivated, setBossActivated] = useState(false);
   const [currentFaults, setCurrentFaults] = useState(0);
   const [wrongOptions, setWrongOptions] = useState<string[]>([]);
+  const [liveQuestion, setLiveQuestion] = useState<{ wordIndex: number; config: QuestionConfig } | null>(null);
 
 // Word review tracking
 const [wordResults, setWordResults] = useState<{ wordIndex: number; questionType: QuestionType; correct: boolean }[]>([]);
@@ -116,6 +118,25 @@ useEffect(() => {
     seenThisBattleRef.current.add(currentItem.wordIndex);
     onMarkWordSeen(level.id, currentItem.wordIndex);
   }, [currentItem, level.id, onMarkWordSeen, actions]);
+
+  const generateNextLatihanQuestion = useCallback(() => {
+    if (activeWords.length === 0) return;
+    const wordIndex = Math.floor(Math.random() * activeWords.length);
+    const word = activeWords[wordIndex];
+    const config = generateQuestionConfig(word, activeWords);
+    setLiveQuestion({ wordIndex, config });
+  }, [activeWords]);
+
+  // Generate question for LATIHAN mode (on mount or after retry)
+  useEffect(() => {
+    if (gameMode !== 'LATIHAN') {
+      setLiveQuestion(null);
+      return;
+    }
+    if (activeWords.length > 0 && !liveQuestion) {
+      generateNextLatihanQuestion();
+    }
+  }, [gameMode, activeWords.length, liveQuestion, generateNextLatihanQuestion]);
 
   // Question config
   const questionConfig = useMemo(() => {
@@ -190,7 +211,9 @@ useEffect(() => {
   }, [state.feedback]);
 
   const handleAnswer = (isCorrect: boolean, option: string) => {
-    if (!currentItem) return;
+    // Determine word index based on mode
+    const wordIndex = gameMode === 'LATIHAN' ? liveQuestion?.wordIndex : currentItem?.wordIndex;
+    if (wordIndex === undefined) return;
 
     // Compute speed multiplier (Belajar mode only)
     const elapsed = (Date.now() - questionStartTimeRef.current) / 1000;
@@ -210,20 +233,24 @@ useEffect(() => {
       setTimeout(() => setSpeedFeedback(null), 800);
     }
 
-    onMarkWordSeen(level.id, currentItem.wordIndex);
+    onMarkWordSeen(level.id, wordIndex);
+
+    const qType = gameMode === 'LATIHAN' ? liveQuestion!.config.questionType : currentItem!.questionType;
 
     // Track result
-    setWordResults(prev => [...prev, { wordIndex: currentItem.wordIndex, questionType: currentItem.questionType, correct: isCorrect }]);
+    setWordResults(prev => [...prev, { wordIndex, questionType: qType, correct: isCorrect }]);
 
-    // Update coverage
-    setWordCoverage(prev => prev.map(wc => {
-      if (wc.wordIndex !== currentItem.wordIndex) return wc;
-      return {
-        ...wc,
-        coveredQuestions: [...new Set([...wc.coveredQuestions, currentItem.questionType])],
-        correct: isCorrect ? wc.correct : false,
-      };
-    }));
+    // Update coverage (Belajar mode only, LATIHAN is survival-based)
+    if (gameMode === 'BELAJAR') {
+      setWordCoverage(prev => prev.map(wc => {
+        if (wc.wordIndex !== wordIndex) return wc;
+        return {
+          ...wc,
+          coveredQuestions: [...new Set([...wc.coveredQuestions, qType])],
+          correct: isCorrect ? wc.correct : false,
+        };
+      }));
+    }
 
     if (isCorrect) {
       setTotalCorrect(prev => prev + 1);
@@ -231,7 +258,11 @@ useEffect(() => {
       setCurrentFaults(0);
       setWrongOptions([]);
       setTimeout(() => {
-        setCurrentIndex(prev => prev + 1);
+        if (gameMode === 'LATIHAN') {
+          generateNextLatihanQuestion();
+        } else {
+          setCurrentIndex(prev => prev + 1);
+        }
         questionStartTimeRef.current = Date.now();
       }, 600);
     } else {
@@ -244,7 +275,11 @@ useEffect(() => {
         setTimeout(() => {
           setCurrentFaults(0);
           setWrongOptions([]);
-          setCurrentIndex(prev => prev + 1);
+          if (gameMode === 'LATIHAN') {
+            generateNextLatihanQuestion();
+          } else {
+            setCurrentIndex(prev => prev + 1);
+          }
           questionStartTimeRef.current = Date.now();
         }, 1200);
       }
@@ -284,6 +319,7 @@ useEffect(() => {
     setHealPopup(null);
     setCurrentFaults(0);
     setWrongOptions([]);
+    setLiveQuestion(null);
     prevEnemiesBeatenRef.current = 0;
     battleStreakRef.current = 0;
     questionStartTimeRef.current = Date.now();
@@ -406,8 +442,14 @@ useEffect(() => {
     );
   }
 
-  // Endless mode fallback: use engine's currentWord
-  const endlessWord = isEndless || gameMode === 'LATIHAN';
+  // Loading for LATIHAN mode before first question is generated
+  if (gameMode === 'LATIHAN' && !liveQuestion && activeWords.length > 0) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center">
+        <p className="text-text-secondary">Mempersiapkan pertanyaan...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-ambient min-h-full pb-24 md:pb-0">
@@ -518,7 +560,28 @@ useEffect(() => {
           />
         }
         centerPanel={
-          currentItem && questionConfig && !endlessWord ? (
+          gameMode === 'LATIHAN' && liveQuestion ? (
+            <QuestionCard
+              questionText={liveQuestion.config.questionText}
+              currentWord={activeWords[liveQuestion.wordIndex]}
+              options={liveQuestion.config.options}
+              correctAnswer={liveQuestion.config.correctAnswer}
+              answerType={liveQuestion.config.answerType}
+              feedback={state.feedback}
+              isShieldActive={state.isShieldActive}
+              onAnswer={handleAnswer}
+              onOpenInventory={() => setShowInventory(true)}
+              gameMode={gameMode}
+              actionPoints={state.actionPoints}
+              enemyHP={state.enemyHP}
+              onUseAttack={handleAttackSkill}
+              onUseDefend={handleDefendSkill}
+              speedFeedback={speedFeedback}
+              wrongOptions={wrongOptions}
+              currentFaults={currentFaults}
+              maxFaults={3}
+            />
+          ) : currentItem && questionConfig ? (
             <QuestionCard
               questionText={questionConfig.questionText}
               currentWord={currentWord!}
@@ -546,7 +609,7 @@ useEffect(() => {
           ) : (
             <div className="flex-1 flex items-center justify-center p-8">
               <p className="text-text-secondary text-center">
-                {endlessWord ? 'Mode Latihan' : 'Semua pertanyaan telah dijawab. Kalahkan bos untuk menyelesaikan level!'}
+                Semua pertanyaan telah dijawab. Kalahkan bos untuk menyelesaikan level!
               </p>
             </div>
           )

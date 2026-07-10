@@ -7,3 +7,7 @@ coverage/
 .env*
 !.env.example
 2026-05-01-185550-local-command-caveatcaveat-the-messages-below.txt
+.kilo/plans/1783604955959-low-risk-fixes.md
+.gitignore
+AGENTS.md
+.env.example
