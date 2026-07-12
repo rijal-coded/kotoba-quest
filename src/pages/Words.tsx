@@ -254,7 +254,7 @@ export const Words = ({ levels, onNavigate, onToggleFavorite }: WordsProps) => {
                                     }}
                                   >
                                     <Heart
-                                      className={`w-4.5 h-4.5 transition-colors duration-200 ${
+                                      className={`w-4 h-4 transition-colors duration-200 ${
                                         isFavorite
                                           ? 'text-danger fill-danger'
                                           : 'text-text-secondary/40 hover:text-danger/60'

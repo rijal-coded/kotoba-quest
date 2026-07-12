@@ -76,28 +76,28 @@ export default function App() {
         return <ModeSelect onSelectMode={setGameMode} onNavigate={handleNavigate} />;
       case 'LEVEL_SELECT':
         return <LevelSelect levels={levels} gameMode={gameMode} onSelect={handleLevelSelect} onNavigate={handleNavigate} />;
-case 'BATTLE':
-  return selectedLevel ? (
-  <Battle
-    level={selectedLevel}
-    gameMode={gameMode}
-    inventory={inventory}
-    completedLevels={levels.filter(l => l.isCompleted).length}
-    onFinish={handleBattleFinish}
-    onMarkWordSeen={markWordSeen}
-    pendingNav={pendingNav}
-    onCancelNav={() => setPendingNav(null)}
-    onConfirmNav={() => { if (pendingNav) { setCurrentPage(pendingNav); setSelectedLevel(null); setPendingNav(null); } }}
-    onNavigate={handleNavigate}
-  />
-      ) : (
-        <LevelSelect levels={levels} gameMode={gameMode} onSelect={handleLevelSelect} onNavigate={handleNavigate} />
-      );
-case 'INVENTORY':
-return       <Inventory username={username} inventory={inventory} setInventory={setInventory} sakuraPetals={sakuraPetals} onNavigate={handleNavigate} setSakuraPetals={setSakuraPetals} />;
-case 'FORGE':
-return       <Forge sakuraPetals={sakuraPetals} setSakuraPetals={setSakuraPetals} inventory={inventory} setInventory={setInventory} onNavigate={handleNavigate} />;
-case 'ABOUT':
+      case 'BATTLE':
+        return selectedLevel ? (
+          <Battle
+            level={selectedLevel}
+            gameMode={gameMode}
+            inventory={inventory}
+            completedLevels={levels.filter(l => l.isCompleted).length}
+            onFinish={handleBattleFinish}
+            onMarkWordSeen={markWordSeen}
+            pendingNav={pendingNav}
+            onCancelNav={() => setPendingNav(null)}
+            onConfirmNav={() => { if (pendingNav) { setCurrentPage(pendingNav); setSelectedLevel(null); setPendingNav(null); } }}
+            onNavigate={handleNavigate}
+          />
+        ) : (
+          <LevelSelect levels={levels} gameMode={gameMode} onSelect={handleLevelSelect} onNavigate={handleNavigate} />
+        );
+      case 'INVENTORY':
+        return <Inventory username={username} inventory={inventory} setInventory={setInventory} sakuraPetals={sakuraPetals} onNavigate={handleNavigate} setSakuraPetals={setSakuraPetals} />;
+      case 'FORGE':
+        return <Forge sakuraPetals={sakuraPetals} setSakuraPetals={setSakuraPetals} inventory={inventory} setInventory={setInventory} onNavigate={handleNavigate} />;
+      case 'ABOUT':
         return <About onNavigate={handleNavigate} onResetData={handleResetData} onUnlockAllLevels={unlockAllLevels} onUnlockLevel={unlockLevel} levels={levels} />;
       case 'WORDS':
         return <Words levels={levels} onNavigate={handleNavigate} onToggleFavorite={toggleFavorite} />;

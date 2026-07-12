@@ -47,7 +47,6 @@ const stateRef = useRef({
   selectedLevel,
   gameMode,
   inventory,
-  lastPage: null as Page | null,
 });
 
 useEffect(() => {
@@ -56,7 +55,6 @@ useEffect(() => {
     selectedLevel,
     gameMode,
     inventory,
-    lastPage: stateRef.current.currentPage,
   };
 }, [currentPage, selectedLevel, gameMode, inventory]);
 
@@ -86,6 +84,7 @@ useEffect(() => {
         );
         const loadedInventory = data[GAME_STATE_KEYS.INVENTORY] ?? INITIAL_INVENTORY;
         const loadedUsername = data[GAME_STATE_KEYS.USERNAME] ?? '';
+        // Legacy fallback: 'power_score' was the key used before GAME_STATE_KEYS.STRENGTH was introduced
         const loadedStrength = data[GAME_STATE_KEYS.STRENGTH] ?? data['power_score'] ?? 0;
   const loadedEndlessRecords = ensureArray(data[GAME_STATE_KEYS.ENDLESS_RECORDS], emptyEndlessRecords);
   const loadedPetals = data[GAME_STATE_KEYS.SAKURA_PETALS] ?? 0;

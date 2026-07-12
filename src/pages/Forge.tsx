@@ -55,7 +55,7 @@ export const Forge = ({ sakuraPetals, setSakuraPetals, inventory, setInventory, 
     setIsForging(true);
 
     setTimeout(() => {
-      const type = slotMode === 'specific' && selectedSlot ? selectedSlot : (['WEAPON', 'SHIELD', 'ARMOR', 'HELM', 'ACCESSORY'] as ItemType[])[Math.floor(Math.random() * 5)];
+      const type = slotMode === 'specific' && selectedSlot ? selectedSlot : EQUIP_SLOTS[Math.floor(Math.random() * EQUIP_SLOTS.length)];
       const newItem = generateEquipment(type, selectedTier, 2);
       setForgedItem(newItem);
       setSakuraPetals(prev => prev - cost);
