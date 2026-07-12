@@ -15,23 +15,26 @@ export const usePersistence = (): PersistenceAdapter => {
     const urlParams = new URLSearchParams(window.location.search);
     const urlAdapter = urlParams.get('persistence');
 
+    const log = import.meta.env.DEV ? console.log : () => {};
+
     if (urlAdapter === 'localStorage') {
-      console.log('[usePersistence] Using LocalStorageAdapter (URL override)');
+      log('[usePersistence] Using LocalStorageAdapter (URL override)');
       return new LocalStorageAdapter();
     }
     if (urlAdapter === 'indexeddb') {
-      console.log('[usePersistence] Using IndexedDBAdapter (URL override)');
+      log('[usePersistence] Using IndexedDBAdapter (URL override)');
       return new IndexedDBAdapter();
     }
 
     if (useIndexedDB) {
-      console.log('[usePersistence] Using IndexedDBAdapter (feature flag)');
+      log('[usePersistence] Using IndexedDBAdapter (feature flag)');
       return new IndexedDBAdapter();
     }
 
-    console.log('[usePersistence] Using LocalStorageAdapter (default)');
+    log('[usePersistence] Using LocalStorageAdapter (default)');
     return new LocalStorageAdapter();
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // Singleton: adapter is selected once on mount and never changes.
   }, []);
 
   return adapter;

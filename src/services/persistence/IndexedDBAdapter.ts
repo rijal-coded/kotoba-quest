@@ -12,6 +12,7 @@ export class IndexedDBAdapter implements PersistenceAdapter {
 
   private db: IDBDatabase | null = null;
   private connectionPromise: Promise<IDBDatabase> | null = null;
+  private migrationAttempted = false;
 
   /**
    * Connect to IndexedDB, creating database/object store if needed.
@@ -52,6 +53,8 @@ export class IndexedDBAdapter implements PersistenceAdapter {
    * This is a one-time operation on first initialization.
    */
   private async migrateFromLocalStorageIfNeeded(): Promise<void> {
+    if (this.migrationAttempted) return;
+    this.migrationAttempted = true;
     try {
       const db = await this.connect();
       const store = db.transaction(IndexedDBAdapter.STORE_NAME, 'readonly').objectStore(IndexedDBAdapter.STORE_NAME);
@@ -60,7 +63,7 @@ export class IndexedDBAdapter implements PersistenceAdapter {
       countRequest.onsuccess = () => {
         const count = countRequest.result;
         if (count === 0) {
-          console.log('[IndexedDBAdapter] Empty DB, migrating from localStorage...');
+          if (import.meta.env.DEV) console.log('[IndexedDBAdapter] Empty DB, migrating from localStorage...');
           this.migrateFromLocalStorage();
         }
       };
@@ -87,7 +90,7 @@ export class IndexedDBAdapter implements PersistenceAdapter {
 
     return new Promise((resolve, reject) => {
       tx.oncomplete = () => {
-        console.log('[IndexedDBAdapter] Migration complete.');
+        if (import.meta.env.DEV) console.log('[IndexedDBAdapter] Migration complete.');
         resolve();
       };
       tx.onerror = () => {
@@ -127,7 +130,7 @@ export class IndexedDBAdapter implements PersistenceAdapter {
     }
   }
 
-  async save(key: string, data: any): Promise<void> {
+  async save<T>(key: string, data: T): Promise<void> {
     try {
       const db = await this.connect();
       return new Promise((resolve, reject) => {

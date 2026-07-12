@@ -49,7 +49,7 @@ export const LevelSelect = ({ levels, gameMode, onSelect, onNavigate }: LevelSel
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
           {availableLevels.map((level, index) => {
-            const IconComponent = (Icons as any)[level.icon] || Icons.HelpCircle;
+            const IconComponent = (Icons as Record<string, React.ComponentType<{ className?: string }>>)[level.icon] ?? Icons.HelpCircle;
 
             return (
               <motion.button

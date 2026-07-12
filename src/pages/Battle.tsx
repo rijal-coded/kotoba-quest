@@ -153,7 +153,7 @@ useEffect(() => {
   // Keyboard shortcuts
   useEffect(() => {
  const handleKeyDown = (e: KeyboardEvent) => {
-  const blockingUI = state.showVictory || state.showDefeat || showWordReview || showWordCard || showInventory;
+  const blockingUI = state.showVictory || state.showDefeat || showWordReview || showWordCard || showInventory || showWave;
   if (blockingUI) return;
   switch (e.key.toLowerCase()) {
   case 'z':

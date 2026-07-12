@@ -87,7 +87,7 @@ export const EnemyPanel = ({ enemy, currentHP, cooldownPercentage, waveAnnouncem
             <span className={`text-[9px] font-bold uppercase tracking-wider ${
               waveAnnouncement.isBoss ? 'text-warning' : 'text-main'
             }`}>
-              {waveAnnouncement.isBoss ? 'Pertempuran' : `Gel ${waveAnnouncement.wave}`}
+              {waveAnnouncement.isBoss ? 'Pertempuran' : `Gelombang ${waveAnnouncement.wave}`}
             </span>
             <span className="text-border text-[9px]">·</span>
             <span className="text-[10px] font-bold text-text-primary truncate">

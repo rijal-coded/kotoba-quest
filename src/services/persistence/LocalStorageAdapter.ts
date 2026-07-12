@@ -18,7 +18,7 @@ export class LocalStorageAdapter implements PersistenceAdapter {
     }
   }
 
-  async save(key: string, data: any): Promise<void> {
+  async save<T>(key: string, data: T): Promise<void> {
     try {
       localStorage.setItem(key, JSON.stringify(data));
     } catch (error) {

@@ -16,7 +16,7 @@ export interface PersistenceAdapter {
    * @param key - Storage key
    * @param data - Value to save (will be serialized)
    */
-  save(key: string, data: any): Promise<void>;
+  save<T>(key: string, data: T): Promise<void>;
 
   /**
    * Load all known game state keys.

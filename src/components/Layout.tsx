@@ -9,17 +9,24 @@ interface HeaderProps {
 
 export const Header = ({ onNavigate, currentPage }: HeaderProps) => {
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    const saved = localStorage.getItem('kotoba_theme');
+    // Read new key first, fall back to old key for migration
+    const oldKey = localStorage.getItem('kotoba_theme');
+    const saved = localStorage.getItem('theme') ?? oldKey;
+    if (oldKey) {
+      // One-time migration from old key to new key
+      localStorage.setItem('theme', saved);
+      localStorage.removeItem('kotoba_theme');
+    }
     return saved ? saved === 'dark' : true;
   });
 
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
-      localStorage.setItem('kotoba_theme', 'dark');
+      localStorage.setItem('theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
-      localStorage.setItem('kotoba_theme', 'light');
+      localStorage.setItem('theme', 'light');
     }
   }, [isDarkMode]);
 

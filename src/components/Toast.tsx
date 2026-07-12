@@ -1,6 +1,6 @@
 import { useState, useCallback, createContext, useContext, ReactNode, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { CheckCircle, AlertCircle, Info, X, Sparkles } from 'lucide-react';
+import { CheckCircle, AlertCircle, X, Sparkles } from 'lucide-react';
 
 interface Toast {
   id: number;
