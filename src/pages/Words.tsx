@@ -61,7 +61,7 @@ export const Words = ({ levels, onNavigate, onToggleFavorite }: WordsProps) => {
           <Sparkles className="w-4 h-4 text-accent" />
         </div>
         <p className="text-base text-text-secondary">
-          Koleksi kata — mainkan mode Belajar untuk membuka kata baru
+          Koleksi kata — mainkan mode Belajar atau Latihan untuk membuka kata baru
         </p>
       </motion.div>
 
@@ -318,12 +318,12 @@ export const Words = ({ levels, onNavigate, onToggleFavorite }: WordsProps) => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: idx * 0.01 }}
-                            className="kawaii-card p-3 opacity-50"
+                            className="kawaii-card p-3 opacity-40"
                           >
                             <div className="flex items-center gap-3">
                               <Lock className="w-4 h-4 text-text-secondary shrink-0" />
-                              <p className="text-xs text-text-secondary">
-                                Kata #{idx + 1} — Mainkan mode Belajar untuk membuka
+                              <p className="text-sm font-bold text-text-secondary">
+                                {word.indonesian}
                               </p>
                             </div>
                           </motion.div>

@@ -5,6 +5,7 @@ import { Word } from '../../types';
 interface WordReviewItem {
   word: Word;
   correct: boolean;
+  wrongAttempts: number;
 }
 
 interface WordReviewProps {
@@ -15,7 +16,9 @@ interface WordReviewProps {
 
 export const WordReview = ({ items, score, onBack }: WordReviewProps) => {
   const correctCount = items.filter(i => i.correct).length;
-  const accuracy = items.length > 0 ? Math.round((correctCount / items.length) * 100) : 0;
+  const totalWrongAttempts = items.reduce((sum, i) => sum + i.wrongAttempts, 0);
+  const totalAttempts = correctCount + totalWrongAttempts;
+  const accuracy = totalAttempts > 0 ? Math.round((correctCount / totalAttempts) * 100) : 0;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] p-6 text-center">
@@ -36,7 +39,7 @@ export const WordReview = ({ items, score, onBack }: WordReviewProps) => {
           <div className="flex justify-center gap-4 text-sm font-mono">
             <span className="text-accent">{correctCount} benar</span>
             <span className="text-text-secondary">|</span>
-            <span className="text-danger">{items.length - correctCount} salah</span>
+            <span className="text-danger">{totalWrongAttempts} salah</span>
             <span className="text-text-secondary">|</span>
             <span className="text-main">{accuracy}% akurasi</span>
           </div>
@@ -68,6 +71,11 @@ export const WordReview = ({ items, score, onBack }: WordReviewProps) => {
                   {item.word.indonesian}
                 </span>
               </div>
+              {item.wrongAttempts > 0 && (
+                <span className="text-[10px] font-mono font-bold text-danger bg-danger/10 px-1.5 py-0.5 rounded shrink-0">
+                  {item.wrongAttempts}× salah
+                </span>
+              )}
             </motion.div>
           ))}
         </div>

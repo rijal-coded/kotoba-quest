@@ -8,7 +8,10 @@ coverage/
 !.env.example
 2026-05-01-185550-local-command-caveatcaveat-the-messages-below.txt
 .kilo/plans/1783604955959-low-risk-fixes.md
+.kilo/plans/1783859636753-home-page-game-explanation.md
+.kilo/plans/1783899854440-battle-ui-fixes.md
 .gitignore
 AGENTS.md
 .env.example
-.kilo/plans/1783859636753-home-page-game-explanation.md
+
+
