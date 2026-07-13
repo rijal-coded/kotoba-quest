@@ -54,8 +54,6 @@ export const Battle = ({ level, isEndless, gameMode, inventory, completedLevels,
   const [queue, setQueue] = useState<QuestionItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [wordCoverage, setWordCoverage] = useState<WordCoverage[]>([]);
-  const [totalCorrect, setTotalCorrect] = useState(0);
-  const [totalWrong, setTotalWrong] = useState(0);
   const [bossActivated, setBossActivated] = useState(false);
   const [currentFaults, setCurrentFaults] = useState(0);
   const [wrongOptions, setWrongOptions] = useState<string[]>([]);
@@ -92,6 +90,12 @@ const isBossZone = showWaveProgress ? currentIndex >= queue.length - BOSS_LEAD_U
   // Current question
   const currentItem = queue[currentIndex] || null;
   const currentWord = currentItem ? level.words[currentItem.wordIndex] || null : null;
+
+  // Synchronously determine if WordCard should block question rendering
+  const needsWordCard = gameMode === 'BELAJAR' && !isEndless && currentItem
+    && !seenThisBattleRef.current.has(currentItem.wordIndex)
+    && !level.seenWordIndices?.includes(currentItem.wordIndex)
+    && !showWave;
 
   // Check for boss activation (when approaching queue end)
   useEffect(() => {
@@ -253,7 +257,6 @@ useEffect(() => {
     }
 
     if (isCorrect) {
-      setTotalCorrect(prev => prev + 1);
       actions.answerWord(true, speedMulti, 0);
       setCurrentFaults(0);
       setWrongOptions([]);
@@ -271,7 +274,6 @@ useEffect(() => {
       setCurrentFaults(nextFaults);
       actions.answerWord(false, 1, nextFaults);
       if (nextFaults >= 3) {
-        setTotalWrong(prev => prev + 1);
         setTimeout(() => {
           setCurrentFaults(0);
           setWrongOptions([]);
@@ -306,8 +308,6 @@ useEffect(() => {
     setQueue([]);
     setCurrentIndex(0);
     setWordCoverage([]);
-    setTotalCorrect(0);
-    setTotalWrong(0);
     setWordResults([]);
     setShowWordReview(false);
     setShowWave(false);
@@ -328,6 +328,7 @@ useEffect(() => {
 
   const handleUseItem = (item: Item) => {
     if (item.type === 'CONSUMABLE' && item.count && item.count > 0) {
+      if (state.playerHP >= state.maxPlayerHP) return;
       actions.healPlayer(item.hpBonus ?? 50);
       actions.consumeItem(item.id);
       setParticleEffect({ type: 'item' });
@@ -349,9 +350,34 @@ useEffect(() => {
     setTimeout(() => setParticleEffect(null), 600);
   };
 
-  // Stats
-  const totalQuestions = totalCorrect + totalWrong;
-  const accuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+  // Deduplicated word results (any correct attempt = word correct, track wrong attempts)
+  const deduplicatedWordResults = useMemo(() => {
+    const byWord = new Map<number, { correct: boolean; wrongAttempts: number }>();
+    for (const r of wordResults) {
+      const existing = byWord.get(r.wordIndex);
+      if (!existing) {
+        byWord.set(r.wordIndex, { correct: r.correct, wrongAttempts: r.correct ? 0 : 1 });
+      } else {
+        if (r.correct) existing.correct = true;
+        else existing.wrongAttempts += 1;
+      }
+    }
+    return [...byWord.entries()].map(([wordIndex, data]) => ({
+      word: level.words[wordIndex],
+      correct: data.correct,
+      wrongAttempts: data.wrongAttempts,
+    }));
+  }, [wordResults, level.words]);
+
+  // Aggregated stats derived from deduplicated results
+  const aggregatedStats = useMemo(() => {
+    const correct = deduplicatedWordResults.filter(r => r.correct).length;
+    const wrong = deduplicatedWordResults.reduce((sum, r) => sum + r.wrongAttempts, 0);
+    const total = correct + wrong;
+    return { correct, wrong, accuracy: total > 0 ? Math.round((correct / total) * 100) : 0 };
+  }, [deduplicatedWordResults]);
+
+  const accuracy = aggregatedStats.accuracy;
   const coverageComplete = wordCoverage.length > 0
     ? wordCoverage.every(wc => {
         const word = level.words[wc.wordIndex];
@@ -391,7 +417,7 @@ useEffect(() => {
     return (
       <VictoryScreen
         message={victoryMessage}
-        stats={{ correct: totalCorrect, wrong: totalWrong, accuracy }}
+        stats={{ correct: aggregatedStats.correct, wrong: aggregatedStats.wrong, accuracy }}
         wordCoverage={wordCoverage}
         coverageComplete={coverageComplete}
         rewards={earnedRewards}
@@ -410,7 +436,7 @@ useEffect(() => {
   if (showWordReview && !isEndless) {
     return (
       <WordReview
-        items={wordResults.map(r => ({ word: level.words[r.wordIndex], correct: r.correct }))}
+        items={deduplicatedWordResults}
         score={state.score}
         onBack={() => setShowWordReview(false)}
       />
@@ -421,7 +447,7 @@ useEffect(() => {
   if (state.showDefeat) {
     return (
       <DefeatScreen
-        stats={{ correct: totalCorrect, wrong: totalWrong, accuracy }}
+        stats={{ correct: aggregatedStats.correct, wrong: aggregatedStats.wrong, accuracy }}
         onRetry={handleRetry}
         onContinue={() => handleFinish(false)}
         onSeeStats={() => {
@@ -485,6 +511,31 @@ useEffect(() => {
             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-accent/20 border border-accent/40 backdrop-blur-sm">
               <Heart className="w-4 h-4 text-accent" />
               <span className="text-lg font-mono font-bold text-accent">+{healPopup.amount} HP</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {speedFeedback && speedFeedback !== 'normal' && state.feedback === 'CORRECT' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: -40 }}
+            exit={{ opacity: 0, y: -60 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            className="fixed left-1/2 -translate-x-1/2 z-50 pointer-events-none"
+            style={{ bottom: '40%' }}
+          >
+            <div className={`flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-sm border ${
+              speedFeedback === 'quick'
+                ? 'bg-accent/20 border-accent/40'
+                : 'bg-text-secondary/10 border-border'
+            }`}>
+              <span className={`text-lg font-mono font-bold ${
+                speedFeedback === 'quick' ? 'text-accent' : 'text-text-secondary'
+              }`}>
+                {speedFeedback === 'quick' ? '⚡ Cepat +1.5×' : '🐌 Lambat +0.75×'}
+              </span>
             </div>
           </motion.div>
         )}
@@ -576,12 +627,11 @@ useEffect(() => {
               enemyHP={state.enemyHP}
               onUseAttack={handleAttackSkill}
               onUseDefend={handleDefendSkill}
-              speedFeedback={speedFeedback}
               wrongOptions={wrongOptions}
               currentFaults={currentFaults}
               maxFaults={3}
             />
-          ) : currentItem && questionConfig ? (
+          ) : currentItem && questionConfig && !needsWordCard ? (
             <QuestionCard
               questionText={questionConfig.questionText}
               currentWord={currentWord!}
@@ -597,7 +647,6 @@ useEffect(() => {
               enemyHP={state.enemyHP}
               onUseAttack={handleAttackSkill}
               onUseDefend={handleDefendSkill}
-              speedFeedback={speedFeedback}
               progress={showWaveProgress
                 ? { currentWave, queueProgress, isBossZone, totalQuestions: queue.length, currentQuestion: currentIndex + 1 }
                 : undefined

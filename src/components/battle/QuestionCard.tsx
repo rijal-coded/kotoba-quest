@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Swords, Briefcase, Sparkles, Check, X, Sword, Shield, Zap } from 'lucide-react';
+import { Swords, Briefcase, Sparkles, Check, X, Sword, Shield } from 'lucide-react';
 import { Word, GameMode, AnswerType } from '../../types';
 
 interface QuestionCardProps {
@@ -18,7 +18,6 @@ interface QuestionCardProps {
   enemyHP: number;
   onUseAttack: () => void;
   onUseDefend: () => void;
-  speedFeedback?: 'quick' | 'normal' | 'slow' | null;
   progress?: { currentWave: number; queueProgress: number; isBossZone: boolean; totalQuestions: number; currentQuestion: number } | null;
   wrongOptions?: string[];
   currentFaults?: number;
@@ -46,7 +45,6 @@ export const QuestionCard = memo(({
   enemyHP,
   onUseAttack,
   onUseDefend,
-  speedFeedback,
   progress,
   wrongOptions = [],
   currentFaults = 0,
@@ -119,28 +117,7 @@ export const QuestionCard = memo(({
         />
       </div>
 
-      {/* Speed feedback (Belajar mode only) */}
-      <AnimatePresence>
-        {speedFeedback && feedback === 'CORRECT' && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            className="text-center"
-          >
-            {speedFeedback === 'quick' && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/15 border border-accent/40 text-sm font-bold text-accent">
-                ⚡ Cepat +1.5×
-              </span>
-            )}
-            {speedFeedback === 'slow' && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-text-secondary/10 border border-border text-sm font-bold text-text-secondary">
-                🐌 Lambat +0.75×
-              </span>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Answer type label */}
 
       <div className="text-center">
         <span className="text-sm font-bold uppercase tracking-wider text-text-secondary">
@@ -208,7 +185,7 @@ const BattleVisual = ({ feedback, isShieldActive, onOpenInventory }: BattleVisua
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 0.15 }}
-        className="absolute inset-0 bg-main rounded-2xl"
+        className="absolute inset-0 bg-main rounded-2xl pointer-events-none"
       />
     )}
 
@@ -279,11 +256,6 @@ const AnswerGrid = ({ options, correctAnswer, feedback, wrongOptions, onAnswer }
             {isEliminated && feedback === null && <X className="w-3 h-3 text-danger" />}
             {opt}
           </span>
-          {feedback === 'WRONG' && isCorrectAnswer && (
-            <span className="block text-[10px] text-accent font-bold mt-0.5 uppercase tracking-wider">
-              Jawaban benar
-            </span>
-          )}
         </motion.button>
       );
     })}

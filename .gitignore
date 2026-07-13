@@ -11,3 +11,5 @@ coverage/
 .gitignore
 AGENTS.md
 .env.example
+.kilo/plans/1783899854440-battle-ui-fixes.md
+
