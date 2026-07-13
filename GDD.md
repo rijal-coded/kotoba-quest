@@ -26,7 +26,7 @@
 - **Modes**:
     - **KANA**: Focuses on Hiragana and Katakana.
     - **KANJI**: Displays Kanji with full Furigana/Okurigana support (e.g., 行く).
-- **Target**: 200 unique vocab items.
+- **Target**: 195 unique vocab items.
 
 ## 3. Visual & UI Design
 - **Theme**: Dark background with neon accents (Cyan, Pink, Orange).
@@ -40,11 +40,6 @@
 - **Styling**: Tailwind CSS.
 - **Animations**: Motion (framer-motion).
 - **Storage**: LocalStorage for persistent player data.
-
-## 5. Security & Secret Features
-- **Admin Access**: Protected via a hidden password prompt in the "About" page.
-- **Current Password**: `faira` (Case-insensitive).
-- **Admin Message**: "I LOVE YOU" (Visual confirmation).
 
 ## 6. Level Design
 - Levels are categorized by real-world themes (e.g., School, Food, Transportation, Nature).
